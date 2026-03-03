@@ -1,0 +1,405 @@
+/**
+ * login.css
+ * Estilos para la pantalla de inicio de sesión
+ */
+
+/* ========================================
+   VARIABLES Y RESET
+   ======================================== */
+:root {
+    /* Colores */
+    --color-bg: #ffffff;
+    --color-bg-page: #f5f7fa;
+    --color-text: #2c3e50;
+    --color-text-muted: #6c757d;
+    --color-accent: #5a6c7d;
+    --color-accent-hover: #4a5a6a;
+    --color-accent-light: rgba(90, 108, 125, 0.1);
+    --color-error: #c0392b;
+    --color-success: #27ae60;
+    --color-border: #e1e5e9;
+    --color-border-focus: #5a6c7d;
+
+    /* Tipografía */
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-size-base: 15px;
+    --font-size-sm: 0.875rem;
+    --font-size-xs: 0.75rem;
+
+    /* Espaciado */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Bordes */
+    --border-radius: 10px;
+    --border-radius-sm: 6px;
+
+    /* Transiciones */
+    --transition: 200ms ease;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: var(--color-bg-page);
+    min-height: 100vh;
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ========================================
+   CONTENEDOR
+   ======================================== */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--spacing-md);
+}
+
+/* ========================================
+   TARJETA
+   ======================================== */
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    background-color: var(--color-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    padding: var(--spacing-xl);
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* ========================================
+   ENCABEZADO
+   ======================================== */
+.login-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.login-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--spacing-md);
+    background-color: var(--color-accent);
+    border-radius: 50%;
+    color: #fff;
+}
+
+.login-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.login-subtitle {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* ========================================
+   FORMULARIO
+   ======================================== */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-group--inline {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Labels */
+.form-group label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.form-group--inline label {
+    font-weight: 400;
+    cursor: pointer;
+}
+
+/* Inputs */
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"] {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-group input:hover {
+    border-color: #c5ccd3;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+/* Estado de error */
+.form-group input[aria-invalid="true"] {
+    border-color: var(--color-error);
+}
+
+.form-group input[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+}
+
+.form-group.shake {
+    animation: shake 0.35s ease-out;
+}
+
+/* Checkbox */
+.form-group input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+
+/* ========================================
+   CAMPO CONTRASEÑA
+   ======================================== */
+.password-wrapper {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.password-wrapper input {
+    flex: 1;
+}
+
+.toggle-password-btn {
+    padding: 0.75rem 0.875rem;
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    color: var(--color-accent);
+    background-color: transparent;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.toggle-password-btn:hover {
+    background-color: var(--color-accent-light);
+    border-color: var(--color-accent);
+}
+
+.toggle-password-btn:focus {
+    outline: none;
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+/* ========================================
+   MENSAJES DE ERROR
+   ======================================== */
+.error-message {
+    font-size: var(--font-size-xs);
+    color: var(--color-error);
+    min-height: 1rem;
+}
+
+/* ========================================
+   ENLACE OLVIDASTE CONTRASEÑA
+   ======================================== */
+.forgot-password-link {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.forgot-password-link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
+
+.forgot-password-link:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* ========================================
+   BOTÓN PRINCIPAL
+   ======================================== */
+.btn-primary {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    font-family: inherit;
+    color: #fff;
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent-hover);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-primary--loading {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* ========================================
+   ZONA DE ESTADO
+   ======================================== */
+.login-status {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    min-height: 1.25rem;
+    padding: var(--spacing-xs) 0;
+    border-radius: var(--border-radius-sm);
+}
+
+.login-status--loading {
+    color: var(--color-text-muted);
+}
+
+.login-status--success {
+    color: var(--color-success);
+}
+
+.login-status--error {
+    color: var(--color-error);
+}
+
+/* ========================================
+   LINKS Y TEXTOS ADICIONALES
+   ======================================== */
+.form-group--center {
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: var(--spacing-sm);
+}
+
+.text-muted {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.link-secondary {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.link-secondary:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
+
+.link-secondary:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 480px) {
+    .login-card {
+        padding: var(--spacing-lg);
+        box-shadow: none;
+        border: 1px solid var(--color-border);
+    }
+
+    .password-wrapper {
+        flex-direction: column;
+    }
+
+    .toggle-password-btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   ACCESIBILIDAD
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}

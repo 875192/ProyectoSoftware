@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta</title>
+    <link rel="stylesheet" href="../styles/register.css">
+</head>
+<body>
+    <main class="register-container">
+        <div class="register-card">
+            <!-- Encabezado -->
+            <header class="register-header">
+                <div class="register-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="22" y1="11" x2="16" y2="11"/>
+                    </svg>
+                </div>
+                <h1>Crear cuenta</h1>
+                <p class="register-subtitle" id="step-subtitle">¿Cómo te llamas?</p>
+            </header>
+
+            <!-- Indicador de pasos -->
+            <div class="steps-indicator">
+                <div class="step step--active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Perfil</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Acceso</span>
+                </div>
+            </div>
+
+            <!-- Formulario de registro -->
+            <form id="register-form" class="register-form" novalidate>
+                
+                <!-- ========== PASO 1: Perfil ========== -->
+                <div class="form-step form-step--active" id="step-1">
+                    <!-- Campo: Nombre completo -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            name="nombre" 
+                            placeholder="Nombre Apellido"
+                            autocomplete="name"
+                            aria-describedby="nombre-error"
+                            required
+                        >
+                        <span id="nombre-error" class="error-message" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Campo: Rol -->
+                    <div class="form-group">
+                        <label for="rol">Rol</label>
+                        <select 
+                            id="rol" 
+                            name="rol" 
+                            aria-describedby="rol-error rol-nota"
+                            required
+                        >
+                            <option value="" disabled hidden>Selecciona un rol</option>
+                            <option value="estudiante">Estudiante</option>
+                            <option value="profesor">Profesor</option>
+                            <option value="personal" disabled>Personal (requiere autorización)</option>
+                        </select>
+                        <span id="rol-nota" class="field-note">El rol "Personal" solo puede ser asignado por administración.</span>
+                        <span id="rol-error" class="error-message" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Botón siguiente -->
+                    <button type="button" id="btn-siguiente" class="btn-primary">
+                        Siguiente
+                    </button>
+                </div>
+
+                <!-- ========== PASO 2: Acceso ========== -->
+                <div class="form-step" id="step-2">
+                    <!-- Campo: Correo institucional -->
+                    <div class="form-group">
+                        <label for="correo">Correo institucional</label>
+                        <input 
+                            type="email" 
+                            id="correo" 
+                            name="correo" 
+                            placeholder="usuario@institucion.edu"
+                            autocomplete="email"
+                            aria-describedby="correo-error"
+                            required
+                        >
+                        <span id="correo-error" class="error-message" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Campo: Contraseña -->
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Mínimo 8 caracteres"
+                                autocomplete="new-password"
+                                aria-describedby="password-error"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                class="toggle-password-btn"
+                                data-target="password"
+                                aria-label="Mostrar contraseña"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                        <span id="password-error" class="error-message" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Campo: Confirmar contraseña -->
+                    <div class="form-group">
+                        <label for="password-confirm">Confirmar contraseña</label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password-confirm" 
+                                name="password-confirm" 
+                                placeholder="Repite la contraseña"
+                                autocomplete="new-password"
+                                aria-describedby="password-confirm-error"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                class="toggle-password-btn"
+                                data-target="password-confirm"
+                                aria-label="Mostrar contraseña"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                        <span id="password-confirm-error" class="error-message" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Checkbox: Aceptar términos -->
+                    <div class="form-group form-group--inline">
+                        <input type="checkbox" id="aceptar-terminos" name="aceptar-terminos" required>
+                        <label for="aceptar-terminos">Acepto los términos y la política de datos</label>
+                    </div>
+                    <span id="terminos-error" class="error-message" role="alert" aria-live="polite"></span>
+
+                    <!-- Botones -->
+                    <div class="btn-group">
+                        <button type="button" id="btn-atras" class="btn-secondary">
+                            Atrás
+                        </button>
+                        <button type="submit" id="btn-crear" class="btn-primary">
+                            Crear cuenta
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Zona de mensajes/estado -->
+                <div id="register-status" class="register-status" role="status" aria-live="polite"></div>
+
+                <!-- Link secundario -->
+                <div class="form-group form-group--center">
+                    <a href="login.html" class="link-secondary">Volver a iniciar sesión</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="../utils/register.js"></script>
+</body>
+</html>
+</html>

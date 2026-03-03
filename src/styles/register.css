@@ -1,0 +1,536 @@
+/**
+ * register.css
+ * Estilos para la pantalla de crear cuenta
+ */
+
+/* ========================================
+   VARIABLES Y RESET
+   ======================================== */
+:root {
+    /* Colores */
+    --color-bg: #ffffff;
+    --color-bg-page: #f5f7fa;
+    --color-text: #2c3e50;
+    --color-text-muted: #6c757d;
+    --color-accent: #5a6c7d;
+    --color-accent-hover: #4a5a6a;
+    --color-accent-light: rgba(90, 108, 125, 0.1);
+    --color-error: #c0392b;
+    --color-success: #27ae60;
+    --color-warning: #d4a017;
+    --color-border: #e1e5e9;
+    --color-border-focus: #5a6c7d;
+
+    /* Tipografía */
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-size-base: 15px;
+    --font-size-sm: 0.875rem;
+    --font-size-xs: 0.75rem;
+
+    /* Espaciado */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Bordes */
+    --border-radius: 10px;
+    --border-radius-sm: 6px;
+
+    /* Transiciones */
+    --transition: 200ms ease;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: var(--color-bg-page);
+    min-height: 100vh;
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ========================================
+   CONTENEDOR
+   ======================================== */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--spacing-md);
+}
+
+/* ========================================
+   TARJETA
+   ======================================== */
+.register-card {
+    width: 100%;
+    max-width: 420px;
+    background-color: var(--color-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    padding: var(--spacing-md);
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* ========================================
+   ENCABEZADO
+   ======================================== */
+.register-header {
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.register-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--spacing-sm);
+    background-color: var(--color-accent);
+    border-radius: 50%;
+    color: #fff;
+}
+
+.register-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.register-subtitle {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* ========================================
+   INDICADOR DE PASOS
+   ======================================== */
+.steps-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    opacity: 0.5;
+    transition: opacity var(--transition);
+}
+
+.step--active {
+    opacity: 1;
+}
+
+.step--completed {
+    opacity: 1;
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--color-border);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.step--active .step-number {
+    background-color: var(--color-accent);
+    color: #fff;
+}
+
+.step--completed .step-number {
+    background-color: var(--color-success);
+    color: #fff;
+}
+
+.step-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.step--active .step-label {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.step-line {
+    flex: 0 0 40px;
+    height: 2px;
+    background-color: var(--color-border);
+    margin-bottom: 18px; /* Alinear con step-number */
+}
+
+/* ========================================
+   PASOS DEL FORMULARIO
+   ======================================== */
+.form-step {
+    display: none;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.form-step--active {
+    display: flex;
+}
+
+/* ========================================
+   FORMULARIO
+   ======================================== */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-group--inline {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.form-group--center {
+    align-items: center;
+}
+
+/* Labels */
+.form-group label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.form-group--inline label {
+    font-weight: 400;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+}
+
+/* Inputs */
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group select {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+    border-color: #c5ccd3;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+/* Estado de error */
+.form-group input[aria-invalid="true"],
+.form-group select[aria-invalid="true"] {
+    border-color: var(--color-error);
+}
+
+.form-group input[aria-invalid="true"]:focus,
+.form-group select[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+}
+
+.form-group.shake {
+    animation: shake 0.35s ease-out;
+}
+
+/* Opciones deshabilitadas en select */
+.form-group select option:disabled {
+    color: var(--color-text-muted);
+}
+
+/* Checkbox */
+.form-group input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Nota de campo */
+.field-note {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* ========================================
+   CAMPO CONTRASEÑA
+   ======================================== */
+.password-wrapper {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.password-wrapper input {
+    flex: 1;
+}
+
+.toggle-password-btn {
+    padding: 0.75rem 0.875rem;
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    color: var(--color-accent);
+    background-color: transparent;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.toggle-password-btn:hover {
+    background-color: var(--color-accent-light);
+    border-color: var(--color-accent);
+}
+
+.toggle-password-btn:focus {
+    outline: none;
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+/* ========================================
+   MENSAJES DE ERROR Y ADVERTENCIA
+   ======================================== */
+.error-message {
+    font-size: var(--font-size-xs);
+    color: var(--color-error);
+    min-height: 1rem;
+}
+
+.warning-message {
+    font-size: var(--font-size-xs);
+    color: var(--color-warning);
+}
+
+/* ========================================
+   LINK SECUNDARIO
+   ======================================== */
+.link-secondary {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.link-secondary:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
+
+.link-secondary:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* ========================================
+   BOTÓN PRINCIPAL
+   ======================================== */
+.btn-primary {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    font-family: inherit;
+    color: #fff;
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent-hover);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-primary--loading {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* ========================================
+   BOTÓN SECUNDARIO
+   ======================================== */
+.btn-secondary {
+    padding: 0.875rem 1.25rem;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--color-accent);
+    background-color: transparent;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-accent-light);
+    border-color: var(--color-accent);
+}
+
+.btn-secondary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+/* ========================================
+   GRUPO DE BOTONES
+   ======================================== */
+.btn-group {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.btn-group .btn-primary {
+    flex: 1;
+}
+
+.btn-group .btn-secondary {
+    flex: 0 0 auto;
+}
+
+/* ========================================
+   ZONA DE ESTADO
+   ======================================== */
+.register-status {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    min-height: 1.25rem;
+    padding: var(--spacing-xs) 0;
+    border-radius: var(--border-radius-sm);
+}
+
+.register-status--loading {
+    color: var(--color-text-muted);
+}
+
+.register-status--success {
+    color: var(--color-success);
+}
+
+.register-status--error {
+    color: var(--color-error);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 480px) {
+    .register-card {
+        padding: var(--spacing-lg);
+        box-shadow: none;
+        border: 1px solid var(--color-border);
+    }
+
+    .password-wrapper {
+        flex-direction: column;
+    }
+
+    .toggle-password-btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   ACCESIBILIDAD
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Profesorado | Sistema de Préstamos</title>
+    <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar Overlay (móvil) -->
+        <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menú principal">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    Sistema de Préstamos
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-title">Principal</span>
+                    <a href="#" class="nav-link nav-link--active" aria-current="page">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Inicio
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Préstamos</span>
+                    <a href="#inventario" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        Consultar inventario
+                    </a>
+                    <a href="#solicitar" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        Solicitar préstamo
+                    </a>
+                    <a href="#mis-solicitudes" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        Mis solicitudes
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Mi cuenta</span>
+                    <a href="#notificaciones" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        Notificaciones
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <h1 class="page-title">Panel del Profesorado</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userInitials">JG</div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">Juan García</span>
+                            <span class="user-role" id="userRole">Profesorado</span>
+                        </div>
+                    </div>
+                    <button class="btn-logout" id="btnLogout" aria-label="Cerrar sesión">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Banner de bienvenida -->
+                <div class="welcome-banner">
+                    <h2 class="welcome-title">Bienvenido, <span id="welcomeName">Usuario</span></h2>
+                    <p class="welcome-subtitle">Gestiona tus préstamos de material de forma sencilla</p>
+                </div>
+
+                <!-- Resumen rápido -->
+                <section class="section" aria-labelledby="resumen-title">
+                    <div class="section-header">
+                        <h2 class="section-title" id="resumen-title">Resumen rápido</h2>
+                    </div>
+                    <div class="summary-grid" id="summaryCards">
+                        <!-- Se llena con JS -->
+                    </div>
+                </section>
+
+                <!-- Acciones rápidas -->
+                <section class="section" aria-labelledby="acciones-title">
+                    <div class="section-header">
+                        <h2 class="section-title" id="acciones-title">Acciones rápidas</h2>
+                    </div>
+                    <div class="actions-grid" id="actionsGrid">
+                        <!-- Se llena con JS -->
+                    </div>
+                </section>
+
+                <!-- Últimas solicitudes -->
+                <section class="section" aria-labelledby="solicitudes-title">
+                    <div class="section-header">
+                        <h2 class="section-title" id="solicitudes-title">Últimas solicitudes</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" aria-label="Lista de últimas solicitudes">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Fecha</th>
+                                    <th scope="col">Material</th>
+                                    <th scope="col">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody">
+                                <!-- Se llena con JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Notificaciones -->
+                <section class="section" aria-labelledby="notificaciones-title">
+                    <div class="section-header">
+                        <h2 class="section-title" id="notificaciones-title">Notificaciones</h2>
+                    </div>
+                    <div class="notifications-panel" id="notificationsPanel" aria-live="polite">
+                        <!-- Se llena con JS -->
+                    </div>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer class="main-footer">
+                Proyecto académico
+            </footer>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Modal</h3>
+                <button class="modal-close" id="modalClose" aria-label="Cerrar modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--outline" id="modalCancel">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/app.js"></script>
+    <script>
+        // Cerrar modal desde botón footer
+        document.getElementById('modalCancel').addEventListener('click', function() {
+            document.getElementById('modalOverlay').classList.remove('modal-overlay--visible');
+            document.body.style.overflow = '';
+        });
+    </script>
+</body>
+</html>
