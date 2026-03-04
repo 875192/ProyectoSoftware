@@ -1,28 +1,31 @@
 /**
  * register.css
- * Estilos para la pantalla de crear cuenta
+ * Estilos para la pantalla de crear cuenta - VERSIÓN PORTAL PREMIUM (Fondo Oscuro)
  */
 
 /* ========================================
    VARIABLES Y RESET
    ======================================== */
 :root {
-    /* Colores */
-    --color-bg: #ffffff;
-    --color-bg-page: #f5f7fa;
-    --color-text: #2c3e50;
-    --color-text-muted: #6c757d;
-    --color-accent: #5a6c7d;
-    --color-accent-hover: #4a5a6a;
-    --color-accent-light: rgba(90, 108, 125, 0.1);
-    --color-error: #c0392b;
-    --color-success: #27ae60;
-    --color-warning: #d4a017;
-    --color-border: #e1e5e9;
-    --color-border-focus: #5a6c7d;
+    /* Colores de la tarjeta y textos */
+    --color-bg-card: #ffffff;
+    --color-text: #1e293b;
+    --color-text-muted: #64748b;
+    
+    /* Acento: Azul / Teal Corporativo */
+    --color-accent: #0f766e;
+    --color-accent-hover: #0d9488;
+    --color-accent-light: rgba(15, 118, 110, 0.1);
+    
+    /* Estados y Bordes */
+    --color-error: #e11d48;
+    --color-success: #059669;
+    --color-border: #e2e8f0;
+    --color-border-focus: #0f766e;
+    --color-input-bg: #f8fafc;
 
     /* Tipografía */
-    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-size-base: 15px;
     --font-size-sm: 0.875rem;
     --font-size-xs: 0.75rem;
@@ -32,46 +35,50 @@
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
+    --spacing-xl: 2.5rem;
 
-    /* Bordes */
-    --border-radius: 10px;
-    --border-radius-sm: 6px;
+    /* Bordes (Estilo App Moderna) */
+    --border-radius-card: 16px;
+    --border-radius-input: 8px;
 
     /* Transiciones */
     --transition: 200ms ease;
 }
 
 /* Reset */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* EL GRAN CAMBIO: Fondo oscuro con degradado elegante a juego con el Login */
 body {
     font-family: var(--font-family);
     font-size: var(--font-size-base);
     line-height: 1.5;
     color: var(--color-text);
-    background-color: var(--color-bg-page);
+    /* Degradado de Azul Noche a Azul/Teal muy profundo */
+    background: linear-gradient(135deg, #0f172a 0%, #115e59 100%);
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* ========================================
    ANIMACIONES
    ======================================== */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
 }
 
 @keyframes pulse {
@@ -80,27 +87,24 @@ body {
 }
 
 /* ========================================
-   CONTENEDOR
+   CONTENEDOR Y TARJETA
    ======================================== */
 .register-container {
+    width: 100%;
+    padding: var(--spacing-md);
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: var(--spacing-md);
 }
 
-/* ========================================
-   TARJETA
-   ======================================== */
 .register-card {
     width: 100%;
-    max-width: 420px;
-    background-color: var(--color-bg);
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-    padding: var(--spacing-md);
-    animation: fadeIn 0.4s ease-out;
+    max-width: 440px; /* Un pelín más ancha que el login por el formulario a dos pasos */
+    background-color: var(--color-bg-card);
+    border-radius: var(--border-radius-card);
+    /* Sombra gigante y suave */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    padding: var(--spacing-xl);
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ========================================
@@ -108,25 +112,27 @@ body {
    ======================================== */
 .register-header {
     text-align: center;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
 }
 
 .register-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     margin-bottom: var(--spacing-sm);
-    background-color: var(--color-accent);
-    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-accent) 0%, #0d9488 100%);
+    border-radius: 14px;
     color: #fff;
+    box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.3);
 }
 
 .register-header h1 {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.025em;
 }
 
 .register-subtitle {
@@ -142,7 +148,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
 }
 
 .step {
@@ -150,17 +156,11 @@ body {
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-xs);
-    opacity: 0.5;
+    opacity: 0.6;
     transition: opacity var(--transition);
 }
 
-.step--active {
-    opacity: 1;
-}
-
-.step--completed {
-    opacity: 1;
-}
+.step--active, .step--completed { opacity: 1; }
 
 .step-number {
     display: flex;
@@ -169,20 +169,24 @@ body {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background-color: var(--color-border);
+    background-color: var(--color-input-bg);
+    border: 1px solid var(--color-border);
     color: var(--color-text-muted);
     font-size: var(--font-size-sm);
     font-weight: 600;
-    transition: background-color var(--transition), color var(--transition);
+    transition: all var(--transition);
 }
 
 .step--active .step-number {
-    background-color: var(--color-accent);
+    background: linear-gradient(135deg, var(--color-accent) 0%, #0d9488 100%);
+    border-color: transparent;
     color: #fff;
+    box-shadow: 0 0 0 3px var(--color-accent-light);
 }
 
 .step--completed .step-number {
     background-color: var(--color-success);
+    border-color: transparent;
     color: #fff;
 }
 
@@ -193,14 +197,20 @@ body {
 
 .step--active .step-label {
     color: var(--color-text);
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .step-line {
     flex: 0 0 40px;
     height: 2px;
     background-color: var(--color-border);
-    margin-bottom: 18px; /* Alinear con step-number */
+    margin-bottom: 18px;
+    border-radius: 2px;
+    transition: background-color var(--transition);
+}
+
+.step--completed + .step-line {
+    background-color: var(--color-success);
 }
 
 /* ========================================
@@ -209,8 +219,8 @@ body {
 .form-step {
     display: none;
     flex-direction: column;
-    gap: var(--spacing-xs);
-    animation: fadeIn 0.3s ease-out;
+    gap: var(--spacing-md);
+    animation: fadeInUp 0.3s ease-out;
 }
 
 .form-step--active {
@@ -240,53 +250,56 @@ body {
 
 .form-group--center {
     align-items: center;
+    margin-top: var(--spacing-sm);
 }
 
 /* Labels */
 .form-group label {
     font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--color-text);
 }
 
 .form-group--inline label {
     font-weight: 400;
     cursor: pointer;
-    font-size: var(--font-size-sm);
 }
 
-/* Inputs */
+/* Inputs y Selects */
 .form-group input[type="text"],
 .form-group input[type="password"],
 .form-group input[type="email"],
 .form-group select {
     width: 100%;
-    padding: 0.75rem 0.875rem;
+    padding: 0.75rem 1rem;
     font-size: var(--font-size-base);
     font-family: inherit;
     color: var(--color-text);
-    background-color: var(--color-bg);
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--border-radius-sm);
-    transition: border-color var(--transition), box-shadow var(--transition);
+    background-color: var(--color-input-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-input);
+    transition: all var(--transition);
 }
 
 .form-group select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.75rem center;
+    background-position: right 1rem center;
     padding-right: 2.5rem;
 }
 
 .form-group input:hover,
 .form-group select:hover {
-    border-color: #c5ccd3;
+    border-color: #cbd5e1;
+    background-color: #ffffff;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
+    background-color: #ffffff;
     border-color: var(--color-border-focus);
     box-shadow: 0 0 0 3px var(--color-accent-light);
 }
@@ -299,24 +312,21 @@ body {
 
 .form-group input[aria-invalid="true"]:focus,
 .form-group select[aria-invalid="true"]:focus {
-    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
 }
 
-.form-group.shake {
-    animation: shake 0.35s ease-out;
-}
+.form-group.shake { animation: shake 0.35s ease-out; }
 
 /* Opciones deshabilitadas en select */
-.form-group select option:disabled {
-    color: var(--color-text-muted);
-}
+.form-group select option:disabled { color: var(--color-text-muted); }
 
 /* Checkbox */
 .form-group input[type="checkbox"] {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     accent-color: var(--color-accent);
     cursor: pointer;
+    border-radius: 4px;
     flex-shrink: 0;
 }
 
@@ -325,6 +335,7 @@ body {
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
     font-style: italic;
+    margin-top: -2px;
 }
 
 /* ========================================
@@ -340,21 +351,23 @@ body {
 }
 
 .toggle-password-btn {
-    padding: 0.75rem 0.875rem;
+    padding: 0.75rem 1rem;
     font-size: var(--font-size-sm);
+    font-weight: 500;
     font-family: inherit;
-    color: var(--color-accent);
-    background-color: transparent;
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--border-radius-sm);
+    color: var(--color-text-muted);
+    background-color: var(--color-input-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-input);
     cursor: pointer;
     white-space: nowrap;
-    transition: background-color var(--transition), border-color var(--transition);
+    transition: all var(--transition);
 }
 
 .toggle-password-btn:hover {
-    background-color: var(--color-accent-light);
-    border-color: var(--color-accent);
+    background-color: #ffffff;
+    color: var(--color-text);
+    border-color: #cbd5e1;
 }
 
 .toggle-password-btn:focus {
@@ -364,7 +377,7 @@ body {
 }
 
 /* ========================================
-   MENSAJES DE ERROR Y ADVERTENCIA
+   MENSAJES DE ERROR
    ======================================== */
 .error-message {
     font-size: var(--font-size-xs);
@@ -372,165 +385,113 @@ body {
     min-height: 1rem;
 }
 
-.warning-message {
-    font-size: var(--font-size-xs);
-    color: var(--color-warning);
+/* ========================================
+   BOTONES
+   ======================================== */
+.btn-primary {
+    width: 100%;
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-accent) 0%, #0d9488 100%);
+    border: none;
+    border-radius: var(--border-radius-input);
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.3);
+    transition: all var(--transition);
 }
 
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 6px 12px -2px rgba(15, 118, 110, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px -1px rgba(15, 118, 110, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-secondary {
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--color-text);
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-input);
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    transition: all var(--transition);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-input-bg);
+    border-color: #cbd5e1;
+}
+
+/* Grupo de botones (Paso 2) */
+.btn-group {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xs);
+}
+
+.btn-group .btn-primary { flex: 2; }
+.btn-group .btn-secondary { flex: 1; }
+
 /* ========================================
-   LINK SECUNDARIO
+   ENLACE SECUNDARIO Y ESTADO
    ======================================== */
 .link-secondary {
     font-size: var(--font-size-sm);
     color: var(--color-accent);
+    font-weight: 600;
     text-decoration: none;
     transition: color var(--transition);
 }
 
-.link-secondary:hover {
-    color: var(--color-accent-hover);
-    text-decoration: underline;
-}
+.link-secondary:hover { color: var(--color-accent-hover); text-decoration: underline; }
 
-.link-secondary:focus {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-}
-
-/* ========================================
-   BOTÓN PRINCIPAL
-   ======================================== */
-.btn-primary {
-    width: 100%;
-    padding: 0.875rem 1.25rem;
-    font-size: var(--font-size-base);
-    font-weight: 500;
-    font-family: inherit;
-    color: #fff;
-    background-color: var(--color-accent);
-    border: none;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    transition: background-color var(--transition), transform var(--transition);
-}
-
-.btn-primary:hover:not(:disabled) {
-    background-color: var(--color-accent-hover);
-}
-
-.btn-primary:active:not(:disabled) {
-    transform: scale(0.98);
-}
-
-.btn-primary:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--color-accent-light);
-}
-
-.btn-primary:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-.btn-primary--loading {
-    animation: pulse 1s ease-in-out infinite;
-}
-
-/* ========================================
-   BOTÓN SECUNDARIO
-   ======================================== */
-.btn-secondary {
-    padding: 0.875rem 1.25rem;
-    font-size: var(--font-size-base);
-    font-weight: 500;
-    font-family: inherit;
-    color: var(--color-accent);
-    background-color: transparent;
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    transition: background-color var(--transition), border-color var(--transition);
-}
-
-.btn-secondary:hover {
-    background-color: var(--color-accent-light);
-    border-color: var(--color-accent);
-}
-
-.btn-secondary:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--color-accent-light);
-}
-
-/* ========================================
-   GRUPO DE BOTONES
-   ======================================== */
-.btn-group {
-    display: flex;
-    gap: var(--spacing-sm);
-}
-
-.btn-group .btn-primary {
-    flex: 1;
-}
-
-.btn-group .btn-secondary {
-    flex: 0 0 auto;
-}
-
-/* ========================================
-   ZONA DE ESTADO
-   ======================================== */
 .register-status {
     text-align: center;
     font-size: var(--font-size-sm);
     min-height: 1.25rem;
     padding: var(--spacing-xs) 0;
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--border-radius-input);
 }
-
-.register-status--loading {
-    color: var(--color-text-muted);
-}
-
-.register-status--success {
-    color: var(--color-success);
-}
-
-.register-status--error {
-    color: var(--color-error);
-}
+.register-status--loading { color: var(--color-text-muted); }
+.register-status--success { color: var(--color-success); }
+.register-status--error { color: var(--color-error); }
 
 /* ========================================
    RESPONSIVE
    ======================================== */
 @media (max-width: 480px) {
+    .register-container { padding: 0; }
+    body { background: var(--color-bg-card); } /* Quitamos fondo oscuro en móvil */
     .register-card {
-        padding: var(--spacing-lg);
+        padding: var(--spacing-xl) var(--spacing-lg);
         box-shadow: none;
-        border: 1px solid var(--color-border);
-    }
-
-    .password-wrapper {
+        border-radius: 0;
+        min-height: 100vh;
+        display: flex;
         flex-direction: column;
+        justify-content: center;
     }
-
-    .toggle-password-btn {
-        width: 100%;
-    }
+    .password-wrapper { flex-direction: column; }
+    .toggle-password-btn { width: 100%; }
 }
 
-/* ========================================
-   ACCESIBILIDAD
-   ======================================== */
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-    }
-}
-
-:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    *, *::before, *::after { animation: none !important; transition: none !important; }
 }
