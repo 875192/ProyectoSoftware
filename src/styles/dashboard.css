@@ -585,6 +585,86 @@ ul, ol { list-style: none; }
     .section-header { flex-direction: column; align-items: flex-start; gap: var(--spacing-sm); }
 }
 
+/* ========================================
+   TRANSICIÓN DE CARGA (PAGE TRANSITION OVERLAY)
+   ======================================== */
+.page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--color-bg-sidebar); /* Fondo oscuro usando variable del sidebar */
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeOutOverlay 0.8s ease-in-out 2s forwards; /* 2s de duración de la animación del logo, luego fadeout */
+}
+
+.transition-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    animation: scaleLogo 2s ease-in-out forwards;
+}
+
+.transition-logo-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--color-accent) 0%, #0d9488 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(15, 118, 110, 0.4);
+}
+
+.transition-logo-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.transition-logo h2 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    opacity: 0;
+    animation: fadeInText 0.5s ease-in-out 0.5s forwards;
+}
+
+@keyframes scaleLogo {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    15% {
+        opacity: 1;
+        transform: scale(1); /* Tamaño normal rápidamente */
+    }
+    65% {
+        opacity: 1;
+        transform: scale(1.1); /* Ligero latido de espera */
+    }
+    100% {
+        opacity: 0;
+        transform: scale(4); /* Crece enormemente hasta desaparecer */
+    }
+}
+
+@keyframes fadeInText {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOutOverlay {
+    0% { opacity: 1; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
 /* --- SECCIÓN NOTIFICACIONES --- */
 
 .notifications-card {
