@@ -774,3 +774,55 @@ ul, ol { list-style: none; }
 .hidden {
     display: none !important;
 }
+
+/* ========================================
+   WELCOME TOAST (bienvenida al iniciar sesión)
+   ======================================== */
+@keyframes welcomeSlideIn {
+    from { opacity: 0; transform: translateY(-24px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+@keyframes welcomeSlideOut {
+    from { opacity: 1; transform: translateY(0)    scale(1); }
+    to   { opacity: 0; transform: translateY(-16px) scale(0.96); }
+}
+
+.welcome-toast-container {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.welcome-toast {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+    color: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px -4px rgba(15, 118, 110, 0.45);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    animation: welcomeSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.welcome-toast::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.welcome-toast--removing {
+    animation: welcomeSlideOut 0.35s ease-in forwards;
+}

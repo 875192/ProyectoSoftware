@@ -31,11 +31,11 @@
     --font-size-xs: 0.75rem;
 
     /* Espaciado */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2.5rem;
+    --spacing-xs: 0.2rem;
+    --spacing-sm: 0.35rem;
+    --spacing-md: 0.6rem;
+    --spacing-lg: 0.9rem;
+    --spacing-xl: 1.25rem;
 
     /* Bordes (Estilo App Moderna) */
     --border-radius-card: 16px;
@@ -112,16 +112,16 @@ body {
    ======================================== */
 .register-header {
     text-align: center;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
 }
 
 .register-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 52px;
-    height: 52px;
-    margin-bottom: var(--spacing-sm);
+    width: 42px;
+    height: 42px;
+    margin-bottom: var(--spacing-xs);
     background: linear-gradient(135deg, var(--color-accent) 0%, #0d9488 100%);
     border-radius: 14px;
     color: #fff;
@@ -129,7 +129,7 @@ body {
 }
 
 .register-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: var(--spacing-xs);
     letter-spacing: -0.025em;
@@ -148,7 +148,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
 }
 
 .step {
@@ -166,8 +166,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     background-color: var(--color-input-bg);
     border: 1px solid var(--color-border);
@@ -233,7 +233,7 @@ body {
 .register-form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: 0;
 }
 
 .form-group {
@@ -271,8 +271,8 @@ body {
 .form-group input[type="email"],
 .form-group select {
     width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: var(--font-size-base);
+    padding: 0.5rem 0.85rem;
+    font-size: var(--font-size-sm);
     font-family: inherit;
     color: var(--color-text);
     background-color: var(--color-input-bg);
@@ -351,8 +351,8 @@ body {
 }
 
 .toggle-password-btn {
-    padding: 0.75rem 1rem;
-    font-size: var(--font-size-sm);
+    padding: 0.5rem 0.85rem;
+    font-size: var(--font-size-xs);
     font-weight: 500;
     font-family: inherit;
     color: var(--color-text-muted);
@@ -382,7 +382,7 @@ body {
 .error-message {
     font-size: var(--font-size-xs);
     color: var(--color-error);
-    min-height: 1rem;
+    min-height: 0.85rem;
 }
 
 /* ========================================
@@ -390,8 +390,8 @@ body {
    ======================================== */
 .btn-primary {
     width: 100%;
-    padding: 0.85rem 1.25rem;
-    font-size: 1rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     font-family: inherit;
     color: #fff;
@@ -421,8 +421,8 @@ body {
 }
 
 .btn-secondary {
-    padding: 0.85rem 1.25rem;
-    font-size: 1rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     font-family: inherit;
     color: var(--color-text);
