@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Solicitudes | Sistema de Préstamos</title>
+    <link rel="stylesheet" href="../styles/dashboard.css">
+    <style>
+        /* Estilos específicos para la vista de tarjetas */
+        .main-content {
+            background-color: #f8fafc;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+        }
+        .content-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Cabecera de filtros */
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .filters-bar { display: flex; gap: 0.75rem; }
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-btn:hover { background: #f1f5f9; }
+        .filter-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+
+        .btn-new-request {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #2563eb;
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Cuadrícula de tarjetas */
+        .requests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .request-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.25rem;
+            background: #ffffff;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .request-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .request-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; }
+        .request-id { font-weight: 700; color: #475569; }
+        .material-name { font-size: 1.1rem; color: #0f172a; margin: 0 0 0.5rem 0; }
+        .request-dates p { margin: 0.25rem 0; font-size: 0.875rem; color: #64748b; }
+
+        /* Etiquetas */
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .status-pendiente { background-color: #fef3c7; color: #d97706; }
+        .status-aprobado { background-color: #d1fae5; color: #059669; }
+        .status-devuelto { background-color: #f1f5f9; color: #475569; }
+
+        /* Botones de acción */
+        .action-buttons { display: flex; gap: 0.5rem; margin-top: auto; }
+        .btn-action { flex: 1; display: inline-flex; justify-content: center; align-items: center; padding: 0.5rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; }
+        .btn-view { color: #2563eb; background: #eff6ff; }
+        .btn-cancel { color: #dc2626; background: #fef2f2; }
+    </style>
+</head>
+<body>
+
+    <div class="page-transition-overlay" id="pageTransitionOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease;">
+        <div style="background: #38bdf8; width: 80px; height: 80px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: pulse 1.5s infinite;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M9 14h6"></path>
+                <path d="M9 10h6"></path>
+            </svg>
+        </div>
+        <h2 style="color: white; font-family: sans-serif; font-weight: 300; letter-spacing: 1px;">Cargando solicitudes...</h2>
+    </div>
+    
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+
+    <div class="dashboard-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menú principal">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    Sistema de Préstamos
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-title">Principal</span>
+                    <a href="index.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Inicio
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Préstamos</span>
+                    <a href="#inventario" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m7.5 4.27 9 5.15"/>
+                            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                            <path d="m3.3 7 8.7 5 8.7-5"/>
+                            <path d="M12 22V12"/>
+                        </svg>
+                        Consultar inventario
+                    </a>
+                    <a href="#solicitar" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="12" y1="18" x2="12" y2="12"/>
+                            <line x1="9" y1="15" x2="15" y2="15"/>
+                        </svg>
+                        Solicitar préstamo
+                    </a>
+                    <a href="mis_solicitudes.html" class="nav-link nav-link--active" aria-current="page">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                        Mis solicitudes
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Mi cuenta</span>
+                    <a href="mis_notificaciones.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                        </svg>
+                        Notificaciones
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <h1 class="page-title">Historial de Solicitudes</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userInitials">JG</div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">Juan García</span>
+                            <span class="user-role" id="userRole">Estudiante</span>
+                        </div>
+                    </div>
+                    <button class="btn-logout" id="btnLogout" aria-label="Cerrar sesión">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="content-card">
+                    <div class="filters-header">
+                        <div class="filters-bar">
+                            <button class="filter-btn active" data-filter="todas">Todas</button>
+                            <button class="filter-btn" data-filter="pendiente">Pendientes</button>
+                            <button class="filter-btn" data-filter="aprobado">Aprobadas</button>
+                            <button class="filter-btn" data-filter="devuelto">Devueltas</button>
+                        </div>
+                        <button class="btn-new-request">Nueva solicitud</button>
+                    </div>
+
+                    <div class="requests-grid" id="solicitudesContainer">
+                        
+                        <div class="request-card" data-status="aprobado">
+                            <div class="request-header">
+                                <span class="request-id">#REQ-042</span>
+                                <span class="status-badge status-aprobado">Aprobado</span>
+                            </div>
+                            <div class="request-body">
+                                <h3 class="material-name">Proyector EPSON X300</h3>
+                                <div class="request-dates">
+                                    <p><strong>Solicitado:</strong> 06/03/2026</p>
+                                    <p><strong>Devolución:</strong> 08/03/2026</p>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view">Ver Detalles</button>
+                            </div>
+                        </div>
+
+                        <div class="request-card" data-status="pendiente">
+                            <div class="request-header">
+                                <span class="request-id">#REQ-045</span>
+                                <span class="status-badge status-pendiente">Pendiente</span>
+                            </div>
+                            <div class="request-body">
+                                <h3 class="material-name">Kit Arduino UNO</h3>
+                                <div class="request-dates">
+                                    <p><strong>Solicitado:</strong> 07/03/2026</p>
+                                    <p><strong>Devolución:</strong> 14/03/2026</p>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-cancel">Cancelar</button>
+                            </div>
+                        </div>
+
+                        <div class="request-card" data-status="devuelto">
+                            <div class="request-header">
+                                <span class="request-id">#REQ-012</span>
+                                <span class="status-badge status-devuelto">Devuelto</span>
+                            </div>
+                            <div class="request-body">
+                                <h3 class="material-name">Osciloscopio Digital</h3>
+                                <div class="request-dates">
+                                    <p><strong>Solicitado:</strong> 15/02/2026</p>
+                                    <p><strong>Devolución:</strong> 20/02/2026</p>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view">Ver Detalles</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </main>
+
+            <footer class="main-footer">
+                Proyecto académico de la Universidad de Zaragoza
+            </footer>
+        </div>
+    </div>
+
+    <script src="../utils/app.js"></script>
+    <script>
+        // Lógica de carga y filtros incluida directamente para que no te falle nada
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. ANIMACIÓN DE CARGA
+            const overlay = document.getElementById('pageTransitionOverlay');
+            if (overlay) {
+                setTimeout(() => {
+                    overlay.style.opacity = '0'; 
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 500); 
+                }, 1000); 
+            }
+
+            // 2. FILTROS POR TARJETAS
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.request-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const filterValue = button.getAttribute('data-filter');
+
+                    cards.forEach(card => {
+                        const cardStatus = card.getAttribute('data-status');
+                        if (filterValue === 'todas' || filterValue === cardStatus) {
+                            card.style.display = 'flex'; 
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
