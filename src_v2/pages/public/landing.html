@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Material y Préstamos | UniGear</title>
+  <link rel="stylesheet" href="../../css/globals.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    /* Landing Specific Styles */
+    :root {
+      --landing-nav-height: 72px;
+    }
+    
+    body {
+      background-color: #ffffff;
+      color: var(--slate-800);
+      font-family: var(--font-family);
+    }
+
+    /* Navbar */
+    .navbar {
+      height: var(--landing-nav-height);
+      border-bottom: 1px solid var(--slate-200);
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--teal-700);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--slate-600);
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--teal-700);
+      text-decoration: none;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 5rem 2rem 0;
+      background: linear-gradient(180deg, var(--slate-50) 0%, #ffffff 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-container {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--teal-50);
+      color: var(--teal-700);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(20, 184, 166, 0.2);
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--slate-900);
+      margin-bottom: 1.5rem;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--slate-600);
+      margin-bottom: 2.5rem;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .btn-large {
+      padding: 0.875rem 1.75rem;
+      font-size: 1rem;
+      height: auto;
+    }
+
+    /* Interface Mockup (Hero) */
+    .hero-mockup-wrapper {
+      margin-top: 4rem;
+      padding: 0 1rem;
+    }
+    .hero-mockup {
+      max-width: 1000px;
+      margin: 0 auto;
+      height: 400px;
+      background-color: var(--slate-800);
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--slate-700);
+      border-bottom: none;
+      position: relative;
+    }
+    .mockup-header {
+      height: 40px;
+      background-color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      gap: 8px;
+    }
+    .mockup-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .mockup-header-title {
+      margin-left: 12px;
+      font-size: 0.875rem;
+      color: var(--slate-400);
+      font-weight: 500;
+    }
+    .mockup-body {
+      flex: 1;
+      display: flex;
+      background-color: var(--slate-50);
+    }
+    .mockup-sidebar {
+      width: 220px;
+      background-color: #ffffff;
+      border-right: 1px solid var(--slate-200);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .mockup-line {
+      height: 12px;
+      background-color: var(--slate-200);
+      border-radius: 4px;
+    }
+    .mockup-content {
+      flex: 1;
+      padding: 2.5rem;
+    }
+    .mockup-card {
+      background-color: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      padding: 1.5rem;
+    }
+    .mockup-card-title {
+      height: 16px;
+      width: 40%;
+      background-color: var(--slate-800);
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    /* Companies/Trusted By */
+    .trusted-section {
+      padding: 4rem 2rem;
+      border-bottom: 1px solid var(--slate-200);
+      text-align: center;
+      background-color: #ffffff;
+    }
+    .trusted-section p {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.875rem;
+      color: var(--slate-500);
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
+    .logos-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+      opacity: 0.7;
+    }
+    .logos-grid span {
+      color: var(--slate-800);
+    }
+
+    /* Split Section (How it works) */
+    .split-section {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .split-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .split-content p {
+      font-size: 1.125rem;
+      color: var(--slate-600);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      list-style: none;
+      margin-bottom: 2.5rem;
+    }
+    .step-item {
+      display: flex;
+      gap: 1rem;
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background-color: var(--teal-50);
+      color: var(--teal-700);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-text h4 {
+      font-size: 1.125rem;
+      margin-bottom: 0.25rem;
+    }
+    .step-text p {
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+    .split-visual {
+      background-color: var(--slate-100);
+      border-radius: 16px;
+      padding: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--slate-200);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    /* Features Grid */
+    .features {
+      padding: 6rem 2rem;
+      background-color: var(--slate-50);
+      border-top: 1px solid var(--slate-200);
+    }
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .features-header {
+      text-align: center;
+      margin-bottom: 4rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .features-header h2 {
+      font-size: 2.5rem;
+      color: var(--slate-900);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .features-header p {
+      font-size: 1.125rem;
+      color: var(--slate-600);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+    .feature-card {
+      background-color: #ffffff;
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .feature-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      background-color: var(--teal-50);
+      color: var(--teal-700);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .feature-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .feature-card p {
+      color: var(--slate-600);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .feature-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: var(--teal-700);
+    }
+    .feature-link:hover {
+      color: var(--teal-600);
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--slate-900);
+      color: var(--slate-400);
+      padding: 4rem 2rem 2rem;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .footer-brand {
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .footer-links a {
+      color: var(--slate-300);
+    }
+    .footer-links a:hover {
+      color: #ffffff;
+    }
+    .footer-bottom {
+      width: 100%;
+      border-top: 1px solid var(--slate-800);
+      padding-top: 2rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .split-section {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .hero h1 { font-size: 2.5rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-left">
+        <a href="#" class="logo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          UniGear
+        </a>
+        <ul class="nav-links">
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#funcionalidades">Características</a></li>
+        </ul>
+      </div>
+      <div class="nav-right">
+        <a href="login.html" class="btn btn-secondary" style="border: none; background: transparent; box-shadow: none;">Iniciar sesión</a>
+        <a href="login.html" class="btn btn-primary">Acceder al sistema</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-container">
+      <div class="hero-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        La plataforma líder en reservas académicas
+      </div>
+      <h1>Reserva el material para tus proyectos sin conflictos de agenda</h1>
+      <p>
+        Consulta disponibilidad en tiempo real, reserva inventario específico por fechas y recibe actualizaciones al instante. La solución integral para usuarios y personal gestor.
+      </p>
+      <div class="hero-ctas">
+        <a href="login.html" class="btn btn-primary btn-large">Ingresar al catálogo</a>
+        <a href="#como-funciona" class="btn btn-secondary btn-large">Ver funcionamiento</a>
+      </div>
+    </div>
+
+    <!-- Simulación de interfaz visual inspirada en index original -->
+    <div class="hero-mockup-wrapper">
+      <div class="hero-mockup">
+        <div class="mockup-header">
+          <div class="mockup-dot" style="background-color: #ef4444;"></div>
+          <div class="mockup-dot" style="background-color: #eab308;"></div>
+          <div class="mockup-dot" style="background-color: #22c55e;"></div>
+          <div class="mockup-header-title">Solicitudes · Inventario en línea</div>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-sidebar">
+            <div class="mockup-line" style="width: 100%; height: 24px; margin-bottom: 1.5rem; background-color: var(--teal-50);"></div>
+            <div class="mockup-line" style="width: 80%;"></div>
+            <div class="mockup-line" style="width: 60%;"></div>
+            <div class="mockup-line" style="width: 90%;"></div>
+            <div class="mockup-line" style="width: 70%;"></div>
+          </div>
+          <div class="mockup-content">
+            <div class="mockup-card" style="margin-bottom: 2rem;">
+              <div class="mockup-card-title"></div>
+              <div class="mockup-line" style="width: 60%; height: 10px; margin-bottom: 0.5rem;"></div>
+              <div class="mockup-line" style="width: 40%; height: 10px;"></div>
+            </div>
+            <div style="display: flex; gap: 1.5rem;">
+              <div class="mockup-card" style="flex: 1; height: 140px;">
+                <div class="mockup-line" style="width: 50%; background-color: var(--slate-300); margin-bottom: 1rem;"></div>
+                <div class="mockup-line" style="width: 90%; height: 8px; margin-bottom: 0.5rem;"></div>
+                <div class="mockup-line" style="width: 80%; height: 8px;"></div>
+              </div>
+              <div class="mockup-card" style="flex: 1; height: 140px;">
+                <div class="mockup-line" style="width: 50%; background-color: var(--slate-300); margin-bottom: 1rem;"></div>
+                <div class="mockup-line" style="width: 70%; height: 8px; margin-bottom: 0.5rem;"></div>
+                <div class="mockup-line" style="width: 60%; height: 8px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TRUSTED SECTION -->
+  <section class="trusted-section">
+    <p>Diseñado para los departamentos clave de la institución</p>
+    <div class="logos-grid">
+      <span style="font-weight: 800; font-size: 1.5rem; letter-spacing: -1px;">BIBLIOTECA</span>
+      <span style="font-family: serif; font-style: italic; font-weight: 700; font-size: 1.5rem;">LABORATORIOS</span>
+      <span style="font-weight: 700; font-size: 1.25rem;">SERVICIOS AUDIOVISUALES</span>
+      <span style="font-weight: 900; font-size: 1.5rem;">IT<span style="color: var(--slate-400)">SUPPORT</span></span>
+    </div>
+  </section>
+
+  <!-- SPLIT SECTION: COMO FUNCIONA -->
+  <section class="split-section" id="como-funciona">
+    <div class="split-content">
+      <h2>Un flujo de trabajo claro</h2>
+      <p>Diseñado para que obtengas el instrumental necesario sin fricción, permitiendo mantener una trazabilidad absoluta al personal de gestión.</p>
+      
+      <ul class="step-list">
+        <li class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-text">
+            <h4>Búsqueda e Inspección</h4>
+            <p>Filtra el catálogo por categoría y revisa el calendario de disponibilidad.</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-text">
+            <h4>Solicitud de reserva</h4>
+            <p>Selecciona las fechas de inicio y fin necesarias, especificando la justificación académica.</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-text">
+            <h4>Revisión y Autorización</h4>
+            <p>El personal evalúa la solicitud basándose en el historial y aprueba o declina con un motivo.</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-text">
+            <h4>Retiro y Retorno</h4>
+            <p>Recoge tu material asignado y devuélvelo. Cualquier anomalía se reporta a mantenimiento.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="split-visual">
+      <!-- Icono grande o gráfico abstracto que representa un dashboard (sin usar imagen externa por ahora) -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 24 24" fill="none" stroke="var(--slate-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="3" y1="9" x2="21" y2="9"></line>
+        <line x1="9" y1="21" x2="9" y2="9"></line>
+      </svg>
+    </div>
+  </section>
+
+  <!-- FEATURES GRID -->
+  <section class="features" id="funcionalidades">
+    <div class="features-container">
+      <div class="features-header">
+        <h2>Herramientas para cada rol</h2>
+        <p>Una experiencia modular que se adapta a estudiantes, profesorado, gestores y técnicos.</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <h3>Prevención de conflictos</h3>
+          <p>La validación de reservas impide la superposición de fechas, garantizando que el material esté listo cuando realmente se necesita.</p>
+          <a href="login.html" class="feature-link">Comprobar disponibilidad
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <h3>Logs y Auditoría</h3>
+          <p>Toda interacción de revisión, autorización o rechazo queda registrada en el sistema. Los gestores tienen control histórico completo.</p>
+          <a href="login.html" class="feature-link">Acceso administrativo
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h3>Control Técnico</h3>
+          <p>Módulo de mantenimiento que extrae de circulación activos defectuosos automáticamente al registrarse incidencias tras una devolución.</p>
+          <a href="login.html" class="feature-link">Área de soporte
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        UniGear
+      </div>
+      <div class="footer-links">
+        <a href="#como-funciona">Funcionamiento</a>
+        <a href="#funcionalidades">Características</a>
+        <a href="login.html">Plataforma</a>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 UniGear Software. Sistema integral de gestión y préstamos institucionales.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initStorage } from '../../js/core/mockData.js';
+    initStorage();
+  </script>
+</body>
+</html>

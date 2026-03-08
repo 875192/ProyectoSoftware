@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil - UniGear</title>
+  <link rel="stylesheet" href="../../css/globals.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <style>
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .profile-avatar-large {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      font-size: 3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-section {
+      margin-bottom: 2rem;
+    }
+    .settings-section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--slate-800);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .pm-card {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .pm-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .pm-icon-wrapper {
+      width: 48px;
+      height: 32px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+<style>:root { --teal-50: #eff6ff; --teal-100: #dbeafe; --teal-500: #3b82f6; --teal-600: #2563eb; --teal-700: #1d4ed8; }</style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        UniGear
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard_profesor.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Mi Resumen
+        </a>
+        <a href="catalog_profesor.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          Cat�logo de Material
+        </a>
+        <a href="requests_profesor.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Mis Solicitudes
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile_profesor.html" class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Mi Perfil
+        </a>
+        <a href="#" class="nav-item" data-action="logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Cerrar Sesi�n
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <span>Área Docente / </span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-secondary" style="border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0;" onclick="window.location.href='notifications_profesor.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 15V9.524A6 6 0 0 0 12 3.5a6 6 0 0 0-6 6.024V15L4 18h16l-2-3Z"/>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="card" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+          
+          <div class="profile-header">
+            <div class="profile-avatar-large" id="profile-avatar-large">A</div>
+            <div>
+              <h1 style="font-size: 1.75rem; margin: 0; color: var(--slate-900);" id="profile-name">Cargando...</h1>
+              <p style="color: var(--slate-500); margin-top: 0.25rem;">Estudiante - Facultad de Inform�tica</p>
+              <span class="chip chip-blue" style="margin-top: 0.5rem; display: inline-block;">Cuenta Verificada</span>
+            </div>
+          </div>
+
+          <form id="profile-form">
+            <div class="settings-section">
+              <h2 class="settings-section-title">Informaci�n Personal</h2>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="prof-email">Correo Electr�nico</label>
+                  <input type="email" id="prof-email" class="form-input" disabled style="background-color: var(--slate-50); cursor: not-allowed; color: var(--slate-500);">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="prof-phone">Tel�fono de Contacto</label>
+                  <input type="tel" id="prof-phone" class="form-input" placeholder="+34 600 000 000">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prof-address">Direcci�n de Env�o / Facturaci�n</label>
+                <input type="text" id="prof-address" class="form-input" placeholder="Calle Ejemplo, 123, Madrid">
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2 class="settings-section-title">M�todos de Pago Guardados</h2>
+              <p style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 1rem;">Utilizados para el bloqueo r�pido de la fianza durante tus solicitudes.</p>
+              
+              <div class="pm-card">
+                <div class="pm-info">
+                  <div class="pm-icon-wrapper">
+                    <!-- Tarjeta Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--slate-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                  </div>
+                  <div>
+                    <div style="font-weight: 500; font-size: 0.95rem;">Visa terminada en •••• 4242</div>
+                    <div style="font-size: 0.8rem; color: var(--slate-500);">Expira en 12/26</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-secondary" style="color: var(--red-600); border-color: transparent;">Eliminar</button>
+              </div>
+
+              <div class="pm-card">
+                <div class="pm-info">
+                  <div class="pm-icon-wrapper" style="background-color: #000; border: none;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" style="height: 12px; filter: brightness(0) invert(1);">
+                  </div>
+                  <div>
+                    <div style="font-weight: 500; font-size: 0.95rem;">Apple Pay</div>
+                    <div style="font-size: 0.8rem; color: var(--slate-500);">Activo en tu dispositivo</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-secondary" style="color: var(--red-600); border-color: transparent;">Eliminar</button>
+              </div>
+
+              <button type="button" class="btn btn-secondary" style="margin-top: 0.5rem;">+ A�adir M�todo de Pago</button>
+            </div>
+
+            <div class="settings-section">
+              <h2 class="settings-section-title">Cambiar Contrase�a</h2>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="prof-curr-pass">Contrase�a Actual</label>
+                  <input type="password" id="prof-curr-pass" class="form-input" placeholder="••••••••">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="prof-new-pass">Nueva Contrase�a</label>
+                  <input type="password" id="prof-new-pass" class="form-input" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="prof-new-pass2">Confirmar Nueva Contrase�a</label>
+                  <input type="password" id="prof-new-pass2" class="form-input" placeholder="••••••••">
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+              <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth } from '../../js/core/auth.js';
+    import { ui } from '../../js/components/ui.js';
+
+    const user = auth.requireAuth(['estudiante', 'profesor']);
+    if(!user) throw new Error("Not authenticated");
+
+    ui.setupLayout(user);
+
+    // Populate data
+    document.getElementById('profile-name').textContent = user.name;
+    document.getElementById('profile-avatar-large').textContent = user.name.charAt(0).toUpperCase();
+    document.getElementById('prof-email').value = user.email;
+
+    // Optional: Simulating saving changes
+    const form = document.getElementById('profile-form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // En una app real, actualizar�amos la BBDD
+      ui.showToast('Perfil actualizado correctamente', 'success');
+    });
+  </script>
+</body>
+</html>

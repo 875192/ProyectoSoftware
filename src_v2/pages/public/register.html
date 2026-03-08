@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta - UniGear</title>
+    <link rel="stylesheet" href="../../css/globals.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #115e59 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            font-family: var(--font-family);
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .register-container {
+            width: 100%;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 480px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            padding: 1.5rem;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            border: none;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .register-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(135deg, var(--teal-700) 0%, #0d9488 100%);
+            border-radius: 10px;
+            color: #fff;
+            box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.3);
+        }
+
+        .register-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .register-header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 0.15rem;
+            letter-spacing: -0.025em;
+        }
+
+        .register-subtitle {
+            color: var(--slate-500);
+            font-size: 0.8rem;
+        }
+
+        .steps-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .step--active, .step--completed {
+            opacity: 1;
+        }
+
+        .step-number {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: var(--slate-200);
+            color: var(--slate-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .step--active .step-number {
+            background-color: var(--teal-700);
+            color: white;
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        }
+
+        .step--completed .step-number {
+            background-color: var(--teal-600);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--slate-600);
+        }
+
+        .step-line {
+            height: 2px;
+            background-color: var(--slate-200);
+            width: 32px;
+            margin-top: -14px;
+        }
+
+        .form-step {
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        .form-step--active {
+            display: flex;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--slate-800);
+        }
+
+        .form-group input:not([type="checkbox"]), .form-group select {
+            width: 100%;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.9rem;
+            color: var(--slate-800);
+            background-color: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-family: var(--font-family);
+        }
+
+        .form-group input:not([type="checkbox"]):hover, .form-group select:hover {
+            border-color: var(--slate-300);
+            background-color: #ffffff;
+        }
+
+        .form-group input:not([type="checkbox"]):focus, .form-group select:focus {
+            outline: none;
+            background-color: #ffffff;
+            border-color: var(--teal-700);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        }
+
+        .form-group input[aria-invalid="true"], .form-group select[aria-invalid="true"] {
+            border-color: var(--red-500);
+            background-color: #fef2f2;
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            padding-right: 4rem !important;
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--teal-700);
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-message {
+            color: var(--red-500);
+            font-size: 0.7rem;
+            min-height: 0.8rem;
+        }
+
+        .field-note {
+            color: var(--slate-500);
+            font-size: 0.7rem;
+        }
+
+        .form-group--inline {
+            flex-direction: row !important;
+            align-items: center;
+            gap: 0.25rem !important;
+        }
+
+        .form-group--inline input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            accent-color: var(--teal-700);
+        }
+
+        .form-group--inline label {
+            font-weight: 400 !important;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.15rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--teal-700);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #0d9488;
+        }
+
+        .btn-secondary {
+            background-color: var(--slate-100);
+            color: var(--slate-700);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--slate-200);
+        }
+
+        .form-group--center {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .link-secondary {
+            color: var(--teal-700);
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 0.25rem;
+            font-size: 0.8rem;
+        }
+
+        .link-secondary:hover {
+            text-decoration: underline;
+        }
+
+        .register-status {
+            text-align: center;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            min-height: 1rem;
+            color: var(--red-500);
+        }
+
+        .register-status--success {
+            color: #10b981; /* emerald-500 */
+        }
+    </style>
+</head>
+<body>
+    <main class="register-container">
+        <div class="register-card">
+            <!-- Encabezado -->
+            <header class="register-header">
+                <div class="register-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="22" y1="11" x2="16" y2="11"/>
+                    </svg>
+                </div>
+                <h1>Crear cuenta</h1>
+                <p class="register-subtitle" id="step-subtitle">¿Cómo te llamas?</p>
+            </header>
+
+            <!-- Indicador de pasos -->
+            <div class="steps-indicator">
+                <div class="step step--active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Perfil</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Acceso</span>
+                </div>
+            </div>
+
+            <!-- Formulario de registro -->
+            <form id="register-form" class="register-form" novalidate>
+                
+                <!-- ========== PASO 1: Perfil ========== -->
+                <div class="form-step form-step--active" id="step-1">
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            name="nombre" 
+                            placeholder="Nombre Apellido"
+                            autocomplete="name"
+                            required
+                        >
+                        <span id="nombre-error" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rol">Rol</label>
+                        <select 
+                            id="rol" 
+                            name="rol" 
+                            required
+                        >
+                            <option value="estudiante" selected>Estudiante</option>
+                            <option value="profesor">Profesor</option>
+                            <option value="personal" disabled>Personal (requiere autorización)</option>
+                        </select>
+                        <span class="field-note">El rol "Personal" solo puede ser asignado por administración.</span>
+                        <span id="rol-error" class="error-message"></span>
+                    </div>
+
+                    <button type="button" id="btn-siguiente" class="btn-primary" style="margin-top: 0.25rem;">
+                        Siguiente
+                    </button>
+                </div>
+
+                <!-- ========== PASO 2: Acceso ========== -->
+                <div class="form-step" id="step-2">
+                    <div class="form-group">
+                        <label for="correo">Correo institucional</label>
+                        <input 
+                            type="email" 
+                            id="correo" 
+                            name="correo" 
+                            placeholder="usuario@univ.edu"
+                            autocomplete="email"
+                            required
+                        >
+                        <span id="correo-error" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Mínimo 8 caracteres"
+                                autocomplete="new-password"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                class="toggle-password-btn"
+                                data-target="password"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                        <span id="password-error" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password-confirm">Confirmar contraseña</label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password-confirm" 
+                                name="password-confirm" 
+                                placeholder="Repite la contraseña"
+                                autocomplete="new-password"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                class="toggle-password-btn"
+                                data-target="password-confirm"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                        <span id="password-confirm-error" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group form-group--inline">
+                        <input type="checkbox" id="aceptar-terminos" name="aceptar-terminos" required>
+                        <label for="aceptar-terminos">Acepto los términos y la política de datos</label>
+                    </div>
+                    <span id="terminos-error" class="error-message" style="margin-top:-0.5rem"></span>
+
+                    <div class="btn-group">
+                        <button type="button" id="btn-atras" class="btn-secondary">
+                            Atrás
+                        </button>
+                        <button type="submit" id="btn-crear" class="btn-primary">
+                            Crear cuenta
+                        </button>
+                    </div>
+                </div>
+
+                <div id="register-status" class="register-status"></div>
+
+                <div class="form-group form-group--center" style="margin-top: 0.5rem;">
+                    <span style="color: var(--slate-500); font-size: 0.8rem;">¿Ya tienes cuenta?</span>
+                    <a href="login.html" class="link-secondary">Volver a iniciar sesión</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script type="module">
+        import { db } from '../../js/core/db.js';
+        import { initStorage } from '../../js/core/mockData.js';
+
+        initStorage();
+
+        // DOM Elements
+        const form = document.getElementById('register-form');
+        const stepSubtitle = document.getElementById('step-subtitle');
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+        const stepIndicators = document.querySelectorAll('.step');
+        
+        const btnSiguiente = document.getElementById('btn-siguiente');
+        const btnAtras = document.getElementById('btn-atras');
+        
+        const nombreInput = document.getElementById('nombre');
+        const rolSelect = document.getElementById('rol');
+        const correoInput = document.getElementById('correo');
+        const passwordInput = document.getElementById('password');
+        const passwordConfirmInput = document.getElementById('password-confirm');
+        const aceptarTerminosCheckbox = document.getElementById('aceptar-terminos');
+        
+        const nombreError = document.getElementById('nombre-error');
+        const rolError = document.getElementById('rol-error');
+        const correoError = document.getElementById('correo-error');
+        const passwordError = document.getElementById('password-error');
+        const passwordConfirmError = document.getElementById('password-confirm-error');
+        const terminosError = document.getElementById('terminos-error');
+        
+        const registerStatus = document.getElementById('register-status');
+        const togglePasswordBtns = document.querySelectorAll('.toggle-password-btn');
+
+        let currentStep = 1;
+        const STEP_SUBTITLES = {
+            1: '¿Cómo te llamas?',
+            2: 'Configura tu acceso'
+        };
+
+        function showError(input, errorElement, message) {
+            input.setAttribute('aria-invalid', 'true');
+            if(errorElement) errorElement.textContent = message;
+        }
+
+        function clearError(input, errorElement) {
+            input.removeAttribute('aria-invalid');
+            if(errorElement) errorElement.textContent = '';
+        }
+
+        function setStatus(message, isSuccess = false) {
+            registerStatus.textContent = message;
+            registerStatus.className = 'register-status ' + (isSuccess ? 'register-status--success' : '');
+        }
+
+        function goToStep(stepNumber) {
+            currentStep = stepNumber;
+            step1.classList.toggle('form-step--active', stepNumber === 1);
+            step2.classList.toggle('form-step--active', stepNumber === 2);
+            
+            stepIndicators.forEach(indicator => {
+                const indicatorStep = parseInt(indicator.dataset.step);
+                indicator.classList.remove('step--active', 'step--completed');
+                if (indicatorStep === stepNumber) {
+                    indicator.classList.add('step--active');
+                } else if (indicatorStep < stepNumber) {
+                    indicator.classList.add('step--completed');
+                }
+            });
+            
+            stepSubtitle.textContent = STEP_SUBTITLES[stepNumber];
+            if (stepNumber === 1) nombreInput.focus();
+            if (stepNumber === 2) correoInput.focus();
+        }
+
+        function validateStep1() {
+            let isValid = true;
+            const nombre = nombreInput.value.trim();
+            if (!nombre || nombre.split(' ').length < 2) {
+                showError(nombreInput, nombreError, 'Incluye tu nombre y apellido.');
+                isValid = false;
+            } else {
+                clearError(nombreInput, nombreError);
+            }
+
+            if (!rolSelect.value) {
+                showError(rolSelect, rolError, 'Selecciona un rol.');
+                isValid = false;
+            } else {
+                clearError(rolSelect, rolError);
+            }
+            return isValid;
+        }
+
+        function validateStep2() {
+            let isValid = true;
+            
+            const correo = correoInput.value.trim();
+            if (!correo || !correo.includes('@')) {
+                showError(correoInput, correoError, 'Ingresa un correo válido.');
+                isValid = false;
+            } else {
+                clearError(correoInput, correoError);
+            }
+
+            const pass = passwordInput.value;
+            if (pass.length < 8) {
+                showError(passwordInput, passwordError, 'Mínimo 8 caracteres.');
+                isValid = false;
+            } else {
+                clearError(passwordInput, passwordError);
+            }
+
+            if (pass !== passwordConfirmInput.value) {
+                showError(passwordConfirmInput, passwordConfirmError, 'Las contraseñas no coinciden.');
+                isValid = false;
+            } else {
+                clearError(passwordConfirmInput, passwordConfirmError);
+            }
+
+            if (!aceptarTerminosCheckbox.checked) {
+                terminosError.textContent = 'Debes aceptar los términos.';
+                isValid = false;
+            } else {
+                terminosError.textContent = '';
+            }
+
+            return isValid;
+        }
+
+        // DOM Events
+        btnSiguiente.addEventListener('click', () => {
+            if (validateStep1()) goToStep(2);
+        });
+
+        btnAtras.addEventListener('click', () => {
+            goToStep(1);
+        });
+
+        togglePasswordBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(btn.dataset.target);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = 'Ocultar';
+                } else {
+                    input.type = 'password';
+                    btn.textContent = 'Mostrar';
+                }
+            });
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            setStatus('');
+
+            if (!validateStep2()) return;
+
+            const existingUser = db.find('users', u => u.email === correoInput.value.trim());
+            if (existingUser) {
+                showError(correoInput, correoError, 'Este correo ya está registrado.');
+                return;
+            }
+
+            db.insert('users', {
+                name: nombreInput.value.trim(),
+                email: correoInput.value.trim(),
+                role: rolSelect.value,
+                password: passwordInput.value
+            });
+
+            setStatus('¡Cuenta creada con éxito! Redirigiendo...', true);
+            setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+        });
+    </script>
+</body>
+</html>
