@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notificaciones - UniGear</title>
+  <link rel="stylesheet" href="../../css/globals.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <style>
+    :root {
+      --teal-50: #eff6ff;
+      --teal-100: #dbeafe;
+      --teal-200: #bfdbfe;
+      --teal-300: #93c5fd;
+      --teal-400: #60a5fa;
+      --teal-500: #3b82f6;
+      --teal-600: #2563eb;
+      --teal-700: #1d4ed8;
+      --primary-color: #2563eb;
+      --primary-50: #eff6ff;
+    }
+
+    .notif-bell-btn {
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .notif-bell-btn.active {
+      background: linear-gradient(135deg, #1e3a8a, #172554) !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      border-radius: 10px !important;
+      width: 44px !important;
+      height: 40px !important;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+    }
+    .notif-bell-btn.active svg {
+      stroke: #ffffff !important;
+    }
+    .notif-bell-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background-color: #dc2626;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      display: none;
+    }
+    .notif-bell-badge.show {
+      display: block;
+    }
+
+    .notifications-header {
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #1e3a8a, #172554);
+      color: #ffffff;
+      border: none;
+      padding: 1.7rem 1.9rem;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 8px 26px rgba(15, 23, 42, 0.14);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .notifications-overline {
+      margin: 0 0 0.45rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.74);
+    }
+    .notifications-title {
+      margin: 0;
+      font-size: 1.85rem;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #ffffff;
+    }
+    .notifications-subtitle {
+      margin: 0.5rem 0 0;
+      max-width: 660px;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.95rem;
+    }
+    .notifications-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .notifications-mark-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      font-weight: 600;
+      padding: 0.6rem 0.95rem;
+      border-radius: 10px;
+      transition: background-color 0.2s ease;
+    }
+    .notifications-mark-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .notifications-kpi-grid {
+      margin-bottom: 1rem;
+      display: none;
+      grid-template-columns: repeat(3, minmax(160px, 1fr));
+      gap: 0.85rem;
+    }
+    .notifications-kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .notifications-kpi-label {
+      color: var(--slate-500);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+    .notifications-kpi-value {
+      color: var(--slate-900);
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .notifications-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.85fr) minmax(300px, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .notifications-list-panel {
+      padding: 0;
+      overflow: hidden;
+    }
+    .notifications-list-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 1.1rem;
+      border-bottom: 1px solid var(--slate-200);
+      background: #ffffff;
+    }
+    .notifications-list-title {
+      margin: 0;
+      color: var(--slate-900);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .notifications-list-meta {
+      color: var(--slate-500);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .notif-tabs-wrap {
+      display: flex;
+      gap: 0.35rem;
+      border-bottom: 1px solid var(--slate-200);
+      background: #ffffff;
+      padding: 0.55rem 0.8rem;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--slate-600);
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.38rem 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--slate-800);
+      border-color: var(--slate-300);
+      background: var(--slate-50);
+    }
+    .tab-btn.active {
+      color: var(--primary-color);
+      border-color: rgba(37, 99, 235, 0.35);
+      background: rgba(37, 99, 235, 0.08);
+    }
+    .tab-count {
+      min-width: 22px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.08);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      padding: 0.1rem 0.4rem;
+      color: var(--slate-700);
+    }
+
+    .notif-mail-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      padding: 0.72rem 1rem;
+      border-bottom: 1px solid var(--slate-200);
+      background: #f8fafc;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .notif-mail-select {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--slate-700);
+      font-size: 0.86rem;
+      font-weight: 500;
+    }
+    .notif-mail-select input[type='checkbox'] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--primary-color);
+      cursor: pointer;
+      margin: 0;
+    }
+    .notif-selected-count {
+      color: var(--primary-color);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.15rem 0.52rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.12);
+      display: none;
+    }
+    .notif-mail-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .notif-bulk-btn {
+      border: 1px solid var(--slate-300);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--slate-700);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.43rem 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .notif-bulk-btn:hover:not(:disabled) {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      background: rgba(37, 99, 235, 0.05);
+    }
+    .notif-bulk-btn.danger {
+      color: var(--red-600);
+      border-color: var(--red-300);
+    }
+    .notif-bulk-btn.danger:hover:not(:disabled) {
+      border-color: var(--red-500);
+      color: var(--red-700);
+      background: var(--red-50);
+    }
+    .notif-bulk-btn:disabled {
+      opacity: 0.46;
+      cursor: not-allowed;
+    }
+
+    .notifications-list {
+      max-height: 62vh;
+      overflow: auto;
+      background: #ffffff;
+    }
+    .notif-row {
+      border-bottom: 1px solid var(--slate-200);
+      display: grid;
+      grid-template-columns: auto auto 1fr auto;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.78rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.16s ease;
+      animation: notif-row-in 0.16s ease-out;
+    }
+    .notif-row:hover {
+      background: #f8fafc;
+    }
+    .notif-row.active {
+      background: #eff6ff;
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.2);
+    }
+    .notif-row.selected {
+      background: #eff6ff;
+    }
+    .notif-row.unseen {
+      border-left: 4px solid var(--primary-color);
+      padding-left: 0.75rem;
+    }
+    .notif-row.seen {
+      border-left: 4px solid #94a3b8;
+      padding-left: 0.75rem;
+    }
+    .notif-select-check {
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      accent-color: var(--primary-color);
+      cursor: pointer;
+    }
+    .notif-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .notif-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+    .icon-info {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .icon-success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .icon-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .icon-alert {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .notif-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.26rem;
+    }
+    .notif-title-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .notif-title {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--slate-900);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notif-row.unseen .notif-title {
+      font-weight: 700;
+    }
+    .notif-date {
+      color: var(--slate-500);
+      font-size: 0.74rem;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .notif-preview {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--slate-600);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notif-meta-row {
+      display: inline-flex;
+      gap: 0.45rem;
+      align-items: center;
+    }
+    .notif-type-chip,
+    .notif-read-chip {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 999px;
+      padding: 0.12rem 0.45rem;
+    }
+    .notif-type-chip {
+      background: rgba(15, 23, 42, 0.08);
+      color: var(--slate-700);
+    }
+    .notif-read-chip.unseen {
+      background: rgba(37, 99, 235, 0.14);
+      color: #1d4ed8;
+    }
+    .notif-read-chip.seen {
+      background: rgba(100, 116, 139, 0.16);
+      color: #475569;
+    }
+
+    .notif-row-actions {
+      display: inline-flex;
+      gap: 0.35rem;
+      align-items: center;
+      opacity: 0;
+      transform: translateX(3px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .notif-row:hover .notif-row-actions,
+    .notif-row.active .notif-row-actions,
+    .notif-row:focus-within .notif-row-actions {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .notif-row-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--slate-500);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+    .notif-row-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    .notif-row-btn:hover {
+      color: var(--primary-color);
+      background: rgba(37, 99, 235, 0.1);
+      border-color: rgba(37, 99, 235, 0.24);
+    }
+    .notif-row-btn.danger:hover {
+      color: var(--red-700);
+      background: var(--red-50);
+      border-color: var(--red-300);
+    }
+
+    .notifications-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--slate-500);
+      background: #ffffff;
+    }
+
+    .notifications-detail-panel {
+      padding: 0;
+      overflow: hidden;
+      position: sticky;
+      top: 1rem;
+    }
+    .notifications-detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1rem 0.85rem;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .notifications-detail-head h2 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--slate-900);
+    }
+    .detail-state-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 0.18rem 0.5rem;
+      color: #475569;
+      background: rgba(100, 116, 139, 0.15);
+    }
+    .detail-state-pill.is-unseen {
+      color: #1d4ed8;
+      background: rgba(37, 99, 235, 0.15);
+    }
+    .detail-empty {
+      padding: 1.4rem 1rem;
+      color: var(--slate-500);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .detail-content {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    .detail-icon-row {
+      display: flex;
+      align-items: center;
+    }
+    .detail-title {
+      margin: 0;
+      color: var(--slate-900);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+    .detail-meta {
+      margin: 0;
+      color: var(--slate-500);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+    .detail-message {
+      margin: 0;
+      color: var(--slate-700);
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+    .detail-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding-top: 0.7rem;
+      border-top: 1px solid var(--slate-200);
+    }
+    .detail-btn {
+      border: 1px solid var(--slate-300);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--slate-700);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .detail-btn:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      background: rgba(37, 99, 235, 0.06);
+    }
+    .detail-btn.danger {
+      border-color: var(--red-300);
+      color: var(--red-600);
+    }
+    .detail-btn.danger:hover {
+      border-color: var(--red-500);
+      color: var(--red-700);
+      background: var(--red-50);
+    }
+
+    @keyframes notif-row-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .notifications-workspace {
+        grid-template-columns: 1fr;
+      }
+      .notifications-detail-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .notifications-header {
+        padding: 1.3rem;
+      }
+      .notifications-title {
+        font-size: 1.5rem;
+      }
+      .notifications-kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .notif-row {
+        grid-template-columns: auto 1fr auto;
+        padding: 0.72rem 0.8rem;
+      }
+      .notif-icon {
+        display: none;
+      }
+      .notif-title-line {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+      .notif-row-actions {
+        opacity: 1;
+        transform: none;
+      }
+      .notif-mail-toolbar {
+        padding: 0.7rem 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        UniGear
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard_profesor.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Mi Resumen
+        </a>
+        <a href="catalog_profesor.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          Catálogo de Material
+        </a>
+        <a href="requests_profesor.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Mis Solicitudes
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile_profesor.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Mi Perfil
+        </a>
+        <a href="#" class="nav-item" data-action="logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Cerrar Sesión
+        </a>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <span style="font-weight: 500; color: var(--slate-600);">Área Docente / Notificaciones</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-secondary notif-bell-btn active" id="notif-bell" style="border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0;" onclick="window.location.href='notifications_profesor.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 15V9.524A6 6 0 0 0 12 3.5a6 6 0 0 0-6 6.024V15L4 18h16l-2-3Z"></path>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+            </svg>
+            <span class="notif-bell-badge" id="notif-bell-badge"></span>
+          </button>
+          <div class="user-profile">
+            <div class="avatar avatar-display">A</div>
+            <span class="user-name-display">Cargando...</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <section class="card notifications-header">
+          <div>
+            <p class="notifications-overline">Comunicaciones docentes</p>
+            <h1 class="notifications-title">Centro de Notificaciones</h1>
+            <p class="notifications-subtitle">Centraliza avisos de solicitudes, devoluciones y recordatorios operativos desde una bandeja clara y ordenada.</p>
+          </div>
+          <div class="notifications-header-right">
+            <button class="btn notifications-mark-btn" id="btn-mark-all" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Marcar todo como visto
+            </button>
+          </div>
+        </section>
+
+        <section class="notifications-kpi-grid">
+          <article class="notifications-kpi-card">
+            <span class="notifications-kpi-label">No vistas</span>
+            <strong class="notifications-kpi-value" id="kpi-unseen">0</strong>
+          </article>
+          <article class="notifications-kpi-card">
+            <span class="notifications-kpi-label">Vistas</span>
+            <strong class="notifications-kpi-value" id="kpi-seen">0</strong>
+          </article>
+          <article class="notifications-kpi-card">
+            <span class="notifications-kpi-label">Total</span>
+            <strong class="notifications-kpi-value" id="kpi-total">0</strong>
+          </article>
+        </section>
+
+        <section class="notifications-workspace">
+          <div class="card notifications-list-panel">
+            <div class="notifications-list-head">
+              <h2 class="notifications-list-title">Bandeja de avisos</h2>
+              <span class="notifications-list-meta" id="panel-meta">0 resultados</span>
+            </div>
+
+            <div class="notif-tabs-wrap">
+              <button class="tab-btn active" data-filter="all">Todas <span class="tab-count" id="tab-all-count">0</span></button>
+              <button class="tab-btn" data-filter="seen">Vistas <span class="tab-count" id="tab-seen-count">0</span></button>
+              <button class="tab-btn" data-filter="unseen">No vistas <span class="tab-count" id="tab-unseen-count">0</span></button>
+            </div>
+
+            <div class="notif-mail-toolbar">
+              <label class="notif-mail-select" for="select-all-visible">
+                <input id="select-all-visible" type="checkbox" aria-label="Seleccionar notificaciones visibles">
+                Seleccionar visibles
+              </label>
+              <span class="notif-selected-count" id="selected-count">0 seleccionados</span>
+              <div class="notif-mail-actions hidden" id="bulk-actions">
+                <button class="notif-bulk-btn" id="btn-mark-selected-seen" type="button" disabled>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  Marcar vistas
+                </button>
+                <button class="notif-bulk-btn" id="btn-mark-selected-unseen" type="button" disabled>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><polyline points="22 7 12 13 2 7"></polyline></svg>
+                  Marcar no vistas
+                </button>
+                <button class="notif-bulk-btn danger" id="btn-delete-selected" type="button" disabled>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
+                  Eliminar
+                </button>
+              </div>
+            </div>
+
+            <div id="notifications-list" class="notifications-list"></div>
+
+            <div id="empty-state" class="notifications-empty" style="display: none;">
+              <div style="width: 60px; height: 60px; background: var(--slate-100); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.8rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              </div>
+              <h3 style="margin: 0 0 0.25rem; color: var(--slate-800);">No hay notificaciones</h3>
+              <p style="margin: 0;">Estás al día con los avisos del material docente.</p>
+            </div>
+          </div>
+
+          <aside class="card notifications-detail-panel">
+            <div class="notifications-detail-head">
+              <h2>Detalle</h2>
+              <span class="detail-state-pill" id="detail-state-pill">Sin seleccionar</span>
+            </div>
+            <div class="detail-empty" id="detail-empty">
+              Selecciona una notificación para revisar su contenido completo y gestionar su estado.
+            </div>
+            <div class="detail-content" id="detail-content" style="display: none;">
+              <div class="detail-icon-row">
+                <div class="notif-icon icon-info" id="detail-icon"></div>
+              </div>
+              <h3 class="detail-title" id="detail-title"></h3>
+              <p class="detail-meta" id="detail-meta"></p>
+              <p class="detail-message" id="detail-message"></p>
+              <div class="detail-actions">
+                <button type="button" class="detail-btn" id="detail-toggle-read">Marcar</button>
+                <button type="button" class="detail-btn danger" id="detail-delete">Eliminar</button>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth } from '../../js/core/auth.js';
+    import { ui } from '../../js/components/ui.js';
+
+    const user = auth.requireAuth(['estudiante', 'profesor']);
+    if (!user) throw new Error('Not authenticated');
+
+    ui.setupLayout(user);
+
+    let notifications = [
+      {
+        id: 'n1',
+        title: 'Solicitud aprobada',
+        message: 'Tu solicitud para el equipo Portátil Dell XPS 15 ha sido aprobada. Puedes pasar a recogerlo por el almacén.',
+        date: 'Hoy, 10:30',
+        type: 'success',
+        read: false
+      },
+      {
+        id: 'n2',
+        title: 'Recordatorio de devolución',
+        message: 'Debes devolver Kits Arduino Uno mañana antes de las 14:00. Si necesitas más tiempo, solicita una prórroga.',
+        date: 'Ayer, 09:15',
+        type: 'warning',
+        read: false
+      },
+      {
+        id: 'n3',
+        title: 'Mantenimiento programado',
+        message: 'El sistema estará fuera de servicio este viernes de 22:00 a 24:00 por tareas de mantenimiento.',
+        date: 'Hace 3 días',
+        type: 'info',
+        read: true
+      },
+      {
+        id: 'n4',
+        title: 'Retraso en devolución',
+        message: 'Tienes material pendiente de devolución cuya fecha expiró ayer. Por favor, regulariza la situación.',
+        date: 'Hace 1 semana',
+        type: 'alert',
+        read: true
+      }
+    ];
+
+    const listContainer = document.getElementById('notifications-list');
+    const emptyState = document.getElementById('empty-state');
+    const btnMarkAll = document.getElementById('btn-mark-all');
+    const tabs = document.querySelectorAll('.tab-btn');
+
+    const tabAllCount = document.getElementById('tab-all-count');
+    const tabSeenCount = document.getElementById('tab-seen-count');
+    const tabUnseenCount = document.getElementById('tab-unseen-count');
+
+    const kpiUnseen = document.getElementById('kpi-unseen');
+    const kpiSeen = document.getElementById('kpi-seen');
+    const kpiTotal = document.getElementById('kpi-total');
+    const panelMeta = document.getElementById('panel-meta');
+
+    const selectAllVisible = document.getElementById('select-all-visible');
+    const selectedCount = document.getElementById('selected-count');
+    const bulkActions = document.getElementById('bulk-actions');
+    const btnMarkSelectedSeen = document.getElementById('btn-mark-selected-seen');
+    const btnMarkSelectedUnseen = document.getElementById('btn-mark-selected-unseen');
+    const btnDeleteSelected = document.getElementById('btn-delete-selected');
+
+    const detailStatePill = document.getElementById('detail-state-pill');
+    const detailEmpty = document.getElementById('detail-empty');
+    const detailContent = document.getElementById('detail-content');
+    const detailIcon = document.getElementById('detail-icon');
+    const detailTitle = document.getElementById('detail-title');
+    const detailMeta = document.getElementById('detail-meta');
+    const detailMessage = document.getElementById('detail-message');
+    const detailToggleRead = document.getElementById('detail-toggle-read');
+    const detailDelete = document.getElementById('detail-delete');
+
+    const notifBellBadge = document.getElementById('notif-bell-badge');
+
+    let currentFilter = 'all';
+    let selectedIds = new Set();
+    let activeNotificationId = notifications.find(n => !n.read)?.id ?? notifications[0]?.id ?? null;
+
+    function getTypeLabel(type) {
+      switch (type) {
+        case 'success':
+          return 'Aprobación';
+        case 'warning':
+          return 'Recordatorio';
+        case 'alert':
+          return 'Alerta';
+        case 'info':
+        default:
+          return 'Información';
+      }
+    }
+
+    function getIcon(type) {
+      switch (type) {
+        case 'success':
+          return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+        case 'warning':
+          return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        case 'alert':
+          return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+        case 'info':
+        default:
+          return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+      }
+    }
+
+    function getStatusIcon(isSeen) {
+      if (isSeen) {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+      }
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><polyline points="22 7 12 13 2 7"></polyline></svg>';
+    }
+
+    function getFilteredNotifications() {
+      return notifications.filter(notification => {
+        if (currentFilter === 'seen') return notification.read;
+        if (currentFilter === 'unseen') return !notification.read;
+        return true;
+      });
+    }
+
+    function getPreviewText(message) {
+      const compactMessage = message.replace(/\s+/g, ' ').trim();
+      if (compactMessage.length <= 115) return compactMessage;
+      return `${compactMessage.slice(0, 115)}...`;
+    }
+
+    function updateBellBadge(unseenTotal) {
+      notifBellBadge.classList.toggle('show', unseenTotal > 0);
+    }
+
+    function syncSelectionToolbar(filtered) {
+      const selectedVisible = filtered.filter(n => selectedIds.has(n.id)).length;
+      const allVisibleSelected = filtered.length > 0 && selectedVisible === filtered.length;
+
+      selectAllVisible.checked = allVisibleSelected;
+      selectAllVisible.indeterminate = selectedVisible > 0 && !allVisibleSelected;
+
+      const selectedTotal = selectedIds.size;
+      selectedCount.textContent = `${selectedTotal} seleccionado${selectedTotal === 1 ? '' : 's'}`;
+      selectedCount.style.display = selectedTotal === 0 ? 'none' : 'inline-flex';
+      bulkActions.classList.toggle('hidden', selectedTotal === 0);
+
+      const disabled = selectedTotal === 0;
+      btnMarkSelectedSeen.disabled = disabled;
+      btnMarkSelectedUnseen.disabled = disabled;
+      btnDeleteSelected.disabled = disabled;
+    }
+
+    function renderDetailPanel() {
+      const notification = notifications.find(n => n.id === activeNotificationId);
+      if (!notification) {
+        detailEmpty.style.display = 'block';
+        detailContent.style.display = 'none';
+        detailStatePill.textContent = 'Sin seleccionar';
+        detailStatePill.classList.remove('is-unseen');
+        return;
+      }
+
+      const safeType = ['success', 'warning', 'alert', 'info'].includes(notification.type)
+        ? notification.type
+        : 'info';
+
+      detailEmpty.style.display = 'none';
+      detailContent.style.display = 'flex';
+
+      detailIcon.className = `notif-icon icon-${safeType}`;
+      detailIcon.innerHTML = getIcon(safeType);
+      detailTitle.textContent = notification.title;
+      detailMeta.textContent = `${getTypeLabel(safeType)} - ${notification.date}`;
+      detailMessage.textContent = notification.message;
+      detailToggleRead.textContent = notification.read ? 'Marcar como no vista' : 'Marcar como vista';
+
+      detailStatePill.textContent = notification.read ? 'Vista' : 'No vista';
+      detailStatePill.classList.toggle('is-unseen', !notification.read);
+    }
+
+    function renderNotifications() {
+      const existingIds = new Set(notifications.map(n => n.id));
+      selectedIds.forEach(id => {
+        if (!existingIds.has(id)) selectedIds.delete(id);
+      });
+      if (activeNotificationId && !existingIds.has(activeNotificationId)) {
+        activeNotificationId = notifications[0]?.id ?? null;
+      }
+
+      const filtered = getFilteredNotifications();
+      const total = notifications.length;
+      const seenTotal = notifications.filter(n => n.read).length;
+      const unseenTotal = notifications.filter(n => !n.read).length;
+
+      tabAllCount.textContent = total;
+      tabSeenCount.textContent = seenTotal;
+      tabUnseenCount.textContent = unseenTotal;
+
+      kpiTotal.textContent = total;
+      kpiSeen.textContent = seenTotal;
+      kpiUnseen.textContent = unseenTotal;
+
+      panelMeta.textContent = `${filtered.length} resultado${filtered.length === 1 ? '' : 's'}`;
+      updateBellBadge(unseenTotal);
+
+      syncSelectionToolbar(filtered);
+
+      if (filtered.length === 0) {
+        listContainer.style.display = 'none';
+        emptyState.style.display = 'block';
+        renderDetailPanel();
+        return;
+      }
+
+      listContainer.style.display = 'block';
+      emptyState.style.display = 'none';
+
+      listContainer.innerHTML = filtered.map(notification => `
+        <article class="notif-row ${notification.read ? 'seen' : 'unseen'} ${selectedIds.has(notification.id) ? 'selected' : ''} ${activeNotificationId === notification.id ? 'active' : ''}" data-id="${notification.id}">
+          <input class="notif-select-check" type="checkbox" data-id="${notification.id}" ${selectedIds.has(notification.id) ? 'checked' : ''} aria-label="Seleccionar notificación">
+          <div class="notif-icon icon-${notification.type}">${getIcon(notification.type)}</div>
+          <div class="notif-main">
+            <div class="notif-title-line">
+              <h3 class="notif-title">${notification.title}</h3>
+              <span class="notif-date">${notification.date}</span>
+            </div>
+            <p class="notif-preview">${getPreviewText(notification.message)}</p>
+            <div class="notif-meta-row">
+              <span class="notif-type-chip">${getTypeLabel(notification.type)}</span>
+              <span class="notif-read-chip ${notification.read ? 'seen' : 'unseen'}">${notification.read ? 'Vista' : 'No vista'}</span>
+            </div>
+          </div>
+          <div class="notif-row-actions">
+            <button class="notif-row-btn notif-toggle-read-btn" type="button" data-id="${notification.id}" title="Cambiar estado" aria-label="Cambiar estado">${getStatusIcon(notification.read)}</button>
+            <button class="notif-row-btn danger notif-delete-btn" type="button" data-id="${notification.id}" title="Eliminar" aria-label="Eliminar notificación">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
+            </button>
+          </div>
+        </article>
+      `).join('');
+
+      document.querySelectorAll('.notif-select-check').forEach(check => {
+        check.addEventListener('click', event => event.stopPropagation());
+        check.addEventListener('change', () => {
+          const id = check.dataset.id;
+          if (check.checked) {
+            selectedIds.add(id);
+          } else {
+            selectedIds.delete(id);
+          }
+          renderNotifications();
+        });
+      });
+
+      document.querySelectorAll('.notif-toggle-read-btn').forEach(button => {
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+          toggleNotificationRead(button.dataset.id);
+        });
+      });
+
+      document.querySelectorAll('.notif-delete-btn').forEach(button => {
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+          deleteNotification(button.dataset.id);
+        });
+      });
+
+      document.querySelectorAll('.notif-row').forEach(row => {
+        row.addEventListener('click', () => openNotification(row.dataset.id));
+      });
+
+      renderDetailPanel();
+    }
+
+    function openNotification(id) {
+      const notification = notifications.find(n => n.id === id);
+      if (!notification) return;
+
+      activeNotificationId = id;
+      if (!notification.read) {
+        notification.read = true;
+      }
+      renderNotifications();
+    }
+
+    function toggleNotificationRead(id) {
+      const notification = notifications.find(n => n.id === id);
+      if (!notification) return;
+
+      notification.read = !notification.read;
+      renderNotifications();
+    }
+
+    function deleteNotification(id) {
+      if (!id) return;
+
+      selectedIds.delete(id);
+      notifications = notifications.filter(n => n.id !== id);
+      if (activeNotificationId === id) {
+        activeNotificationId = notifications[0]?.id ?? null;
+      }
+      renderNotifications();
+    }
+
+    function markSelectedAs(readState) {
+      if (selectedIds.size === 0) return;
+
+      notifications.forEach(notification => {
+        if (selectedIds.has(notification.id)) {
+          notification.read = readState;
+        }
+      });
+
+      selectedIds.clear();
+      renderNotifications();
+    }
+
+    function deleteSelectedNotifications() {
+      if (selectedIds.size === 0) return;
+
+      notifications = notifications.filter(n => !selectedIds.has(n.id));
+      if (activeNotificationId && !notifications.some(n => n.id === activeNotificationId)) {
+        activeNotificationId = notifications[0]?.id ?? null;
+      }
+
+      selectedIds.clear();
+      renderNotifications();
+    }
+
+    selectAllVisible.addEventListener('change', () => {
+      const visibleNotifications = getFilteredNotifications();
+      if (selectAllVisible.checked) {
+        visibleNotifications.forEach(notification => selectedIds.add(notification.id));
+      } else {
+        visibleNotifications.forEach(notification => selectedIds.delete(notification.id));
+      }
+      renderNotifications();
+    });
+
+    btnMarkSelectedSeen.addEventListener('click', () => markSelectedAs(true));
+    btnMarkSelectedUnseen.addEventListener('click', () => markSelectedAs(false));
+    btnDeleteSelected.addEventListener('click', deleteSelectedNotifications);
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(item => item.classList.remove('active'));
+        tab.classList.add('active');
+        currentFilter = tab.dataset.filter;
+        selectedIds.clear();
+        renderNotifications();
+      });
+    });
+
+    btnMarkAll.addEventListener('click', () => {
+      notifications.forEach(notification => {
+        notification.read = true;
+      });
+      selectedIds.clear();
+      renderNotifications();
+    });
+
+    detailToggleRead.addEventListener('click', () => {
+      if (!activeNotificationId) return;
+      toggleNotificationRead(activeNotificationId);
+    });
+
+    detailDelete.addEventListener('click', () => {
+      if (!activeNotificationId) return;
+      deleteNotification(activeNotificationId);
+    });
+
+    renderNotifications();
+  </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+/* ======================================================
+   Staff / Personal — Red Theme Override
+   Loaded after layout.css only in staff pages.
+   Overrides teal accent with a red palette.
+   ====================================================== */
+
+:root {
+  --accent:       #dc2626;   /* red-600  */
+  --accent-hover: #b91c1c;   /* red-700  */
+  --accent-light: #fef2f2;   /* red-50   */
+  --accent-ring:  rgba(220, 38, 38, 0.15);
+}
+
+/* ── Sidebar active item ─────────────────────────────── */
+.nav-item.active {
+  background-color: #991b1b !important;   /* red-800, dark enough on slate-900 */
+  color: white !important;
+}
+
+.nav-item:hover {
+  background-color: var(--slate-800) !important;
+  color: #fca5a5 !important;             /* red-300 on hover */
+}
+
+/* ── Topbar avatar ───────────────────────────────────── */
+.avatar-display {
+  background-color: #dc2626 !important;
+  color: white !important;
+}
+
+/* ── Primary button ──────────────────────────────────── */
+.btn-primary {
+  background-color: #dc2626 !important;
+  color: white !important;
+}
+.btn-primary:hover {
+  background-color: #b91c1c !important;
+}
+
+/* ── Links & accent colour ───────────────────────────── */
+a:not(.nav-item):not(.btn) {
+  color: #dc2626;
+}
+
+/* ── Toast border ────────────────────────────────────── */
+.toast {
+  border-left-color: #dc2626 !important;
+}
+
+/* ── Form focus ring ─────────────────────────────────── */
+.form-control:focus,
+.form-input:focus,
+select:focus,
+textarea:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px var(--accent-ring) !important;
+}
+
+/* ── Focus outline (accessibility) ──────────────────── */
+:focus-visible {
+  outline-color: #dc2626 !important;
+}
+
+/* ── Dashboard welcome title accent ─────────────────── */
+#staff-name {
+  color: #dc2626;
+}

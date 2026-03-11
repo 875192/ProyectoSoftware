@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Material - UniGear</title>
+  <link rel="stylesheet" href="../../css/globals.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <style>
+    /* Badge de notificaciones */
+    .notif-bell-btn {
+      position: relative;
+    }
+    .notif-bell-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background-color: #dc2626;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: none;
+    }
+    .notif-bell-badge.show {
+      display: block;
+    }
+
+    /* Hero Section */
+    .catalog-hero {
+      background: linear-gradient(135deg, #1c5b56, #164743);
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .catalog-hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      letter-spacing: -0.02em;
+      color: white;
+    }
+
+    .catalog-hero p {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.75rem;
+    }
+    
+    .item-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .item-card:hover {
+      border-color: var(--teal-300);
+      box-shadow: 0 12px 32px rgba(20, 184, 166, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .item-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--slate-100);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .item-image svg {
+      width: 80px;
+      height: 80px;
+      color: var(--teal-400);
+      opacity: 0.6;
+    }
+
+    .item-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .item-category {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--teal-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .item-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin: 0 0 0.5rem 0;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .item-desc {
+      font-size: 0.8rem;
+      color: var(--slate-600);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;  
+      overflow: hidden;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .item-stock-badge {
+      font-weight: 600;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .item-footer {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: auto;
+    }
+
+    .item-footer .btn {
+      flex: 1;
+      padding: 0.55rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.8fr) minmax(220px, 1fr) minmax(220px, 1fr);
+      gap: 1rem;
+      align-items: flex-end;
+      margin-bottom: 2.5rem;
+      background: linear-gradient(180deg, #ffffff 0%, #f7fcfb 100%);
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.03);
+    }
+
+    .filter-input-wrap {
+      position: relative;
+      min-width: 0;
+    }
+    
+    .filter-input-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--teal-500);
+      stroke-width: 2;
+    }
+
+    .filter-input {
+      width: 100%;
+      height: 44px;
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      border: 1px solid var(--slate-300);
+      border-radius: 12px;
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.2s;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfb 100%);
+    }
+
+    .filter-input:focus {
+      border-color: var(--teal-500);
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+      background: #f8fffe;
+    }
+
+    .premium-select-wrap {
+      min-width: 0;
+    }
+
+    .premium-select-label {
+      display: inline-block;
+      margin-bottom: 0.35rem;
+      padding-left: 0.2rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--teal-700);
+      font-weight: 700;
+    }
+
+    .premium-select {
+      position: relative;
+    }
+
+    .premium-select-trigger {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--slate-300);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfb 100%);
+      color: var(--slate-700);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-align: left;
+      padding: 0 2.35rem 0 0.75rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .premium-select-trigger:hover {
+      border-color: var(--teal-400);
+    }
+
+    .premium-select-leading {
+      color: var(--teal-500);
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .premium-select-value {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--slate-700);
+    }
+
+    .premium-select-chevron {
+      position: absolute;
+      right: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-500);
+      pointer-events: none;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .premium-select-panel {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      left: 0;
+      right: 0;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.16);
+      padding: 0.65rem;
+      z-index: 60;
+      display: none;
+    }
+
+    .premium-select.open .premium-select-panel {
+      display: block;
+      animation: premiumPanelIn 0.2s ease;
+    }
+
+    .premium-select.open .premium-select-trigger {
+      border-color: var(--teal-500);
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .premium-select.open .premium-select-leading,
+    .premium-select.open .premium-select-chevron {
+      color: var(--teal-600);
+    }
+
+    .premium-select.open .premium-select-chevron {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    .premium-select-search-wrap {
+      position: relative;
+      margin-bottom: 0.45rem;
+    }
+
+    .premium-select-search-wrap svg {
+      position: absolute;
+      left: 0.65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--teal-500);
+      pointer-events: none;
+    }
+
+    .premium-select-search {
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      font-size: 0.82rem;
+      outline: none;
+      padding: 0.45rem 0.7rem 0.45rem 2rem;
+      background: #fbfefe;
+      color: var(--slate-700);
+    }
+
+    .premium-select-search:focus {
+      border-color: var(--teal-400);
+      box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.12);
+      background: #f8fffe;
+    }
+
+    .premium-select-options {
+      max-height: 210px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding-right: 0.1rem;
+    }
+
+    .premium-select-option {
+      width: 100%;
+      border: none;
+      background: #ffffff;
+      border-radius: 9px;
+      padding: 0.55rem 0.7rem;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--slate-700);
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .premium-select-option-main {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .premium-select-option-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .premium-select-count {
+      margin-left: auto;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid var(--teal-200);
+      background: var(--teal-50);
+      color: var(--teal-700);
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .premium-select-option:hover,
+    .premium-select-option:focus {
+      background: var(--teal-50);
+      color: var(--teal-800);
+      outline: none;
+    }
+
+    .premium-select-option.active {
+      background: #ecfdf8;
+      color: var(--teal-800);
+      font-weight: 700;
+    }
+
+    .premium-select-check {
+      color: var(--teal-600);
+      opacity: 0;
+      transition: opacity 0.16s;
+      flex-shrink: 0;
+    }
+
+    .premium-select-option.active .premium-select-check {
+      opacity: 1;
+    }
+
+    .premium-select-empty {
+      padding: 0.6rem 0.7rem;
+      border-radius: 9px;
+      background: var(--slate-50);
+      color: var(--slate-500);
+      font-size: 0.82rem;
+    }
+
+    .filter-select-native {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      pointer-events: none;
+      width: 1px;
+      height: 1px;
+    }
+
+    @keyframes premiumPanelIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 1150px) {
+      .filter-bar {
+        grid-template-columns: minmax(240px, 1.4fr) minmax(200px, 1fr);
+      }
+
+      .premium-select-wrap:last-child {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .filter-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .premium-select-wrap:last-child {
+        grid-column: span 1;
+      }
+    }
+
+    /* Modal Styles */
+    .product-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .product-modal-backdrop.active {
+      display: flex;
+    }
+
+    .product-modal {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 700px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease-out;
+    }
+
+    .product-modal-header {
+      display: grid;
+      grid-template-columns: 1fr 40px;
+      gap: 1rem;
+      padding: 2rem;
+      border-bottom: 1px solid var(--slate-100);
+      align-items: flex-start;
+    }
+
+    .product-modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .product-modal-close {
+      background: var(--slate-100);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      color: var(--slate-600);
+    }
+
+    .product-modal-close:hover {
+      background: var(--slate-200);
+    }
+
+    .product-modal-image {
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--slate-100);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-modal-image svg {
+      width: 120px;
+      height: 120px;
+      color: var(--teal-400);
+      opacity: 0.5;
+    }
+
+    .product-modal-content {
+      padding: 2rem;
+    }
+
+    .product-spec {
+      margin-bottom: 1.5rem;
+    }
+
+    .product-spec-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.4rem;
+    }
+
+    .product-spec-value {
+      font-size: 1rem;
+      color: var(--slate-800);
+      line-height: 1.6;
+    }
+
+    .product-stock-info {
+      display: flex;
+      gap: 2rem;
+      padding: 1.25rem;
+      background: var(--slate-50);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .product-stock-item {
+      flex: 1;
+    }
+
+    .product-stock-label {
+      font-size: 0.8rem;
+      color: var(--slate-500);
+      margin-bottom: 0.25rem;
+    }
+
+    .product-stock-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .product-modal-footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--slate-100);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .product-modal-footer .btn {
+      flex: 1;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        UniGear
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard_estudiante.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Mi Resumen
+        </a>
+        <a href="catalog_estudiante.html" class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          Catálogo de Material
+        </a>
+        <a href="requests_estudiante.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Mis Solicitudes
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile_estudiante.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Mi Perfil
+        </a>
+        <a href="#" class="nav-item" data-action="logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Cerrar Sesión
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <span style="font-weight: 500; color: var(--slate-600);">Área de Estudiante / Catálogo</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-secondary notif-bell-btn" id="notif-bell" style="border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0;" onclick="window.location.href='notifications_estudiante.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 15V9.524A6 6 0 0 0 12 3.5a6 6 0 0 0-6 6.024V15L4 18h16l-2-3Z"/>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+            </svg>
+            <span class="notif-bell-badge" id="notif-bell-badge"></span>
+          </button>
+          <div class="user-profile">
+            <div class="avatar avatar-display">A</div>
+            <span class="user-name-display">Cargando...</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="catalog-hero">
+          <h1>Catálogo de Material Disponible</h1>
+          <p>Explora nuestro inventario y solicita el equipo que necesitas para tus prácticas académicas.</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar">
+          <div class="filter-input-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="search-input" class="filter-input" placeholder="Buscar material (ej: cámara, Arduino, trípode...)">
+          </div>
+          
+          <div class="premium-select-wrap">
+            <label class="premium-select-label" for="category-filter-trigger">Categoría</label>
+            <div class="premium-select" data-native-select="category-filter">
+              <button type="button" class="premium-select-trigger" id="category-filter-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="premium-select-leading">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </span>
+                <span class="premium-select-value">Todas las categorías</span>
+                <svg class="premium-select-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+
+              <div class="premium-select-panel">
+                <div class="premium-select-search-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" class="premium-select-search" placeholder="Buscar categoría...">
+                </div>
+                <div class="premium-select-options" role="listbox"></div>
+              </div>
+            </div>
+
+            <select id="category-filter" class="filter-select-native">
+              <option value="all">Todas las categorías</option>
+              <option value="computacion">Computación</option>
+              <option value="laboratorio">Laboratorio</option>
+              <option value="fotografia">Fotografía</option>
+              <option value="audiovisual">Audiovisual</option>
+              <option value="electronica">Electrónica</option>
+            </select>
+          </div>
+
+          <div class="premium-select-wrap">
+            <label class="premium-select-label" for="availability-filter-trigger">Disponibilidad</label>
+            <div class="premium-select" data-native-select="availability-filter">
+              <button type="button" class="premium-select-trigger" id="availability-filter-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="premium-select-leading">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="9 12 11 14 15 10"></polyline></svg>
+                </span>
+                <span class="premium-select-value">Cualquier disponibilidad</span>
+                <svg class="premium-select-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+
+              <div class="premium-select-panel">
+                <div class="premium-select-search-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" class="premium-select-search" placeholder="Buscar disponibilidad...">
+                </div>
+                <div class="premium-select-options" role="listbox"></div>
+              </div>
+            </div>
+
+            <select id="availability-filter" class="filter-select-native">
+              <option value="all">Cualquier disponibilidad</option>
+              <option value="available">Disponibles (3+)</option>
+              <option value="low-stock">Pocas unidades (1-2)</option>
+              <option value="out-of-stock">Solo agotados</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="empty-state" style="display: none; text-align: center; padding: 4rem 2rem; background: white; border-radius: var(--radius-lg); border: 1px solid var(--slate-300); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+          <div style="color: var(--slate-300); margin-bottom: 1.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto; display: block;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+          </div>
+          <h3 style="font-size: 1.25rem; color: var(--slate-700); margin: 0 0 0.5rem 0; font-weight: 600;">No se encontraron resultados</h3>
+          <p style="color: var(--slate-500); font-size: 0.9rem; margin: 0 0 1.5rem 0;">Prueba con otros términos de búsqueda o ajusta los filtros aplicados.</p>
+          <button class="btn btn-secondary" onclick="document.getElementById('search-input').value=''; document.getElementById('category-filter').value='all'; document.getElementById('availability-filter').value='all'; document.getElementById('category-filter').dispatchEvent(new Event('change')); document.getElementById('availability-filter').dispatchEvent(new Event('change')); document.getElementById('search-input').dispatchEvent(new Event('input'));">Limpiar filtros</button>
+        </div>
+
+        <!-- Grid -->
+        <div class="catalog-grid" id="catalog-grid">
+          <!-- JS fills this -->
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Product Modal -->
+  <div class="product-modal-backdrop" id="productModalBackdrop">
+    <div class="product-modal">
+      <div class="product-modal-header">
+        <h2 class="product-modal-title" id="modalProductName">Nombre del Producto</h2>
+        <button class="product-modal-close" id="modalCloseBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      
+      <div class="product-modal-image" id="modalProductImage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      </div>
+
+      <div class="product-modal-content">
+        <div class="product-stock-info">
+          <div class="product-stock-item">
+            <div class="product-stock-label">Stock Total</div>
+            <div class="product-stock-value" id="modalStockTotal">0</div>
+          </div>
+          <div class="product-stock-item">
+            <div class="product-stock-label">Disponibles</div>
+            <div class="product-stock-value" id="modalStockAvailable">0</div>
+          </div>
+        </div>
+
+        <div class="product-spec">
+          <div class="product-spec-label">Categoría</div>
+          <div class="product-spec-value" id="modalCategory">--</div>
+        </div>
+
+        <div class="product-spec">
+          <div class="product-spec-label">Descripción</div>
+          <div class="product-spec-value" id="modalDescription">--</div>
+        </div>
+
+        <div id="modalAvailabilityBox" style="padding: 1rem; background: var(--green-50); border: 1px solid var(--green-200); border-radius: var(--radius-md); margin-bottom: 1.5rem; display: none;">
+          <div style="color: var(--green-700); font-weight: 600;">✓ Disponible para solicitar</div>
+        </div>
+
+        <div id="modalOutOfStockBox" style="padding: 1rem; background: var(--red-50); border: 1px solid var(--red-200); border-radius: var(--radius-md); margin-bottom: 1.5rem; display: none;">
+          <div style="color: var(--red-700); font-weight: 600;">✗ Agotado en este momento</div>
+        </div>
+      </div>
+
+      <div class="product-modal-footer">
+        <button class="btn btn-secondary" id="modalCloseBtn2" style="background: var(--slate-100); color: var(--slate-700); border: none;">Cerrar</button>
+        <a id="modalRequestBtn" href="#" class="btn btn-primary" style="text-decoration: none; text-align: center;">Solicitar Ahora</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth } from '../../js/core/auth.js';
+    import { db } from '../../js/core/db.js';
+    import { ui } from '../../js/components/ui.js';
+
+    // 1. Auth Check - Allow student & profesor
+    const user = auth.requireAuth(['estudiante', 'profesor']);
+    if(!user) throw new Error("Not authenticated");
+
+    // 2. Setup Layout
+    ui.setupLayout(user);
+
+    // 3. Init logic
+    const searchInput = document.getElementById('search-input');
+    const categoryFilter = document.getElementById('category-filter');
+    const availabilityFilter = document.getElementById('availability-filter');
+    const catalogGrid = document.getElementById('catalog-grid');
+    const emptyState = document.getElementById('empty-state');
+
+    const fallbackInventory = [
+      { id: '1', name: 'Portátil Dell XPS 15', category: 'Portátil', desc: 'Intel Core i7, 16GB RAM, 512GB SSD. Para programación y análisis de datos.', stock: 5, total: 5 },
+      { id: '2', name: 'Cámara Canon EOS R5', category: 'Cámara', desc: 'Cámara mirrorless Full Frame 45MP. Ideal para documentación de proyectos.', stock: 2, total: 3 },
+      { id: '3', name: 'Kit Arduino Uno Rev3', category: 'Electrónica', desc: 'Placa base + sensores, cables de conexión y protoboard para prototipos.', stock: 15, total: 20 },
+      { id: '4', name: 'Microscopio Binocular', category: 'Laboratorio', desc: 'Aumentos 40x-1000x. Iluminación LED ajustable para prácticas de biología.', stock: 0, total: 4 },
+      { id: '5', name: 'Proyector Epson WXGA', category: 'Proyector', desc: '3300 lúmenes. Conexiones HDMI y VGA. Ideal para presentaciones académicas.', stock: 8, total: 8 },
+      { id: '6', name: 'MacBook Pro M2 16"', category: 'Portátil', desc: 'Chip M2 Apple, 16GB RAM, 512GB SSD. Para diseño y multimedia.', stock: 1, total: 2 },
+      { id: '7', name: 'Micrófono Rode NT1', category: 'Audiovisual', desc: 'Micrófono condensador de estudio con brazo articulado incluido.', stock: 4, total: 5 },
+      { id: '8', name: 'Multímetro Digital Fluke', category: 'Laboratorio', desc: 'Medidor profesional para circuitos eléctricos. Precisión ±0.5%.', stock: 6, total: 10 }
+    ];
+
+    function normalizeText(value) {
+      return (value || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    }
+
+    function resolveCategoryBucket(value) {
+      const normalized = normalizeText(value);
+      if (!normalized) return normalized;
+
+      if (normalized.includes('portatil') || normalized.includes('laptop') || normalized.includes('comput')) {
+        return 'computacion';
+      }
+
+      if (normalized.includes('camara') || normalized.includes('fotografia') || normalized.includes('foto')) {
+        return 'fotografia';
+      }
+
+      if (
+        normalized.includes('proyector') ||
+        normalized.includes('audiovisual') ||
+        normalized.includes('microfono') ||
+        normalized.includes('audio') ||
+        normalized.includes('video')
+      ) {
+        return 'audiovisual';
+      }
+
+      if (normalized.includes('laboratorio') || normalized.startsWith('lab')) {
+        return 'laboratorio';
+      }
+
+      if (normalized.includes('electro') || normalized.includes('circuit')) {
+        return 'electronica';
+      }
+
+      return normalized;
+    }
+
+    function getInventoryItems() {
+      const items = db.get('inventory') || [];
+      return items.length === 0 ? fallbackInventory : items;
+    }
+
+    function matchesCategoryFilter(itemCategory, categoryValue) {
+      if (categoryValue === 'all') return true;
+      const itemBucket = resolveCategoryBucket(itemCategory);
+      const selectedBucket = resolveCategoryBucket(categoryValue);
+      return itemBucket === selectedBucket;
+    }
+
+    function resolveAvailabilityBucket(stock) {
+      if (stock <= 0) return 'out-of-stock';
+      if (stock <= 2) return 'low-stock';
+      return 'available';
+    }
+
+    function matchesAvailabilityFilter(stock, availabilityValue) {
+      if (availabilityValue === 'all') return true;
+      return resolveAvailabilityBucket(stock) === availabilityValue;
+    }
+
+    function getStockBadgeMarkup(stock) {
+      const availabilityBucket = resolveAvailabilityBucket(stock);
+
+      if (availabilityBucket === 'out-of-stock') {
+        return `<span class="chip chip-red">Agotado</span>`;
+      }
+
+      if (availabilityBucket === 'low-stock') {
+        if (stock === 1) {
+          return `<span class="chip chip-yellow">¡Última unidad!</span>`;
+        }
+
+        return `<span class="chip chip-yellow">Pocas unidades (${stock})</span>`;
+      }
+
+      return `<span class="chip chip-green">Disponible (${stock})</span>`;
+    }
+
+    function getFilterOptionCount(selectId, optionValue) {
+      const items = getInventoryItems();
+      const normalizedSearch = normalizeText(searchInput.value);
+
+      return items.filter((item) => {
+        const normalizedName = normalizeText(item.name);
+        const normalizedDesc = normalizeText(item.desc);
+
+        if (normalizedSearch && !normalizedName.includes(normalizedSearch) && !normalizedDesc.includes(normalizedSearch)) {
+          return false;
+        }
+
+        const categoryToApply = selectId === 'category-filter' ? optionValue : categoryFilter.value;
+        if (!matchesCategoryFilter(item.category, categoryToApply)) {
+          return false;
+        }
+
+        const availabilityToApply = selectId === 'availability-filter' ? optionValue : availabilityFilter.value;
+        if (!matchesAvailabilityFilter(item.stock, availabilityToApply)) {
+          return false;
+        }
+
+        return true;
+      }).length;
+    }
+
+    // Parse URL params for initial filters (coming from dashboard)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get('q');
+    const initialCategory = urlParams.get('category');
+
+    if (initialQuery) searchInput.value = initialQuery;
+    if (initialCategory) {
+      // Ensure category exists in dropdown, else default to 'all'
+      const normalizedInitialCategory = resolveCategoryBucket(initialCategory);
+      const options = Array.from(categoryFilter.options).map(o => o.value);
+      if (options.includes(normalizedInitialCategory)) {
+        categoryFilter.value = normalizedInitialCategory;
+      }
+    }
+
+    const premiumSelectRoots = Array.from(document.querySelectorAll('.premium-select'));
+
+    function closeAllPremiumSelects(exceptRoot = null) {
+      premiumSelectRoots.forEach((root) => {
+        if (root !== exceptRoot && typeof root.__closePremiumSelect === 'function') {
+          root.__closePremiumSelect();
+        }
+      });
+    }
+
+    function setupPremiumSelect(root) {
+      const nativeSelectId = root.dataset.nativeSelect;
+      const nativeSelect = document.getElementById(nativeSelectId);
+      if (!nativeSelect) return;
+
+      const trigger = root.querySelector('.premium-select-trigger');
+      const valueNode = root.querySelector('.premium-select-value');
+      const searchNode = root.querySelector('.premium-select-search');
+      const optionsNode = root.querySelector('.premium-select-options');
+
+      const listboxId = `${nativeSelect.id}-listbox`;
+      optionsNode.id = listboxId;
+      trigger.setAttribute('aria-controls', listboxId);
+
+      function renderOptions(query = '') {
+        const normalized = normalizeText(query);
+        const availableOptions = Array.from(nativeSelect.options).filter((option) => {
+          return normalizeText(option.textContent).includes(normalized);
+        });
+
+        optionsNode.innerHTML = '';
+
+        if (availableOptions.length === 0) {
+          const emptyNode = document.createElement('div');
+          emptyNode.className = 'premium-select-empty';
+          emptyNode.textContent = 'Sin coincidencias';
+          optionsNode.appendChild(emptyNode);
+          return;
+        }
+
+        availableOptions.forEach((option) => {
+          const optionButton = document.createElement('button');
+          optionButton.type = 'button';
+          optionButton.className = 'premium-select-option';
+          optionButton.setAttribute('role', 'option');
+
+          const isActive = option.value === nativeSelect.value;
+          if (isActive) {
+            optionButton.classList.add('active');
+          }
+          optionButton.setAttribute('aria-selected', isActive ? 'true' : 'false');
+
+          const optionCount = getFilterOptionCount(nativeSelect.id, option.value);
+
+          optionButton.innerHTML = `
+            <span class="premium-select-option-main">
+              <span class="premium-select-option-text">${option.textContent}</span>
+              <span class="premium-select-count">${optionCount}</span>
+            </span>
+            <svg class="premium-select-check" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          `;
+
+          optionButton.addEventListener('click', () => {
+            const changed = nativeSelect.value !== option.value;
+            nativeSelect.value = option.value;
+            if (changed) {
+              nativeSelect.dispatchEvent(new Event('change'));
+            }
+            syncTrigger();
+            closePanel();
+            trigger.focus();
+          });
+
+          optionsNode.appendChild(optionButton);
+        });
+      }
+
+      function syncTrigger() {
+        const selected = nativeSelect.options[nativeSelect.selectedIndex];
+        valueNode.textContent = selected ? selected.textContent : 'Seleccionar';
+        renderOptions(searchNode.value);
+      }
+
+      function closePanel() {
+        root.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        searchNode.value = '';
+        renderOptions('');
+      }
+
+      function openPanel() {
+        closeAllPremiumSelects(root);
+        root.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        renderOptions(searchNode.value);
+        searchNode.focus();
+      }
+
+      trigger.addEventListener('click', () => {
+        if (root.classList.contains('open')) {
+          closePanel();
+        } else {
+          openPanel();
+        }
+      });
+
+      trigger.addEventListener('keydown', (event) => {
+        if (event.key === ' ' || event.key === 'Enter' || event.key === 'ArrowDown') {
+          event.preventDefault();
+          openPanel();
+        }
+      });
+
+      searchNode.addEventListener('input', () => {
+        renderOptions(searchNode.value);
+      });
+
+      searchNode.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closePanel();
+          trigger.focus();
+        }
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          const firstOption = optionsNode.querySelector('.premium-select-option');
+          if (firstOption) firstOption.focus();
+        }
+      });
+
+      optionsNode.addEventListener('keydown', (event) => {
+        const currentOption = event.target.closest('.premium-select-option');
+        if (!currentOption) return;
+
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          const nextOption = currentOption.nextElementSibling;
+          if (nextOption && nextOption.classList.contains('premium-select-option')) {
+            nextOption.focus();
+          }
+        }
+
+        if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          const prevOption = currentOption.previousElementSibling;
+          if (prevOption && prevOption.classList.contains('premium-select-option')) {
+            prevOption.focus();
+          } else {
+            searchNode.focus();
+          }
+        }
+
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closePanel();
+          trigger.focus();
+        }
+      });
+
+      nativeSelect.addEventListener('change', syncTrigger);
+
+      root.__closePremiumSelect = closePanel;
+      root.__syncPremiumSelect = syncTrigger;
+      syncTrigger();
+    }
+
+    premiumSelectRoots.forEach(setupPremiumSelect);
+
+    function refreshPremiumSelectState() {
+      premiumSelectRoots.forEach((root) => {
+        if (typeof root.__syncPremiumSelect === 'function') {
+          root.__syncPremiumSelect();
+        }
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.premium-select')) {
+        closeAllPremiumSelects();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeAllPremiumSelects();
+      }
+    });
+
+    // Helper: Map category to an icon
+    function getCategoryIcon(category, size = 20) {
+      const icons = {
+        'computacion': '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>',
+        'fotografia': '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle>',
+        'portatil': '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>',
+        'camara': '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle>',
+        'proyector': '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><circle cx="12" cy="12" r="3"></circle><line x1="20" y1="12" x2="22" y2="12"></line>',
+        'laboratorio': '<path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"></path>',
+        'audiovisual': '<polygon points="5 3 19 12 5 21 5 3"></polygon>',
+        'electronica': '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line>'
+      };
+      
+      const normalizedCategory = normalizeText(category);
+      const match = Object.keys(icons).find(k => normalizedCategory.includes(k));
+      const iconPath = match ? icons[match] : '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>';
+      
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>`;
+    }
+
+    // 4. Render Logic
+    function renderCatalog() {
+      // 1. Get raw inventory
+      const items = getInventoryItems();
+
+      // 2. Filter
+      const q = normalizeText(searchInput.value);
+      const c = categoryFilter.value;
+      const a = availabilityFilter.value;
+
+      const filtered = items.filter(item => {
+        const normalizedName = normalizeText(item.name);
+        const normalizedDesc = normalizeText(item.desc);
+
+        // Search
+        if (q && !normalizedName.includes(q) && !normalizedDesc.includes(q)) return false;
+
+        // Category
+        if (!matchesCategoryFilter(item.category, c)) {
+          return false;
+        }
+
+        // Availability
+        if (!matchesAvailabilityFilter(item.stock, a)) return false;
+        
+        return true;
+      });
+
+      // 3. Render
+      catalogGrid.innerHTML = '';
+      
+      if (filtered.length === 0) {
+        catalogGrid.style.display = 'none';
+        emptyState.style.display = 'block';
+        refreshPremiumSelectState();
+        return;
+      }
+      
+      catalogGrid.style.display = 'grid';
+      emptyState.style.display = 'none';
+
+      filtered.forEach(item => {
+        const outOfStock = item.stock <= 0;
+        const stockBadge = getStockBadgeMarkup(item.stock);
+
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <div class="item-image">
+            ${getCategoryIcon(item.category)}
+          </div>
+          <div class="item-body">
+            <div class="item-category">${item.category}</div>
+            <h3 class="item-title">${item.name}</h3>
+            <p class="item-desc">${item.desc || 'Sin descripción disponible.'}</p>
+            <div class="item-stock-badge">${stockBadge}</div>
+            <div class="item-footer">
+              <button class="btn btn-secondary" style="border: 1px solid var(--slate-300); flex: 1;" onclick="openProductModal(event, '${item.id}', '${item.name}', '${item.category}', '${item.desc}', ${item.stock}, ${item.total})">Ver Detalles</button>
+              <a href="requests_estudiante.html?new=true&item=${item.id}" class="btn btn-primary" style="text-decoration: none; text-align: center; flex: 0.8; ${outOfStock ? 'opacity: 0.5; pointer-events: none;' : ''}">
+                ${outOfStock ? 'No disponible' : 'Solicitar'}
+              </a>
+            </div>
+          </div>
+        `;
+        
+        // Add click handler to card
+        card.addEventListener('click', (e) => {
+          if (!e.target.closest('a') && !e.target.closest('button')) {
+            openProductModal(e, item.id, item.name, item.category, item.desc, item.stock, item.total);
+          }
+        });
+        
+        catalogGrid.appendChild(card);
+      });
+
+      refreshPremiumSelectState();
+    }
+
+    // 5. Setup Listeners
+    searchInput.addEventListener('input', renderCatalog);
+    categoryFilter.addEventListener('change', renderCatalog);
+    availabilityFilter.addEventListener('change', renderCatalog);
+
+    // Initial render
+    renderCatalog();
+
+    // Notification badge logic
+    const mockNotifications = [
+      { id: 1, read: false },
+      { id: 2, read: false },
+      { id: 3, read: true }
+    ];
+    const notifBellBadge = document.getElementById('notif-bell-badge');
+    const unseenCount = mockNotifications.filter(n => !n.read).length;
+    if (unseenCount > 0) {
+      notifBellBadge.classList.add('show');
+    }
+
+    // Modal Logic
+    const modalBackdrop = document.getElementById('productModalBackdrop');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalCloseBtn2 = document.getElementById('modalCloseBtn2');
+
+    window.openProductModal = function(e, itemId, name, category, desc, stock, total) {
+      document.getElementById('modalProductName').textContent = name;
+      document.getElementById('modalCategory').textContent = category;
+      document.getElementById('modalDescription').textContent = desc || 'Sin descripción disponible.';
+      document.getElementById('modalStockTotal').textContent = total;
+      document.getElementById('modalStockAvailable').textContent = stock;
+      document.getElementById('modalProductImage').innerHTML = getCategoryIcon(category, 120);
+      
+      const availBox = document.getElementById('modalAvailabilityBox');
+      const outStockBox = document.getElementById('modalOutOfStockBox');
+      const availabilityBucket = resolveAvailabilityBucket(stock);
+      
+      if (availabilityBucket === 'available') {
+        availBox.style.display = 'block';
+        availBox.style.background = 'var(--green-50)';
+        availBox.style.borderColor = 'var(--green-200)';
+        availBox.innerHTML = '<div style="color: var(--green-700); font-weight: 600;">✓ Disponible para solicitar</div>';
+        outStockBox.style.display = 'none';
+      } else if (availabilityBucket === 'low-stock') {
+        availBox.style.display = 'block';
+        availBox.style.background = '#fffbeb';
+        availBox.style.borderColor = '#fcd34d';
+        availBox.innerHTML = `<div style="color: #b45309; font-weight: 600;">! Stock limitado: ${stock === 1 ? 'queda 1 unidad disponible' : `quedan ${stock} unidades disponibles`}</div>`;
+        outStockBox.style.display = 'none';
+      } else {
+        availBox.style.display = 'none';
+        outStockBox.style.display = 'block';
+      }
+      
+      const requestBtn = document.getElementById('modalRequestBtn');
+      if (stock > 0) {
+        requestBtn.href = `requests_estudiante.html?new=true&item=${itemId}`;
+        requestBtn.style.opacity = '1';
+        requestBtn.style.pointerEvents = 'auto';
+      } else {
+        requestBtn.href = '#';
+        requestBtn.style.opacity = '0.5';
+        requestBtn.style.pointerEvents = 'none';
+      }
+      
+      modalBackdrop.classList.add('active');
+    };
+
+    function closeModal() {
+      modalBackdrop.classList.remove('active');
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalCloseBtn2.addEventListener('click', closeModal);
+    
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+
+  </script>
+</body>
+</html>
