@@ -23,6 +23,30 @@ const getMateriales = async (req, res) => {
   }
 };
 
+const getCatalogo = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        MIN(m.id) AS id,
+        m.nombre,
+        MIN(m.descripcion) AS descripcion,
+        c.nombre AS categoria_nombre,
+        COUNT(*) FILTER (WHERE m.estado = 'disponible') AS stock,
+        COUNT(*) AS total
+      FROM materiales m
+      JOIN categorias c ON m.categoria_id = c.id
+      WHERE m.activo = TRUE
+      GROUP BY m.nombre, c.nombre
+      ORDER BY m.nombre ASC
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener catálogo:', error);
+    res.status(500).json({ message: 'Error al obtener catálogo' });
+  }
+};
+
 const createMaterial = async (req, res) => {
   try {
     const { codigo_inventario, nombre, descripcion, categoria_id } = req.body;
@@ -129,6 +153,7 @@ const deleteMaterial = async (req, res) => {
 
 module.exports = {
   getMateriales,
+  getCatalogo,
   createMaterial,
   updateMaterial,
   deleteMaterial,

@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   getMateriales,
+  getCatalogo,
   createMaterial,
   updateMaterial,
   deleteMaterial,
@@ -9,6 +10,7 @@ const {
 const router = express.Router();
 
 router.get('/', getMateriales);
+router.get('/catalogo', getCatalogo);
 router.post('/', createMaterial);
 router.put('/:id', updateMaterial);
 router.delete('/:id', deleteMaterial);
