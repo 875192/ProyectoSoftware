@@ -89,7 +89,30 @@ const usuariosDao = {
     } finally {
       client.release();
     }
-  }
+  },
+
+  saveResetToken: async (userId, token, expiry) => {
+    await pool.query(`
+      UPDATE usuarios SET reset_token = $1, reset_token_expiry = $2
+      WHERE id = $3
+    `, [token, expiry, userId]);
+  },
+
+  findByResetToken: async (token) => {
+    const result = await pool.query(`
+      SELECT id, email_institucional
+      FROM usuarios
+      WHERE reset_token = $1 AND reset_token_expiry > NOW()
+    `, [token]);
+    return result.rows[0] || null;
+  },
+
+  clearResetToken: async (userId) => {
+    await pool.query(`
+      UPDATE usuarios SET reset_token = NULL, reset_token_expiry = NULL
+      WHERE id = $1
+    `, [userId]);
+  },
 };
 
 module.exports = usuariosDao;

@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const usuariosDao = require('../dao/usuariosDao');
+const { sendPasswordResetEmail } = require('../config/mailer');
 
 function verifyPassword(password, hash, salt) {
   const computed = crypto.scryptSync(password, salt, 64).toString('hex');
@@ -98,4 +99,59 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { login, register };
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: 'El correo es obligatorio' });
+    }
+
+    const user = await usuariosDao.findByEmail(email);
+
+    // Siempre respondemos igual para evitar enumeración de correos
+    if (!user) {
+      return res.json({ message: 'Si el correo existe, recibirás un enlace de recuperación' });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+    await usuariosDao.saveResetToken(user.id, token, expiry);
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
+    const resetUrl = `${frontendUrl}/api/src/pages/public/reset_password.html?token=${token}`;
+    await sendPasswordResetEmail(user.email_institucional, resetUrl);
+
+    res.json({ message: 'Si el correo existe, recibirás un enlace de recuperación' });
+  } catch (error) {
+    console.error('Error en forgot-password:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      return res.status(400).json({ message: 'Token y contraseña son obligatorios' });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
+    }
+
+    const user = await usuariosDao.findByResetToken(token);
+    if (!user) {
+      return res.status(400).json({ message: 'El enlace es inválido o ha expirado' });
+    }
+
+    const { hash, salt } = hashPassword(password);
+    await usuariosDao.updatePassword(user.id, hash, salt);
+    await usuariosDao.clearResetToken(user.id);
+
+    res.json({ message: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    console.error('Error en reset-password:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+module.exports = { login, register, forgotPassword, resetPassword };
