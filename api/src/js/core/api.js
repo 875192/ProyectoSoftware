@@ -117,7 +117,7 @@ export const api = {
     return data.map(mapSolicitud);
   },
 
-  createSolicitud: async ({ userId, materialName, startDate, endDate, purpose }) => {
+  createSolicitud: async ({ userId, materialName, startDate, endDate, purpose, stripePaymentIntentId }) => {
     const data = await request('/solicitudes', {
       method: 'POST',
       body: JSON.stringify({
@@ -126,6 +126,7 @@ export const api = {
         fecha_inicio: startDate,
         fecha_fin: endDate,
         motivo: purpose,
+        stripe_payment_intent_id: stripePaymentIntentId || null,
       }),
     });
     return mapSolicitud(data);
@@ -171,6 +172,18 @@ export const api = {
     return request(`/usuarios/${id}/password`, {
       method: 'PUT',
       body: JSON.stringify({ password_actual: currentPassword, password_nueva: newPassword }),
+    });
+  },
+
+  // Pagos (Stripe)
+  getStripeConfig: async () => {
+    return request('/pagos/config');
+  },
+
+  createPaymentIntent: async (amount) => {
+    return request('/pagos/create-payment-intent', {
+      method: 'POST',
+      body: JSON.stringify({ amount }),
     });
   },
 };

@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const solicitudesRoutes = require('./routes/solicitudesRoutes');
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const notificacionesRoutes = require('./routes/notificacionesRoutes');
+const pagosRoutes = require('./routes/pagosRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.use('/materiales', materialesRoutes);
 app.use('/solicitudes', solicitudesRoutes);
 app.use('/usuarios', usuariosRoutes);
 app.use('/notificaciones', notificacionesRoutes);
+app.use('/pagos', pagosRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

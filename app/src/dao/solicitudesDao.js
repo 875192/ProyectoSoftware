@@ -44,7 +44,7 @@ const solicitudesDao = {
     return result.rows[0] || null;
   },
 
-  create: async ({ usuario_id, material_nombre, fecha_inicio, fecha_fin, motivo }) => {
+  create: async ({ usuario_id, material_nombre, fecha_inicio, fecha_fin, motivo, stripe_payment_intent_id }) => {
     const available = await pool.query(`
       SELECT id FROM materiales
       WHERE nombre = $1 AND estado = 'disponible' AND activo = TRUE
@@ -58,10 +58,10 @@ const solicitudesDao = {
     const actualMaterialId = available.rows[0].id;
 
     const result = await pool.query(`
-      INSERT INTO solicitudes (usuario_id, material_id, fecha_inicio, fecha_fin, motivo)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO solicitudes (usuario_id, material_id, fecha_inicio, fecha_fin, motivo, stripe_payment_intent_id)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
-    `, [usuario_id, actualMaterialId, fecha_inicio, fecha_fin, motivo || null]);
+    `, [usuario_id, actualMaterialId, fecha_inicio, fecha_fin, motivo || null, stripe_payment_intent_id || null]);
 
     // Return with material name
     const full = await pool.query(`
@@ -73,6 +73,7 @@ const solicitudesDao = {
         TO_CHAR(s.fecha_fin, 'YYYY-MM-DD') AS fecha_fin,
         s.motivo,
         s.estado::text,
+        s.stripe_payment_intent_id,
         m.nombre AS material_nombre
       FROM solicitudes s
       JOIN materiales m ON s.material_id = m.id

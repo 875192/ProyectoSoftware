@@ -34,7 +34,7 @@ const getSolicitudById = async (req, res) => {
 
 const createSolicitud = async (req, res) => {
   try {
-    const { usuario_id, material_nombre, fecha_inicio, fecha_fin, motivo } = req.body;
+    const { usuario_id, material_nombre, fecha_inicio, fecha_fin, motivo, stripe_payment_intent_id } = req.body;
 
     if (!usuario_id || !material_nombre || !fecha_inicio || !fecha_fin) {
       return res.status(400).json({
@@ -47,7 +47,7 @@ const createSolicitud = async (req, res) => {
     }
 
     const solicitud = await solicitudesDao.create({
-      usuario_id, material_nombre, fecha_inicio, fecha_fin, motivo
+      usuario_id, material_nombre, fecha_inicio, fecha_fin, motivo, stripe_payment_intent_id
     });
 
     res.status(201).json(solicitud);
