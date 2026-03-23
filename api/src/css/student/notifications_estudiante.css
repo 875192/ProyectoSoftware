@@ -1,0 +1,22 @@
+/* Badge de notificaciones */
+    .notif-bell-btn {
+      position: relative;
+    }
+    .notif-bell-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background-color: #dc2626;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: none;
+    }
+    .notif-bell-badge.show {
+      display: block;
+    }
+
+#quick-search-input::placeholder { color: rgba(255, 255, 255, 0.7); opacity: 1; }
+                #quick-search-input:-ms-input-placeholder { color: rgba(255, 255, 255, 0.7); }
+                #quick-search-input::-ms-input-placeholder { color: rgba(255, 255, 255, 0.7); }

@@ -1,0 +1,36 @@
+:root {
+      --teal-50: #eff6ff;
+      --teal-100: #dbeafe;
+      --teal-200: #bfdbfe;
+      --teal-300: #93c5fd;
+      --teal-400: #60a5fa;
+      --teal-500: #3b82f6;
+      --teal-600: #2563eb;
+      --teal-700: #1d4ed8;
+      --primary-color: #2563eb;
+      --primary-50: #eff6ff;
+    }
+
+    .notif-bell-btn {
+      position: relative;
+    }
+
+    .notif-bell-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background-color: #dc2626;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: none;
+    }
+
+    .notif-bell-badge.show {
+      display: block;
+    }
+
+#quick-search-input::placeholder { color: rgba(255, 255, 255, 0.7); opacity: 1; }
+                #quick-search-input:-ms-input-placeholder { color: rgba(255, 255, 255, 0.7); }
+                #quick-search-input::-ms-input-placeholder { color: rgba(255, 255, 255, 0.7); }

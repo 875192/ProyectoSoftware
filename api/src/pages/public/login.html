@@ -1,293 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión - UniGear</title>
+  <title>Iniciar SesiÃ³n - UniGear</title>
   <link rel="stylesheet" href="../../css/globals.css">
   <link rel="stylesheet" href="../../css/components.css">
   <!-- Google Identity Services SDK -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Apple Sign In JS SDK -->
   <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
-  <style>
-    /* ========================================
-       DISEÑO DE LOGIN BASADO EN EL CSS ORIGINAL
-       ======================================== */
-    body {
-      background: linear-gradient(135deg, #0f172a 0%, #115e59 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      font-family: var(--font-family);
-    }
-    
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .login-wrapper {
-      width: 100%;
-      padding: 1rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 800px;
-      background-color: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-      /* padding removed since it will be on inner columns */
-      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      border: none;
-      display: flex;
-      overflow: hidden;
-    }
-
-    .login-left {
-      flex: 1;
-      padding: 1.5rem;
-      border-right: 1px solid var(--slate-100);
-    }
-
-    .login-right {
-      flex: 1;
-      padding: 1.5rem;
-      background-color: var(--slate-50);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .login-header {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .login-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      margin-bottom: 0.25rem;
-      background: linear-gradient(135deg, var(--teal-700) 0%, #0d9488 100%);
-      border-radius: 10px;
-      color: #fff;
-      box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.3);
-    }
-
-    .login-icon svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .login-header h1 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--slate-900);
-      margin-bottom: 0.15rem;
-      letter-spacing: -0.025em;
-    }
-
-    .login-header p {
-      color: var(--slate-500);
-      font-size: 0.8rem;
-    }
-
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .form-group label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--slate-800);
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 0.45rem 0.75rem;
-      font-size: 0.9rem;
-      color: var(--slate-800);
-      background-color: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 8px;
-      transition: all 0.2s;
-    }
-
-    .form-input:hover {
-      border-color: var(--slate-300);
-      background-color: #ffffff;
-    }
-
-    .form-input:focus {
-      outline: none;
-      background-color: #ffffff;
-      border-color: var(--teal-700);
-      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
-    }
-
-    .form-input[aria-invalid="true"] {
-      border-color: var(--red-500);
-      background-color: #fef2f2;
-      animation: shake 0.5s;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-5px); }
-      40%, 80% { transform: translateX(5px); }
-    }
-
-    .form-options {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      margin-top: 0.25rem;
-    }
-
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .checkbox-group label {
-      font-weight: 400;
-      cursor: pointer;
-    }
-
-    .btn-login {
-      margin-top: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      background-color: var(--teal-700);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      width: 100%;
-    }
-
-    .btn-login:hover {
-      background-color: #0d9488;
-    }
-
-    .social-auth-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--slate-800);
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .btn-social {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 0.5rem;
-      border: 1px solid var(--slate-200);
-      background-color: #ffffff;
-      color: var(--slate-700);
-    }
-
-    .btn-social:hover {
-      background-color: var(--slate-100);
-      border-color: var(--slate-300);
-    }
-
-    .btn-social svg {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-    }
-
-    .error-text {
-      display: none;
-      color: var(--red-500);
-      font-size: 0.7rem;
-      margin-top: 0.15rem;
-    }
-
-    .form-input[aria-invalid="true"] ~ .error-text {
-      display: block;
-    }
-
-    .mock-creds {
-      margin-top: 1rem;
-      font-size: 0.7rem;
-      color: var(--slate-500);
-      background: var(--slate-50);
-      padding: 0.75rem;
-      border-radius: 8px;
-      border: 1px solid var(--slate-200);
-    }
-
-    .social-separator {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 1rem 0;
-      width: 100%;
-    }
-    .social-separator::before,
-    .social-separator::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--slate-200);
-    }
-    .social-separator span {
-      font-size: 0.75rem;
-      color: var(--slate-400);
-      white-space: nowrap;
-    }
-
-    .social-note {
-      margin-top: 1.5rem;
-      font-size: 0.7rem;
-      color: var(--slate-400);
-      text-align: center;
-      line-height: 1.4;
-    }
-
-    @media (max-width: 768px) {
-      .login-card {
-        flex-direction: column;
-        max-width: 420px;
-      }
-      .login-left {
-        border-right: none;
-        border-bottom: 1px solid var(--slate-100);
-      }
-    }
-  </style>
+    <link rel="stylesheet" href="../../css/public/login.css">
 </head>
 <body>
 
@@ -301,7 +24,7 @@
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
           </div>
-          <h1>Iniciar sesión</h1>
+          <h1>Iniciar sesiÃ³n</h1>
           <p>Introduce tus credenciales universitarias</p>
         </div>
 
@@ -313,8 +36,8 @@
           </div>
           
           <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input type="password" id="password" class="form-input" placeholder="••••••••" required aria-invalid="false">
+            <label for="password">ContraseÃ±a</label>
+            <input type="password" id="password" class="form-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required aria-invalid="false">
           </div>
 
           <div class="form-options">
@@ -322,13 +45,13 @@
               <input type="checkbox" id="recordarme">
               <label for="recordarme">Recordarme</label>
             </div>
-            <a href="forgot_password.html" style="color: var(--teal-700); text-decoration: none; font-weight: 500;">¿Olvidaste tu clave?</a>
+            <a href="forgot_password.html" style="color: var(--teal-700); text-decoration: none; font-weight: 500;">Â¿Olvidaste tu clave?</a>
           </div>
 
           <button type="submit" class="btn-login">Acceder al sistema</button>
           
           <div style="text-align: center; margin-top: 1rem; font-size: 0.8rem;">
-            <span style="color: var(--slate-500);">¿No tienes cuenta?</span>
+            <span style="color: var(--slate-500);">Â¿No tienes cuenta?</span>
             <a href="register.html" style="color: var(--teal-700); font-weight: 600; text-decoration: none; margin-left: 0.25rem;">Crear cuenta</a>
           </div>
         </form>
@@ -337,12 +60,12 @@
           <strong>Credenciales de prueba (pass: 123)</strong><br/><br/>
           Estudiante: ana.garcia@univ.edu<br/>
           Profesor: carlos.pere@univ.edu<br/>
-          Gestión: laura.gomez@univ.edu<br/>
-          Técnico: roberto.diaz@univ.edu
+          GestiÃ³n: laura.gomez@univ.edu<br/>
+          TÃ©cnico: roberto.diaz@univ.edu
         </div>
       </div>
       <div class="login-right">
-        <h2 class="social-auth-title">Otros métodos de acceso</h2>
+        <h2 class="social-auth-title">Otros mÃ©todos de acceso</h2>
         <button type="button" class="btn-social" id="btnGoogle">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -359,125 +82,11 @@
           </svg>
           Continuar con Apple
         </button>
-        <p class="social-note">Necesitas configurar tus Client IDs de Google y Apple en el código para activar estos botones.</p>
+        <p class="social-note">Necesitas configurar tus Client IDs de Google y Apple en el cÃ³digo para activar estos botones.</p>
       </div>
     </div>
   </div>
 
-  <script type="module">
-    import { auth } from '../../js/core/auth.js';
-
-    /* =============================================
-       CONFIGURACIÓN — Pon aquí tus Client IDs reales
-       ============================================= */
-    const GOOGLE_CLIENT_ID = 'TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-    const APPLE_CLIENT_ID  = 'com.tudominio.servicio'; // Apple Service ID
-    const APPLE_REDIRECT   = window.location.href;
-
-    /* ---------- Redirect helper ---------- */
-    function redirectByRole(user) {
-      const routes = {
-        estudiante: '../student/dashboard_estudiante.html',
-        profesor:   '../profesor/dashboard_profesor.html',
-        personal_gestion: '../staff/dashboard_personal.html',
-        mantenimiento: '../maintenance/dashboard.html'
-      };
-      window.location.href = routes[user.role] || '../public/login.html';
-    }
-
-    /* ---------- Email / password login ---------- */
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const emailInput = document.getElementById('email');
-      const passInput  = document.getElementById('password');
-
-      try {
-        const user = await auth.login(emailInput.value, passInput.value);
-        redirectByRole(user);
-      } catch (err) {
-        emailInput.setAttribute('aria-invalid', 'true');
-        passInput.setAttribute('aria-invalid', 'true');
-        emailInput.addEventListener('input', () => {
-          emailInput.setAttribute('aria-invalid', 'false');
-          passInput.setAttribute('aria-invalid', 'false');
-        }, { once: true });
-      }
-    });
-
-    /* ---------- Google Sign-In (real OAuth popup) ---------- */
-    let googleTokenClient = null;
-
-    function initGoogle() {
-      if (typeof google === 'undefined' || !google.accounts) return;
-      googleTokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID,
-        scope: 'email profile',
-        callback: async (tokenResponse) => {
-          if (tokenResponse.error) return;
-          const res  = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
-          });
-          const info = await res.json();
-          const user = auth.loginSocial(info.email);
-          if (user) {
-            redirectByRole(user);
-          } else {
-            alert('No existe una cuenta registrada con el correo ' + info.email + '. Por favor, crea una cuenta primero.');
-          }
-        }
-      });
-    }
-
-    document.getElementById('btnGoogle').addEventListener('click', () => {
-      if (!googleTokenClient) initGoogle();
-      if (googleTokenClient) {
-        googleTokenClient.requestAccessToken();
-      } else {
-        alert('El SDK de Google aún no ha cargado. Verifica tu Client ID y conexión a Internet.');
-      }
-    });
-
-    /* ---------- Apple Sign-In (real OAuth popup) ---------- */
-    function initApple() {
-      if (typeof AppleID === 'undefined') return false;
-      AppleID.auth.init({
-        clientId:    APPLE_CLIENT_ID,
-        scope:       'name email',
-        redirectURI: APPLE_REDIRECT,
-        usePopup:    true
-      });
-      return true;
-    }
-
-    document.getElementById('btnApple').addEventListener('click', async () => {
-      if (!initApple()) {
-        alert('El SDK de Apple aún no ha cargado. Verifica tu Service ID y conexión a Internet.');
-        return;
-      }
-      try {
-        const data  = await AppleID.auth.signIn();
-        const token = data.authorization.id_token;
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const email = payload.email;
-        if (!email) {
-          alert('No se pudo obtener el correo de Apple. Inténtalo de nuevo.');
-          return;
-        }
-        const user = auth.loginSocial(email);
-        if (user) {
-          redirectByRole(user);
-        } else {
-          alert('No existe una cuenta registrada con el correo ' + email + '. Por favor, crea una cuenta primero.');
-        }
-      } catch (err) {
-        if (err.error !== 'popup_closed_by_user') {
-          console.error('Apple Sign-In error:', err);
-        }
-      }
-    });
-
-    /* Intentar inicializar Google cuando el SDK termine de cargar */
-    window.addEventListener('load', () => setTimeout(initGoogle, 500));
-  </script>
+    <script type="module" src="../../js/views/public/login.js"></script>
 </body>
 </html>
