@@ -76,35 +76,45 @@
         </div>
       </header>
       <main class="main-content">
-            
-        <h2 id="welcome-msg" style="margin-bottom:20px; font-weight:400;">Bienvenido, <span id="staff-name" style="font-weight:bold;">Usuario</span></h2>
-        <div class="dashboard-grid">
-            <div class="card" style="padding: 1.5rem;"><h3>Solicitudes Pendientes</h3><div class="value" id="kpi-pendientes">0</div></div>
-            <div class="card" style="padding: 1.5rem;"><h3>Aprobadas (Entregas pendientes)</h3><div class="value" id="kpi-entregas">0</div></div>
-            <div class="card" style="padding: 1.5rem;"><h3>Préstamos Activos</h3><div class="value" id="kpi-activos">0</div></div>
-            <div class="card" style="padding: 1.5rem;"><h3>Incidencias Generadas</h3><div class="value" id="kpi-incidencias">0</div></div>
+        <div style="margin-bottom: 1rem; background: linear-gradient(135deg, #991b1b, #7f1d1d); color: #ffffff; border: none; border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14); padding: 1.25rem 1.4rem; display: grid; grid-template-columns: minmax(0, 1.35fr) auto; gap: 0.9rem 1rem; align-items: center;">
+          <div style="min-width: 0;">
+          <p style="margin: 0 0 0.35rem; color: rgba(255, 255, 255, 0.72); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;">Centro de operaciones</p>
+          <h2 id="welcome-msg" style="margin: 0; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.01em; color: #ffffff; font-weight: 700;">Bienvenido, <span id="staff-name" style="font-weight: 800; color: #ffffff;">Usuario</span></h2>
+          <p style="margin: 0.35rem 0 0; color: rgba(255, 255, 255, 0.88); font-size: 0.9rem; line-height: 1.45; max-width: 55ch;">Supervisa solicitudes, coordina entregas y detecta incidencias desde una sola vista.</p>
+          </div>
+          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end;">
+          <a href="solicitudes_personal.html" class="btn" style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff;">Ver solicitudes</a>
+          <a href="reportes_personal.html" class="btn" style="background: #ffffff; color: #991b1b; border: 1px solid transparent;">Ver reportes</a>
+          </div>
         </div>
-        
-        <div style="display:flex; gap: 20px;">
-            <div class="card p-0" style="flex:2;">
-                <div style="padding:15px 20px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between;">
-                    <h3 style="font-size:1rem;">Solicitudes Recientes</h3>
-                    <a href="solicitudes_personal.html" style="color:var(--accent); font-size:0.875rem; text-decoration:none;">Ver todas</a>
-                </div>
-                <table id="recent-requests-table" class="data-table">
-                    <thead><tr><th>ID</th><th>Solicitante</th><th>Material</th><th>Estado</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
 
-            <div class="card p-0" style="flex:1;">
-                <div style="padding:15px 20px; border-bottom: 1px solid var(--border);">
-                    <h3 style="font-size:1rem;">Notificaciones Internas</h3>
-                </div>
-                <div id="dashboard-notifications" style="padding:15px 20px; font-size:0.875rem; color:#475569;">
-                    No hay notificaciones recientes.
-                </div>
+        <div class="dashboard-grid" style="margin-bottom: 1rem;">
+          <div class="card" style="padding: 1.5rem;"><h3 style="margin:0; color: var(--slate-500); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;">Solicitudes Pendientes</h3><div class="value" id="kpi-pendientes" style="margin-top: 0.5rem;">0</div></div>
+          <div class="card" style="padding: 1.5rem;"><h3 style="margin:0; color: var(--slate-500); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;">Aprobadas (Entregas pendientes)</h3><div class="value" id="kpi-entregas" style="margin-top: 0.5rem;">0</div></div>
+          <div class="card" style="padding: 1.5rem;"><h3 style="margin:0; color: var(--slate-500); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;">Préstamos Activos</h3><div class="value" id="kpi-activos" style="margin-top: 0.5rem;">0</div></div>
+          <div class="card" style="padding: 1.5rem;"><h3 style="margin:0; color: var(--slate-500); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;">Incidencias Generadas</h3><div class="value" id="kpi-incidencias" style="margin-top: 0.5rem;">0</div></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: minmax(0, 1.8fr) minmax(300px, 1fr); gap: 1rem; align-items: start;">
+          <div class="card p-0" style="overflow: hidden;">
+            <div style="padding: 0.95rem 1rem; border-bottom: 1px solid var(--slate-200); display:flex; justify-content:space-between; align-items:center; background: #ffffff;">
+              <h3 style="font-size: 1rem; margin: 0;">Solicitudes recientes</h3>
+              <a href="solicitudes_personal.html" style="color: var(--accent); font-size: 0.82rem; font-weight: 600; text-decoration:none;">Ver todas</a>
             </div>
+            <table id="recent-requests-table" class="data-table">
+              <thead><tr><th>ID</th><th>Solicitante</th><th>Material</th><th>Estado</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="card p-0" style="overflow: hidden;">
+            <div style="padding: 0.95rem 1rem; border-bottom: 1px solid var(--slate-200); background: #ffffff;">
+              <h3 style="font-size: 1rem; margin: 0;">Notificaciones internas</h3>
+            </div>
+            <div id="dashboard-notifications" style="padding: 1rem; font-size: 0.875rem; color:#475569; min-height: 96px; background: #f8fafc;">
+              No hay notificaciones recientes.
+            </div>
+          </div>
         </div>
     </main>
     <div id="toast" class="toast">Mensaje del sistema</div>
