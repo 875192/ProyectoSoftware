@@ -76,44 +76,129 @@
         </div>
       </header>
       <main class="main-content">
-            
-        <div style="display:flex; gap: 20px;">
-            <div class="card p-0" style="padding:24px; flex: 2;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                    <h2 id="det-id">Solicitud #--</h2>
-                    <span id="det-status" class="chip">--</span>
-                </div>
-                <div class="dashboard-grid">
-                    <div><label style="color:#64748b; font-size:0.875rem;">Solicitante</label><p id="det-user" style="font-weight:500;"></p></div>
-                    <div><label style="color:#64748b; font-size:0.875rem;">Material</label><p id="det-mat" style="font-weight:500;"></p></div>
-                    <div><label style="color:#64748b; font-size:0.875rem;">Rango de Fechas</label><p id="det-dates" style="font-weight:500;"></p></div>
-                </div>
-                <div style="margin-top:20px; padding:15px; background:var(--bg-color); border-radius:var(--radius);">
-                    <label style="color:#64748b; font-size:0.875rem; font-weight:600;">Notas del solicitante:</label>
-                    <p id="det-notes" style="margin-top:5px; font-size:0.875rem;"></p>
-                </div>
-                <hr style="margin:24px 0; border:none; border-top:1px solid var(--border);">
-                <div id="det-actions" style="display:flex; gap:10px;">
-                    <button class="btn btn-primary" onclick="StaffPages.doApproveCurrent()">Aprobar Solicitud</button>
-                    <button class="btn btn-danger" onclick="StaffUI.openModal('reject-modal')">Rechazar Solicitud</button>
-                    <button class="btn" onclick="window.location.href='solicitudes_personal.html'">Volver</button>
-                </div>
-            </div>
+        <style>
+          .admin-hero{background: linear-gradient(135deg, rgba(99,102,241,0.95), rgba(79,70,229,0.95)); color: #fff; padding: 1.1rem 1.4rem; border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(15,23,42,0.12);}
+          .admin-hero .meta{font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; opacity:0.9; font-weight:700}
+          .detail-grid{display:grid; grid-template-columns: 1fr 340px; gap:1rem; align-items:start;}
+          .fact-grid{display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:0.75rem; margin-top:0.75rem}
+          .fact{background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:0.85rem}
+          .fact label{display:block;font-size:0.76rem;color:var(--slate-500);text-transform:uppercase;font-weight:700;letter-spacing:0.04em}
+          .fact .value{margin-top:0.45rem;font-weight:600;color:var(--slate-800);font-size:1rem}
+          .admin-hero h1{color:#fff;font-size:1.6rem;margin:0}
+          .notes{background:#fbfdff;border:1px solid var(--slate-200);padding:12px;border-radius:10px;margin-top:12px}
+          .action-panel{position:relative}
+          .sticky{position:sticky;top:84px}
+          .timeline{list-style:none;padding:0;margin:0;border:1px solid var(--slate-200);border-radius:10px;background:#fff;overflow:hidden}
+          .timeline li{padding:12px;border-bottom:1px solid #eef2f7;color:var(--slate-600)}
+          .kpi-small{background:#fff;border:1px solid var(--slate-200);padding:10px;border-radius:10px;margin-bottom:12px}
+          .actions-row{display:flex;gap:10px;flex-wrap:wrap}
+        </style>
 
-            <div class="card p-0" style="padding:24px; flex: 1;">
-                <h3 style="font-size:1rem; margin-bottom:15px;">Validación (Simulada)</h3>
-                <div style="padding:15px; border-left:4px solid var(--status-approved); background:#f0fdf4; margin-bottom:15px;">
-                    <strong>Stock Disponible</strong><br>
-                    <p style="font-size:0.875rem; margin-top:5px;">El material seleccionado no tiene conflictos de fechas.</p>
-                </div>
-                <h3 style="font-size:1rem; margin-bottom:15px; margin-top:30px;">Historial de Cambios</h3>
-                <ul id="det-logs" style="list-style:none; font-size:0.875rem;">
-                    <li style="margin-bottom:10px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;">[Fecha] Solicitud Creada por usuario</li>
-                </ul>
+        <div class="admin-hero">
+          <p class="meta">Área de Personal • Revisión</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:6px;">
+            <div>
+              <h1 style="margin:0;font-size:1.6rem;line-height:1.1;font-weight:700;color:#fff">Solicitud para revisión administrativa</h1>
+              <p style="margin:6px 0 0;opacity:0.95;max-width:66ch">Revisa la solicitud, confirma stock y fechas, y aplica la resolución adecuada para gestionar el expediente.</p>
             </div>
+            <div style="text-align:right">
+              <div id="det-status" class="chip" style="font-weight:700;background:rgba(255,255,255,0.12);color:#fff;padding:6px 10px;border-radius:999px">--</div>
+              <div style="margin-top:8px;font-size:0.9rem;color:rgba(255,255,255,0.9)">Solicitud <strong id="det-id">#--</strong></div>
+            </div>
+          </div>
         </div>
 
-        <!-- Modal Rechazo -->
+        <div style="height:12px"></div>
+
+        <div class="detail-grid">
+          <section>
+            <div class="card" style="padding:20px;border:1px solid var(--slate-200);box-shadow:0 6px 16px rgba(15,23,42,0.06)">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <div>
+                  <h2 style="margin:0;font-size:1.05rem">Expediente de la solicitud</h2>
+                  <p style="margin:6px 0 0;color:var(--slate-500);font-size:0.9rem">Información clave para la decisión</p>
+                </div>
+                <div style="text-align:right">
+                  <small style="color:var(--slate-500)">Generado el:</small>
+                  <div id="det-dates" class="value" style="font-size:0.95rem">--</div>
+                </div>
+              </div>
+
+              <div class="fact-grid">
+                <div class="fact">
+                  <label>Solicitante</label>
+                  <div id="det-user" class="value">--</div>
+                </div>
+                <div class="fact">
+                  <label>Material</label>
+                  <div id="det-mat" class="value">--</div>
+                </div>
+                <div class="fact">
+                  <label>Duración solicitada</label>
+                  <div class="value">--</div>
+                </div>
+              </div>
+
+              <div class="notes">
+                <label style="font-size:0.78rem;color:var(--slate-600);font-weight:700;">Notas del solicitante</label>
+                <p id="det-notes" style="margin:8px 0 0;color:var(--slate-700);line-height:1.45">--</p>
+              </div>
+
+              <div style="margin-top:14px;border-top:1px solid var(--slate-200);padding-top:12px">
+                <h3 style="margin:0 0 8px;font-size:0.98rem">Evidencias y anexos</h3>
+                <p style="margin:0;color:var(--slate-500);font-size:0.88rem">Archivos adjuntos o notas internas vinculadas al expediente.</p>
+              </div>
+            </div>
+
+            <div style="height:12px"></div>
+
+            <div class="card" style="padding:16px;border:1px solid var(--slate-200);box-shadow:0 6px 14px rgba(15,23,42,0.04)">
+              <h3 style="margin:0 0 8px;font-size:1rem">Historial</h3>
+              <ul id="det-logs" class="timeline">
+                <li>[Fecha] Solicitud creada</li>
+              </ul>
+            </div>
+          </section>
+
+          <aside class="action-panel">
+            <div class="sticky">
+              <div class="kpi-small">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div>
+                    <div style="font-size:0.78rem;color:var(--slate-500)">Stock estimado</div>
+                    <div style="font-weight:700;color:var(--slate-800);">-- unidades</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-size:0.78rem;color:var(--slate-500)">Impacto</div>
+                    <div style="font-weight:700;color:var(--slate-800);">Bajo</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid var(--slate-200);padding:14px;border-radius:10px;margin-bottom:12px">
+                <h4 style="margin:0 0 8px;font-size:0.95rem">Checklist rápido</h4>
+                <div style="font-size:0.9rem;color:var(--slate-600);">- Confirma stock<br>- Comprueba fechas<br>- Revisa observaciones</div>
+              </div>
+
+              <div style="background:#fff;border:1px solid var(--slate-200);padding:14px;border-radius:10px;margin-bottom:12px">
+                <h4 style="margin:0 0 10px;font-size:0.95rem">Acciones</h4>
+                <div id="det-actions" style="margin-top:6px" class="actions-row">
+                  <button class="btn btn-primary" style="flex:1" onclick="StaffPages.doApproveCurrent()">Aprobar</button>
+                  <button class="btn btn-danger" style="flex:1" onclick="StaffUI.openModal('reject-modal')">Rechazar</button>
+                  <button class="btn" style="flex:1" onclick="window.location.href='solicitudes_personal.html'">Volver</button>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid var(--slate-200);padding:12px;border-radius:10px">
+                <h4 style="margin:0 0 8px;font-size:0.95rem">Registro rápido</h4>
+                <p style="margin:0;color:var(--slate-600);font-size:0.9rem">Anota observaciones internas antes de aplicar la resolución.</p>
+                <textarea id="admin-note" class="form-control" rows="3" style="margin-top:8px"></textarea>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Modal Rechazo (se mantienen IDs y hooks) -->
         <div class="modal-overlay" id="reject-modal">
             <div class="modal">
                 <div class="modal-header">
@@ -130,7 +215,7 @@
                 </div>
             </div>
         </div>
-    </main>
+      </main>
     <div id="toast" class="toast">Mensaje del sistema</div>
     <script src="../../js/staff/staff_data.js"></script>
     <script src="../../js/staff/staff_ui.js"></script>
