@@ -1,6 +1,6 @@
 import { auth } from '../../js/core/auth.js';
-    import { db } from '../../js/core/db.js';
     import { ui } from '../../js/components/ui.js';
+    import { api } from '../../js/core/api.js';
 
     // 1. Auth Check - Allow student & profesor
     const user = auth.requireAuth(['estudiante', 'profesor']);
@@ -16,16 +16,7 @@ import { auth } from '../../js/core/auth.js';
     const catalogGrid = document.getElementById('catalog-grid');
     const emptyState = document.getElementById('empty-state');
 
-    const fallbackInventory = [
-      { id: '1', name: 'Portátil Dell XPS 15', category: 'Portátil', desc: 'Intel Core i7, 16GB RAM, 512GB SSD. Para programación y análisis de datos.', stock: 5, total: 5 },
-      { id: '2', name: 'Cámara Canon EOS R5', category: 'Cámara', desc: 'Cámara mirrorless Full Frame 45MP. Ideal para documentación de proyectos.', stock: 2, total: 3 },
-      { id: '3', name: 'Kit Arduino Uno Rev3', category: 'Electrónica', desc: 'Placa base + sensores, cables de conexión y protoboard para prototipos.', stock: 15, total: 20 },
-      { id: '4', name: 'Microscopio Binocular', category: 'Laboratorio', desc: 'Aumentos 40x-1000x. Iluminación LED ajustable para prácticas de biología.', stock: 0, total: 4 },
-      { id: '5', name: 'Proyector Epson WXGA', category: 'Proyector', desc: '3300 lúmenes. Conexiones HDMI y VGA. Ideal para presentaciones académicas.', stock: 8, total: 8 },
-      { id: '6', name: 'MacBook Pro M2 16"', category: 'Portátil', desc: 'Chip M2 Apple, 16GB RAM, 512GB SSD. Para diseño y multimedia.', stock: 1, total: 2 },
-      { id: '7', name: 'Micrófono Rode NT1', category: 'Audiovisual', desc: 'Micrófono condensador de estudio con brazo articulado incluido.', stock: 4, total: 5 },
-      { id: '8', name: 'Multímetro Digital Fluke', category: 'Laboratorio', desc: 'Medidor profesional para circuitos eléctricos. Precisión ±0.5%.', stock: 6, total: 10 }
-    ];
+    let allMaterials = [];
 
     function normalizeText(value) {
       return (value || '')
@@ -70,8 +61,7 @@ import { auth } from '../../js/core/auth.js';
     }
 
     function getInventoryItems() {
-      const items = db.get('inventory') || [];
-      return items.length === 0 ? fallbackInventory : items;
+      return allMaterials;
     }
 
     function matchesCategoryFilter(itemCategory, categoryValue) {
@@ -443,19 +433,31 @@ import { auth } from '../../js/core/auth.js';
     availabilityFilter.addEventListener('change', renderCatalog);
 
     // Initial render
-    renderCatalog();
+    async function initCatalog() {
+      try {
+        allMaterials = await api.getMateriales();
+        renderCatalog();
+      } catch (err) {
+        console.error('Error al cargar materiales:', err);
+        catalogGrid.innerHTML = '<p class="error-msg">Error al cargar los materiales. Intenta más tarde.</p>';
+      }
+    }
+    initCatalog();
 
     // Notification badge logic
-    const mockNotifications = [
-      { id: 1, read: false },
-      { id: 2, read: false },
-      { id: 3, read: true }
-    ];
-    const notifBellBadge = document.getElementById('notif-bell-badge');
-    const unseenCount = mockNotifications.filter(n => !n.read).length;
-    if (unseenCount > 0) {
-      notifBellBadge.classList.add('show');
+    async function updateNotificationBadge() {
+      try {
+        const notifs = await api.getNotificaciones(user.id);
+        const unseenCount = notifs.filter(n => !n.read).length;
+        const notifBellBadge = document.getElementById('notif-bell-badge');
+        if (unseenCount > 0 && notifBellBadge) {
+          notifBellBadge.classList.add('show');
+        }
+      } catch (err) {
+        console.error('Error fetching notifs:', err);
+      }
     }
+    updateNotificationBadge();
 
     // Modal Logic
     const modalBackdrop = document.getElementById('productModalBackdrop');

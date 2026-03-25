@@ -1,350 +1,376 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Solicitudes - UniGear</title>
-  <link rel="stylesheet" href="../../css/globals.css">
-  <link rel="stylesheet" href="../../css/components.css">
-  <link rel="stylesheet" href="../../css/layout.css">
-  <script src="https://js.stripe.com/v3/"></script>
-  <link rel="stylesheet" href="../../css/student/requests_estudiante.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniGear | Mis Solicitudes</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        :root {
+            --bg-page: #f1f5f9;
+            --bg-white: #ffffff;
+            --primary-teal: #1c5b56; 
+            --primary-hover: #164743;
+            --button-teal: #0d9488;  
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --accent-gradient: linear-gradient(135deg, #1c5b56, #164743);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        .main-header {
+            background-color: var(--bg-white);
+            height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 60px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo-section { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .logo-icon { width: 38px; height: 38px; background: var(--accent-gradient); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+        .brand-name { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        .nav-btn { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; transition: all 0.3s ease; position: relative; padding: 5px 0; }
+        .nav-btn.active { color: var(--primary-teal); font-weight: 700; }
+        .nav-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background-color: var(--primary-teal); border-radius: 2px; }
+
+        .header-actions { display: flex; align-items: center; gap: 25px; }
+
+        /* BOTÓN VOLVER (Minimalista) */
+        .back-link {
+            display: flex; align-items: center;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            background: none; border: none; padding: 0;
+            cursor: pointer;
+        }
+        .back-link:hover { color: var(--button-teal); }
+        
+        .arrow-back-wrapper { 
+            position: relative; 
+            width: 0; 
+            opacity: 0; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+        }
+        .arrow-head-back { 
+            position: absolute; left: 0; width: 7px; height: 7px; 
+            border-bottom: 2.5px solid var(--button-teal); 
+            border-left: 2.5px solid var(--button-teal); 
+            transform: rotate(45deg); 
+        }
+        .arrow-tail-back { 
+            position: absolute; left: 0; width: 0; height: 2.5px; 
+            background: var(--button-teal); border-radius: 2px; 
+        }
+
+        .notification-btn { color: var(--text-muted); transition: all 0.3s ease; text-decoration: none; }
+        .notification-btn:hover { color: var(--button-teal); transform: scale(1.1); }
+
+        .user-profile { display: flex; align-items: center; gap: 12px; padding-left: 20px; border-left: 1px solid #e2e8f0; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #f97316; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+
+        /* --- CONTENIDO --- */
+        .requests-container { max-width: 1200px; margin: 40px auto; padding: 0 40px; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .page-title h1 { font-size: 28px; font-weight: 700; }
+        .page-title p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+
+        .btn-new-request {
+            display: flex; align-items: center; justify-content: center;
+            background-color: var(--button-teal); color: white; border: none;
+            padding: 12px 24px; border-radius: 14px; font-weight: 700; font-size: 15px;
+            position: relative; overflow: hidden; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.15);
+            transition: background-color 0.3s ease; margin-top: 10px;
+        }
+        .plus-wrapper { position: relative; width: 0; opacity: 0; display: inline-flex; align-items: center; justify-content: center; z-index: 2; }
+
+        /* SELECTOR DE VISTA */
+        .view-switcher {
+            display: flex; align-items: center; gap: 4px; margin-bottom: 20px;
+            background: #e2e8f0; padding: 4px; width: fit-content; border-radius: 12px; position: relative;
+        }
+        .view-indicator {
+            position: absolute; background: white; border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); z-index: 0; top: 4px; bottom: 4px; left: 4px; width: 0;
+        }
+        .view-btn {
+            background: transparent; border: none; padding: 8px 16px; border-radius: 10px;
+            color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px;
+            font-size: 13.5px; font-weight: 600; transition: color 0.3s; position: relative; z-index: 1;
+        }
+        .view-btn.active { color: var(--primary-teal); }
+
+        /* --- WRAPPER Y CARDS COMPACTAS --- */
+        .requests-wrapper { display: flex; flex-direction: column; gap: 12px; opacity: 0; }
+        
+        .request-card {
+            background: white; border-radius: 20px; padding: 18px 25px;
+            display: grid; align-items: center; gap: 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.02); position: relative;
+        }
+        .request-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.04); border-color: #e2e8f0; }
+
+        .requests-wrapper.list-view .request-card { grid-template-columns: 48px 1fr 120px 120px 110px 20px; }
+
+        .requests-wrapper.grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .requests-wrapper.grid-view .request-card { 
+            grid-template-columns: 1fr; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 220px;
+        }
+
+        .req-icon { width: 48px; height: 48px; background: #f0fdfa; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--button-teal); }
+        .req-info h3 { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .req-info p { font-size: 12px; color: var(--text-muted); font-family: monospace; }
+        
+        .req-meta { text-align: left; }
+        .req-meta span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .req-meta p { font-size: 13px; font-weight: 600; color: var(--text-main); }
+
+        .status-badge { padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; width: fit-content; justify-self: center; }
+        .status-pending { background: #fffbeb; color: var(--warning); }
+        .status-approved { background: #ecfdf5; color: var(--success); }
+        
+        .btn-more { background: none; border: none; color: #cbd5e1; cursor: pointer; justify-self: end; }
+
+        /* --- MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; }
+        .modal-card { background: white; width: 450px; border-radius: 24px; padding: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); position: relative; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); cursor: pointer; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-family: 'Inter'; font-size: 14px; outline: none; }
+        .form-group input:focus { border-color: var(--button-teal); }
+
+        .btn-pay { width: 100%; padding: 14px; border-radius: 12px; background: var(--accent-gradient); color: white; border: none; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+        .btn-pay:active { transform: scale(0.98); }
+    </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>
-        UniGear
-      </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          Mi Resumen
-        </a>
-        <a href="catalog_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-          CatÃ¡logo de Material
-        </a>
-        <a href="requests_estudiante.html" class="nav-item active">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          Mis Solicitudes
-        </a>
-      </nav>
-      <div class="sidebar-footer">
-        <a href="profile_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Mi Perfil
-        </a>
-        <a href="#" class="nav-item" data-action="logout">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          Cerrar SesiÃ³n
-        </a>
-      </div>
-    </aside>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="mobile-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-          </button>
-          <span style="font-weight: 500; color: var(--slate-600);">Ãrea de Estudiante / Mis Solicitudes</span>
-        </div>
-        <div class="topbar-right">
-          <button class="btn btn-secondary notif-bell-btn" id="notif-bell" style="border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0;" onclick="window.location.href='notifications_estudiante.html'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 15V9.524A6 6 0 0 0 12 3.5a6 6 0 0 0-6 6.024V15L4 18h16l-2-3Z"/>
-              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-            </svg>
-            <span class="notif-bell-badge" id="notif-bell-badge"></span>
-          </button>
-          <div class="user-profile">
-            <div class="avatar avatar-display">A</div>
-            <span class="user-name-display">Cargando...</span>
-          </div>
-        </div>
-      </header>
+    <header class="main-header">
+        <a href="dashboard_estudiante.html" class="logo-section">
+            <div class="logo-icon"><i data-lucide="package"></i></div>
+            <span class="brand-name">UniGear</span>
+        </a>
+        <nav class="nav-menu">
+            <a href="dashboard_estudiante.html" class="nav-btn">Dashboard</a>
+            <a href="catalog_estudiante.html" class="nav-btn">Catálogo</a>
+            <a href="calendario_estudiante.html" class="nav-btn">Calendario</a>
+            <a href="requests_estudiante.html" class="nav-btn active">Solicitudes</a>
+            <a href="analitics_estudiante.html" class="nav-btn">Analíticas</a>
+        </nav>
+        <div class="header-actions">
+            <a href="../public/landing.html" class="back-link" id="backHomeBtn">
+                <div class="arrow-back-wrapper" id="arrowBackWrapper">
+                    <div class="arrow-tail-back"></div>
+                    <div class="arrow-head-back"></div>
+                </div>
+                <span>Volver al inicio</span>
+            </a>
 
-      <main class="main-content">
-        <section class="card requests-hero-compact">
-          <div class="requests-hero-main">
-            <p class="requests-hero-overline">GestiÃ³n de prÃ©stamos</p>
-            <h1 class="requests-hero-title">Mis Solicitudes</h1>
-            <p class="requests-hero-subtitle">Vista compacta para revisar estados, abrir detalles y gestionar solicitudes sin ocupar media pantalla.</p>
-          </div>
-          <div class="requests-hero-actions">
-            <button class="btn" id="btn-new-request" style="background-color: #0d9488; color: white; font-weight: 600; padding: 0.55rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; gap: 0.45rem; align-items: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              Nueva solicitud
+            <a href="notifications_estudiante.html" class="notification-btn"><i data-lucide="bell"></i></a>
+            <div class="user-profile" style="cursor: pointer;" onclick="window.location.href='profile_estudiante.html'">
+                <div class="user-avatar">AG</div>
+                <div>
+                    <p style="font-size: 14px; font-weight: 700;">Ana García</p>
+                    <p style="font-size: 11px; color: var(--text-muted);">Estudiante</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="requests-container">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Mis Solicitudes</h1>
+                <p>Historial de equipos y estado de préstamos actuales</p>
+            </div>
+            <button class="btn-new-request" id="newReqBtn">
+                <div class="plus-wrapper" id="plusWrapper"><i data-lucide="plus" style="stroke-width: 3px; width: 16px;"></i></div>
+                <span>Nueva Solicitud</span>
             </button>
-            <a href="catalog_estudiante.html" class="btn" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); font-weight: 600; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none;">Ver catÃ¡logo</a>
-          </div>
-        </section>
+        </div>
 
-        <section class="card requests-board">
-          <div class="requests-board-head">
-            <h2 id="requests-board-title">Bandeja de solicitudes</h2>
-            <div class="requests-board-controls">
-              <span class="requests-results" id="results-count">0 resultados</span>
-              <div class="view-toggle" role="tablist" aria-label="Cambiar vista de solicitudes">
-                <button class="view-toggle-btn" id="view-board-btn" data-view="tablero" type="button">Tablero</button>
-                <button class="view-toggle-btn active" id="view-list-btn" data-view="lista" type="button">Lista</button>
-              </div>
+        <div class="view-switcher">
+            <div class="view-indicator" id="indicator"></div>
+            <button class="view-btn active" id="btnList"><i data-lucide="list" width="14"></i> Lista</button>
+            <button class="view-btn" id="btnGrid"><i data-lucide="layout-grid" width="14"></i> Cuadrícula</button>
+        </div>
+
+        <div class="requests-wrapper list-view" id="requestsWrapper">
+            <div class="request-card">
+                <div class="req-icon"><i data-lucide="camera"></i></div>
+                <div class="req-info"><h3>Canon EOS R</h3><p>#REQ-4582</p></div>
+                <div class="req-meta"><span>Recogida</span><p>25 Mar 2026</p></div>
+                <div class="req-meta"><span>Devolución</span><p>28 Mar 2026</p></div>
+                <div class="status-badge status-pending">Pendiente</div>
+                <button class="btn-more"><i data-lucide="more-horizontal"></i></button>
             </div>
-          </div>
+        </div>
+    </main>
 
-          <div class="status-tabs" id="status-tabs">
-            <button class="status-tab active" data-filter="all">Todas <span class="status-tab-count" id="tab-all-count">0</span></button>
-            <button class="status-tab" data-filter="pendiente">Pendientes <span class="status-tab-count" id="tab-pending-count">0</span></button>
-            <button class="status-tab" data-filter="aprobada">Aprobadas <span class="status-tab-count" id="tab-approved-count">0</span></button>
-            <button class="status-tab" data-filter="en_prestamo">En prÃ©stamo <span class="status-tab-count" id="tab-active-count">0</span></button>
-            <button class="status-tab" data-filter="finalizada">Finalizadas <span class="status-tab-count" id="tab-completed-count">0</span></button>
-            <button class="status-tab" data-filter="rechazada">Rechazadas <span class="status-tab-count" id="tab-rejected-count">0</span></button>
-          </div>
-
-          <div class="requests-workspace">
-            <div class="requests-list-wrap">
-              <div id="requests-list" class="requests-list"></div>
-
-              <div id="empty-table-state" style="display: none; text-align: center; padding: 3rem 1rem; background: #ffffff;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--slate-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                <p id="empty-state-message" style="color: var(--slate-500); font-size: 0.95rem;">No tienes solicitudes que coincidan con estos filtros.</p>
-              </div>
-            </div>
-
-            <aside class="requests-detail-panel">
-              <div class="detail-head">
-                <h3>Detalle de solicitud</h3>
-                <span class="detail-status-chip" id="detail-status-chip">Sin selecciÃ³n</span>
-              </div>
-              <div class="detail-body">
-                <p class="detail-empty" id="detail-empty">Selecciona una solicitud para ver su trazabilidad, datos acadÃ©micos y acciones disponibles.</p>
-
-                <div id="detail-content" class="detail-content" style="display: none;">
-                  <section class="detail-summary">
-                    <h4 class="detail-item" id="detail-item">-</h4>
-                    <p class="detail-period" id="detail-period">-</p>
-                    <p class="detail-purpose" id="detail-purpose">-</p>
-                  </section>
-
-                  <section>
-                    <div class="detail-facts">
-                      <article class="detail-fact">
-                        <span>Aula de recogida</span>
-                        <strong id="detail-location">-</strong>
-                      </article>
-                      <article class="detail-fact">
-                        <span>Docente responsable</span>
-                        <strong id="detail-teacher">-</strong>
-                      </article>
-                      <article class="detail-fact">
-                        <span>Fianza</span>
-                        <strong id="detail-deposit">-</strong>
-                      </article>
-                      <article class="detail-fact">
-                        <span>CategorÃ­a</span>
-                        <strong id="detail-category">-</strong>
-                      </article>
-                    </div>
-                  </section>
-
-                  <section class="detail-actions-wrap">
-                    <p class="detail-section-title">Acciones disponibles</p>
-                    <div class="detail-actions" id="detail-actions"></div>
-                  </section>
-
-                  <section class="detail-timeline-wrap">
-                    <p class="detail-timeline-title">Seguimiento</p>
-                    <ul class="detail-timeline" id="detail-timeline"></ul>
-                  </section>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </section>
-      </main>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card" id="modalCard">
+            <button class="modal-close" id="closeModal"><i data-lucide="x"></i></button>
+            <h2 style="margin-bottom: 20px; font-size: 20px;">Nueva Solicitud</h2>
+            <form id="request-form">
+                <div class="form-group"><label>Equipo</label><input type="text" id="equipment-name" placeholder="Nombre del equipo..." required></div>
+                <div class="form-group"><label>Día de recogida</label><input type="date" id="pickup-date" required></div>
+                <div class="form-group"><label>Motivo</label><textarea id="reason" rows="3" placeholder="¿Para qué lo necesitas?" required></textarea></div>
+                <button type="submit" class="btn-pay" id="pay-button">Ir al pago fianza</button>
+            </form>
+        </div>
     </div>
-  </div>
 
-  <!-- Modal Detalles de PrÃ©stamo -->
-  <div id="loan-details-modal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="card" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden; animation: slideUp 0.3s ease-out;">
-      <div style="padding: 1.5rem; border-bottom: 1px solid var(--slate-200); display: flex; justify-content: space-between; align-items: center; background: var(--slate-50);">
-        <h3 style="margin: 0; font-size: 1.25rem; color: var(--slate-800); display: flex; align-items: center; gap: 0.5rem;" id="modal-item-name">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Detalles del PrÃ©stamo
-        </h3>
-        <button class="btn btn-secondary" style="border: none; padding: 0.5rem;" id="btn-close-detail-modal">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-      <div style="padding: 1.5rem;">
-        <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem;">
-          <div style="flex: 1;">
-            <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.25rem;">Estado</div>
-            <div id="modal-status-badge"></div>
-          </div>
-          <div style="flex: 1;">
-            <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.25rem;">Fechas</div>
-            <div style="font-weight: 500; color: var(--slate-800);" id="modal-dates">--</div>
-          </div>
-        </div>
+    <script>
+        lucide.createIcons();
 
-        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;" id="modal-action-box">
-          <!-- Dynamic Action Box -->
-        </div>
+        // 1. INICIALIZAR STRIPE (Asegúrate de que tu clave es correcta)
+        const stripe = Stripe('pk_test_51TA7tR40Jfy8CmFZXUD6kfBS5SU8ZEgLoPRrQSMt9qAX1M8YvunVBx0bEAHWmaMUlmZEtSwNeYHWdXBDGHkYCk4r00fDqdEQA8');
 
-        <div>
-          <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.5rem;">Finalidad de Uso</div>
-          <p style="margin: 0; color: var(--slate-700); font-size: 0.95rem; line-height: 1.5;" id="modal-purpose">--</p>
-        </div>
-      </div>
-      <div style="padding: 1.25rem 1.5rem; background: var(--slate-50); border-top: 1px solid var(--slate-200); display: flex; justify-content: space-between;">
-        <button class="btn btn-secondary" style="color: var(--red-600); border-color: transparent;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          Ayuda / Incidencia
-        </button>
-        <button class="btn btn-primary" id="btn-primary-detail-modal">Entendido</button>
-      </div>
-    </div>
-  </div>
+        // 2. Lógica del Selector de Vista
+        const indicator = document.getElementById('indicator');
+        const btnList = document.getElementById('btnList');
+        const btnGrid = document.getElementById('btnGrid');
+        const wrapper = document.getElementById('requestsWrapper');
 
-  <!-- Modal for New Request -->
-  <div class="modal-backdrop" id="request-modal">
-    <div class="modal request-modal">
-      <header class="request-modal-header">
-        <div>
-          <p class="request-modal-overline">Solicitud de material</p>
-          <h2 id="request-modal-title">Completa los datos de la solicitud</h2>
-          <p class="request-modal-subtitle" id="request-modal-subtitle">Selecciona el equipamiento, define fechas y continÃºa al pago de fianza en dos pasos.</p>
-        </div>
-        <button id="close-modal" class="request-modal-close" type="button" aria-label="Cerrar ventana de solicitud">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </header>
+        const updateIndicator = (btn, animate = true) => {
+            if (animate) {
+                gsap.to(indicator, { x: btn.offsetLeft - 4, width: btn.offsetWidth, duration: 0.4, ease: "power2.inOut" });
+            } else {
+                gsap.set(indicator, { x: btn.offsetLeft - 4, width: btn.offsetWidth });
+            }
+        };
 
-      <div class="request-modal-steps" aria-hidden="true">
-        <div class="request-step-item is-active" data-request-step="1">
-          <span class="request-step-index">1</span>
-          <span class="request-step-label">Detalles</span>
-        </div>
-        <div class="request-step-item" data-request-step="2">
-          <span class="request-step-index">2</span>
-          <span class="request-step-label">Pago</span>
-        </div>
-      </div>
+        window.addEventListener('load', () => {
+            setTimeout(() => updateIndicator(btnList, false), 100);
+            gsap.set(wrapper, { opacity: 1 });
+            gsap.from(".request-card", { y: 15, opacity: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" });
+        });
 
-      <form id="new-req-form" class="request-modal-form" novalidate onsubmit="return false">
-        <!-- STEP 1: SOLICITUD -->
-        <div id="req-step-1" class="request-step-pane">
-          <section class="request-form-card">
-            <div class="form-group">
-              <label class="form-label" for="req-item">Material *</label>
-              <select class="form-input request-form-select" id="req-item" required>
-                <option value="" disabled selected>Selecciona un elemento disponible...</option>
-                <!-- JS populates from inventory -->
-              </select>
-              <div class="form-error">Debes seleccionar el material.</div>
-            </div>
+        [btnList, btnGrid].forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isGrid = btn === btnGrid;
+                btnList.classList.toggle('active', !isGrid);
+                btnGrid.classList.toggle('active', isGrid);
+                updateIndicator(btn, true);
+                gsap.to(".request-card", { opacity: 0, scale: 0.98, duration: 0.2, onComplete: () => {
+                    wrapper.className = `requests-wrapper ${isGrid ? 'grid-view' : 'list-view'}`;
+                    gsap.to(".request-card", { opacity: 1, scale: 1, duration: 0.3 });
+                }});
+            });
+        });
 
-            <div class="request-date-grid">
-              <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label" for="req-start">Desde *</label>
-                <input type="date" class="form-input" id="req-start" required>
-                <div class="form-error">Fecha de inicio invÃ¡lida.</div>
-              </div>
-              <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label" for="req-end">Hasta *</label>
-                <input type="date" class="form-input" id="req-end" required>
-                <div class="form-error">Fecha fin invÃ¡lida.</div>
-              </div>
-            </div>
+        // 3. Lógica del Modal
+        const newReqBtn = document.getElementById('newReqBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        
+        newReqBtn.addEventListener('click', () => {
+            modalOverlay.style.display = 'flex';
+            gsap.to(modalOverlay, { opacity: 1, duration: 0.3 });
+            gsap.from("#modalCard", { y: 20, scale: 0.95, duration: 0.4 });
+        });
 
-            <div class="form-group" style="margin-bottom: 0;">
-              <label class="form-label" for="req-purpose">Finalidad de uso *</label>
-              <textarea class="form-input" id="req-purpose" rows="3" placeholder="Ej. PrÃ¡ctica de la asignatura de RobÃ³tica..." required></textarea>
-              <div class="form-error">Explica brevemente para quÃ© lo necesitas.</div>
-            </div>
+        document.getElementById('closeModal').addEventListener('click', () => {
+            gsap.to(modalOverlay, { opacity: 0, duration: 0.2, onComplete: () => modalOverlay.style.display = 'none' });
+        });
 
-            <div class="request-deposit-note">
-              <div style="color: #b45309; margin-top: 0.1rem;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-              </div>
-              <p><strong>Fianza obligatoria:</strong> para completar la solicitud debes abonar <strong>10,00 â‚¬</strong>. El importe se reembolsa cuando devuelves el material en plazo y estado correcto.</p>
-            </div>
-          </section>
+        // 4. LÓGICA DE PAGO (RESTAURADA)
+        const requestForm = document.getElementById('request-form');
+        requestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btnPay = document.getElementById('pay-button');
+            btnPay.disabled = true;
+            btnPay.innerText = 'Cargando Stripe...';
 
-          <div class="request-step-actions">
-            <button type="button" class="btn btn-secondary" id="btn-cancel-req">Cancelar</button>
-            <button type="button" class="btn btn-primary" id="btn-to-pay">Pagar fianza (10,00 â‚¬)</button>
-          </div>
-        </div>
+            const requestData = {
+                equipment: document.getElementById('equipment-name').value,
+                pickupDate: document.getElementById('pickup-date').value,
+                reason: document.getElementById('reason').value
+            };
 
-        <!-- STEP 2: PAGO -->
-        <div id="req-step-2" class="request-step-pane" style="display: none;">
-          <section class="request-payment-hero">
-            <p class="request-payment-amount">Importe de la fianza</p>
-            <p class="request-payment-total">10,00 â‚¬</p>
-            <p class="request-payment-hint">Se desbloquea automÃ¡ticamente tras la devoluciÃ³n validada.</p>
-          </section>
+            try {
+                // LLAMADA AL BACKEND
+                const response = await fetch('http://localhost:3000/pagos/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
 
-          <section class="request-form-card" style="margin-bottom: 0.9rem;">
-            <p class="request-section-title">Resumen de la solicitud</p>
-            <div class="request-summary-grid">
-              <article class="request-summary-item">
-                <span class="request-summary-label">Material</span>
-                <strong class="request-summary-value" id="pay-summary-item">Material pendiente de seleccionar</strong>
-              </article>
-              <article class="request-summary-item">
-                <span class="request-summary-label">Periodo</span>
-                <strong class="request-summary-value" id="pay-summary-range">Define las fechas en el paso anterior</strong>
-              </article>
-              <article class="request-summary-item">
-                <span class="request-summary-label">Finalidad</span>
-                <strong class="request-summary-value" id="pay-summary-purpose">AÃ±ade una finalidad de uso para completar el resumen</strong>
-              </article>
-            </div>
-          </section>
+                if (!response.ok) throw new Error('Error en el servidor');
 
-          <section class="request-form-card">
-            <p class="request-section-title">Selecciona un mÃ©todo de pago</p>
-            <p class="request-methods-hint">Pago seguro con validaciÃ³n inmediata para tramitar la solicitud.</p>
+                const session = await response.json();
+                
+                // REDIRECCIÓN A STRIPE
+                if (session.url) {
+                    window.location.href = session.url;
+                } else {
+                    throw new Error('No se recibió la URL de pago');
+                }
 
-            <div class="payment-options-list">
-            <!-- Tarjeta Stripe Elements -->
-            <div class="payment-method-label active" style="flex-direction: column; align-items: stretch;">
-              <div class="payment-method-content" style="margin-bottom: 0.75rem;">
-                <svg class="pm-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-                <div class="payment-method-meta">
-                  <span class="payment-method-title">Tarjeta de CrÃ©dito / DÃ©bito</span>
-                  <span class="payment-method-desc">Pago seguro procesado por Stripe</span>
-                </div>
-              </div>
-              <div id="card-element" style="padding: 0.75rem; border: 1px solid var(--slate-300); border-radius: 8px; background: white; transition: border-color 0.2s;"></div>
-              <div id="card-errors" role="alert" style="color: var(--red-600); font-size: 0.82rem; margin-top: 0.4rem; min-height: 1.2em;"></div>
-            </div>
-            </div>
-          </section>
+            } catch (error) {
+                console.error("Error:", error);
+                alert("No se pudo conectar con el servidor de pagos. Revisa que el backend esté corriendo.");
+                btnPay.disabled = false;
+                btnPay.innerText = 'Ir al pago fianza';
+            }
+        });
 
-          <div class="request-step-actions">
-            <button type="button" class="btn btn-secondary" id="btn-back-step">AtrÃ¡s</button>
-            <button type="button" class="btn btn-primary" id="btn-submit-req">Procesar Pago y Enviar</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
+        // Animación hover botón "+"
+        newReqBtn.addEventListener("mouseenter", () => {
+            gsap.to("#newReqBtn span", { x: 8, duration: 0.3 });
+            gsap.to("#plusWrapper", { width: 20, opacity: 1, marginRight: 8, duration: 0.3 });
+            gsap.to(newReqBtn, { backgroundColor: "#0f766e", duration: 0.3 });
+        });
+        newReqBtn.addEventListener("mouseleave", () => {
+            gsap.to("#newReqBtn span", { x: 0, duration: 0.3 });
+            gsap.to("#plusWrapper", { width: 0, opacity: 0, marginRight: 0, duration: 0.3 });
+            gsap.to(newReqBtn, { backgroundColor: "#0d9488", duration: 0.3 });
+        });
 
-  <!-- Toast Container -->
-  <div id="toast-container"></div>
+        // --- LÓGICA ANIMACIÓN BOTÓN VOLVER ---
+        const backBtn = document.getElementById('backHomeBtn');
+        const arrowW = document.getElementById('arrowBackWrapper');
 
-    <script type="module" src="../../js/views/student/requests_estudiante.js"></script>
+        if (backBtn && arrowW) {
+            backBtn.addEventListener('mouseenter', () => {
+                // Desplaza el texto ligeramente
+                gsap.to("#backHomeBtn span", { x: 4, duration: 0.3, ease: "power2.out" });
+                // Muestra la flecha
+                gsap.to(arrowW, { width: 15, opacity: 1, marginRight: 3, duration: 0.3, ease: "power2.out" });
+                gsap.to(".arrow-tail-back", { width: 10, duration: 0.3 });
+            });
+
+            backBtn.addEventListener('mouseleave', () => {
+                gsap.to("#backHomeBtn span", { x: 0, duration: 0.3 });
+                gsap.to(arrowW, { width: 0, opacity: 0, marginRight: 0, duration: 0.3 });
+                gsap.to(".arrow-tail-back", { width: 0, duration: 0.3 });
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,6 +1,5 @@
 import { api } from '../../js/core/api.js';
     import { auth } from '../../js/core/auth.js';
-    import { db } from '../../js/core/db.js';
     import { ui } from '../../js/components/ui.js';
 
     // --- Stripe initialization ---
@@ -255,57 +254,26 @@ import { api } from '../../js/core/api.js';
       return isValid;
     }
 
-    // 4. Data Layer & Render (Mock simulated)
-    function loadData() {
-      // Create some initial mock data for the simulation to work properly, or fall back to db
-      let allReqs = db.filter('requests', r => r.userId === user.id);
-      let inv = db.get('inventory') || [];
+    // 4. Data Layer & Render
+async function loadData() {
+      try {
+        const inv = await api.getMateriales();
+        const allReqs = await api.getSolicitudes(user.id);
 
-      const sampleInventoryForTesting = [
-        { id: 'demo_tripode', name: 'Trípode Manfrotto Compact', stock: 4 },
-        { id: 'demo_microfono', name: 'Micrófono Rode NT-USB', stock: 3 }
-      ];
-      
-      // Seed logic (just in case db is empty out-of-the-box for the prototype)
-      if(inv.length === 0) {
-        inv = [
-          { id: '1', name: 'Portátil Dell XPS 15', stock: 5 },
-          { id: '2', name: 'Cámara Canon EOS R5', stock: 2 },
-          { id: '3', name: 'Kit Arduino Uno Rev3', stock: 15 }
-        ];
-      }
-
-      // Ensure test options are available in the request dropdown.
-      let inventoryUpdated = false;
-      const existingInventoryIds = new Set(inv.map(item => String(item.id)));
-      sampleInventoryForTesting.forEach((sampleItem) => {
-        if (!existingInventoryIds.has(String(sampleItem.id))) {
-          inv.push(sampleItem);
-          inventoryUpdated = true;
+        inventoryMap.clear();
+        inv.forEach(i => inventoryMap.set(i.id, i));
+        
+        requestsList = allReqs.sort((a,b) => new Date(b.startDate) - new Date(a.startDate));
+        if (!selectedRequestId || !requestsList.some(req => req.id === selectedRequestId)) {
+          selectedRequestId = requestsList[0]?.id ?? null;
         }
-      });
 
-      if (inventoryUpdated) {
-        db.set('inventory', inv);
+        populateInventorySelect(inv);
+        renderTable();
+      } catch (err) {
+        console.error('Error cargando datos:', err);
+        ui.showToast('Error cargando solicitudes', 'error');
       }
-      
-      if(allReqs.length === 0) {
-        allReqs = [
-          { id: 'req_1', userId: user.id, itemId: '1', startDate: '2026-03-01', endDate: '2026-03-05', status: 'finalizada', purpose: 'Práctica TFG' },
-          { id: 'req_2', userId: user.id, itemId: '2', startDate: '2026-03-10', endDate: '2026-03-12', status: 'aprobada', purpose: 'Grabación de vídeo corto' }
-        ];
-        db.set('requests', allReqs);
-      }
-
-      inventoryMap.clear();
-      inv.forEach(i => inventoryMap.set(i.id, i));
-      requestsList = allReqs.sort((a,b) => new Date(b.startDate) - new Date(a.startDate));
-      if (!selectedRequestId || !requestsList.some(req => req.id === selectedRequestId)) {
-        selectedRequestId = requestsList[0]?.id ?? null;
-      }
-      
-      populateInventorySelect(inv);
-      renderTable();
     }
 
     function populateInventorySelect(inv) {
@@ -374,8 +342,9 @@ import { api } from '../../js/core/api.js';
 
     function createRequestCard(req) {
       const item = inventoryMap.get(req.itemId);
+      const itemName = item ? item.name : (req.materialName || 'Elemento desconocido');
       const badgeHTML = getStatusBadge(req.status);
-      const context = getAcademicContext(item?.name || '');
+      const context = getAcademicContext(itemName);
 
       const card = document.createElement('article');
       card.className = `request-card ${selectedRequestId === req.id ? 'active' : ''}`;
@@ -383,7 +352,7 @@ import { api } from '../../js/core/api.js';
       card.innerHTML = `
         <div class="request-top">
           <div class="request-title-wrap">
-            <h3 class="request-title">${item ? item.name : 'Elemento desconocido'}</h3>
+            <h3 class="request-title">${itemName}</h3>
             ${badgeHTML}
           </div>
           <span class="request-range">${req.startDate} a ${req.endDate}</span>
@@ -584,7 +553,7 @@ import { api } from '../../js/core/api.js';
       detailEmpty.style.display = 'none';
       detailContent.style.display = 'grid';
 
-      detailItem.textContent = item ? item.name : 'Elemento desconocido';
+      detailItem.textContent = item ? item.name : (request.materialName || 'Elemento desconocido');
       detailPeriod.textContent = `${request.startDate} - ${request.endDate}`;
       detailPurpose.textContent = request.purpose || 'Sin finalidad registrada';
       detailLocation.textContent = context.location;
@@ -790,8 +759,8 @@ import { api } from '../../js/core/api.js';
 
         if (paymentIntent.status === 'succeeded') {
           // 3. Create the solicitud with the PaymentIntent ID
-          const selectedOption = selItem.options[selItem.selectedIndex];
-          const materialName = selectedOption ? selectedOption.textContent.replace(/\s*\(.*\)$/, '') : '';
+          const selectedMaterialObj = inventoryMap.get(selItem.value);
+          const materialName = selectedMaterialObj ? selectedMaterialObj.name : '';
 
           await api.createSolicitud({
             userId: user.id,
@@ -814,8 +783,9 @@ import { api } from '../../js/core/api.js';
           renderTable();
         }
       } catch (err) {
-        console.error('Error en el pago:', err);
-        ui.showToast('Error al procesar el pago. Inténtalo de nuevo.', 'error');
+        console.error('Error al crear solicitud:', err);
+        const errorMsg = err.message || 'Error al procesar la solicitud. Inténtalo de nuevo.';
+        ui.showToast(errorMsg, 'error');
       } finally {
         btnSubmitReq.disabled = false;
         btnSubmitReq.textContent = 'Procesar Pago y Enviar';
@@ -836,7 +806,7 @@ import { api } from '../../js/core/api.js';
         const target = requestsList.find(r => r.id === reqId);
         if(target) {
           target.status = 'rechazada'; // or completely map a new status 'cancelada'
-          db.set('requests', requestsList);
+          // db.set('requests', requestsList); // TODO Use Real API cancellation Call Here
           ui.showToast('Solicitud cancelada', 'success');
           renderTable();
         }
@@ -882,7 +852,7 @@ import { api } from '../../js/core/api.js';
 
       if (action === 'return') {
         targetReq.status = 'finalizada';
-        db.set('requests', requestsList);
+        // db.set('requests', requestsList); // TODO Use API Finalize call here
         renderTable();
         ui.showToast('Devolución registrada correctamente.', 'success');
         return;
@@ -897,17 +867,19 @@ import { api } from '../../js/core/api.js';
     loadData();
 
     // Notification badge logic
-    const mockNotifications = [
-      { id: 1, read: false },
-      { id: 2, read: false },
-      { id: 3, read: true }
-    ];
-    const notifBellBadge = document.getElementById('notif-bell-badge');
-    const unseenCount = mockNotifications.filter(n => !n.read).length;
-    if (unseenCount > 0) {
-      notifBellBadge.classList.add('show');
-    }
-
+      async function updateNotificationBadge() {
+        try {
+          const notifs = await api.getNotificaciones(user.id);
+          const unseenCount = notifs.filter(n => !n.read).length;
+          const notifBellBadge = document.getElementById('notif-bell-badge');
+          if (unseenCount > 0 && notifBellBadge) {
+            notifBellBadge.classList.add('show');
+          }
+        } catch (err) {
+          console.error('Error fetching notifs:', err);
+        }
+      }
+      updateNotificationBadge();
     refreshPaymentMethodStyles('tarjeta');
     updatePaymentSummary();
     setRequestStep(1);

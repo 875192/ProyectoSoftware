@@ -1,24 +1,44 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const createPaymentIntent = async (req, res) => {
+const createCheckoutSession = async (req, res) => {
   try {
-    const { amount, description, metadata } = req.body;
+    const { equipment, pickupDate, reason } = req.body;
 
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ message: 'El importe debe ser mayor que 0' });
-    }
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount),     // en céntimos (1000 = 10,00 €)
-      currency: 'eur',
-      description: description || 'Fianza UniGear',
-      metadata: metadata || {},
+    // Creamos la sesión de Checkout
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'], // Puedes añadir 'bizum' si lo tienes activo en Stripe
+      line_items: [
+        {
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: `Fianza de Préstamo: ${equipment}`,
+              description: `Recogida programada: ${pickupDate}`,
+            },
+            unit_amount: 1000, // 1000 céntimos = 10,00 €
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      // URLs a las que Stripe enviará al usuario tras el proceso
+      // Asegúrate de tener FRONTEND_URL en tu .env (ej: http://localhost:5500)
+      success_url: `${process.env.FRONTEND_URL}/api/src/pages/student/requests_estudiante.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/api/src/pages/student/requests_estudiante.html?status=cancelled`,
+      
+      // Guardamos la info de la solicitud en los metadatos de Stripe para consultarlos luego
+      metadata: {
+        equipo: equipment,
+        fecha_recogida: pickupDate,
+        motivo: reason
+      },
     });
 
-    res.json({ clientSecret: paymentIntent.client_secret });
+    // Devolvemos el ID y la URL de redirección
+    res.json({ id: session.id, url: session.url });
   } catch (error) {
-    console.error('Error al crear PaymentIntent:', error);
-    res.status(500).json({ message: 'Error al procesar el pago' });
+    console.error('Error al crear Checkout Session:', error);
+    res.status(500).json({ message: 'No se pudo crear la sesión de pago' });
   }
 };
 
@@ -27,6 +47,6 @@ const getPublishableKey = (req, res) => {
 };
 
 module.exports = {
-  createPaymentIntent,
+  createCheckoutSession,
   getPublishableKey,
 };

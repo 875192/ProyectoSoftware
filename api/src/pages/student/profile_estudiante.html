@@ -1,167 +1,349 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Perfil - UniGear</title>
-  <link rel="stylesheet" href="../../css/globals.css">
-  <link rel="stylesheet" href="../../css/components.css">
-  <link rel="stylesheet" href="../../css/layout.css">
-    <link rel="stylesheet" href="../../css/student/profile_estudiante.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniGear | Mi Perfil</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f1f5f9;
+            --bg-white: #ffffff;
+            --primary-teal: #1c5b56; 
+            --primary-hover: #164743;
+            --button-teal: #0d9488;  
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --danger-soft: #fef2f2; /* Soft red for hover background */
+            --accent-gradient: linear-gradient(135deg, #1c5b56, #164743);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER (Estandarizado) --- */
+        .main-header {
+            background-color: var(--bg-white);
+            height: 70px;
+            min-height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 60px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo-section { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .logo-icon { width: 38px; height: 38px; background: var(--accent-gradient); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+        .brand-name { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        .nav-btn { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; transition: 0.3s; position: relative; padding: 5px 0; }
+        .nav-btn:hover { color: var(--primary-teal); }
+
+        .header-actions { display: flex; align-items: center; gap: 25px; }
+
+        /* Botón Volver al inicio (Minimalista) */
+        .back-link {
+            display: flex; align-items: center; gap: 2px;
+            text-decoration: none; color: var(--text-muted);
+            font-size: 14px; font-weight: 500; transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--button-teal); }
+        .arrow-back-wrapper { position: relative; width: 0; opacity: 0; display: inline-flex; align-items: center; justify-content: center; }
+        .arrow-head-back { position: absolute; left: 0; width: 7px; height: 7px; border-bottom: 2.5px solid var(--button-teal); border-left: 2.5px solid var(--button-teal); transform: rotate(45deg); }
+        .arrow-tail-back { position: absolute; left: 0; width: 0; height: 2.5px; background: var(--button-teal); border-radius: 2px; }
+
+        .notification-btn { color: var(--text-muted); transition: 0.3s; display: flex; align-items: center; }
+        .notification-btn:hover { color: var(--button-teal); }
+
+        .user-profile { display: flex; align-items: center; gap: 12px; padding-left: 20px; border-left: 1px solid #e2e8f0; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #f97316; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .profile-workspace {
+            flex: 1;
+            padding: 25px 60px;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .profile-sidebar { display: flex; flex-direction: column; gap: 8px; }
+        .profile-nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px 18px;
+            text-decoration: none; color: var(--text-muted); font-size: 14px; font-weight: 600;
+            border-radius: 12px; transition: all 0.3s; cursor: pointer;
+            border: none; background: transparent; width: 100%; text-align: left;
+        }
+        .profile-nav-item:not(.btn-logout):hover { background: rgba(203, 213, 225, 0.4); color: var(--text-main); }
+        .profile-nav-item.active { background: var(--bg-white); color: var(--primary-teal); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+
+        /* --- BOTÓN CERRAR SESIÓN CON ANIMACIÓN ESPEJO + POMO --- */
+        .btn-logout { 
+            margin-top: auto; 
+            padding-top: 20px; 
+            border-top: 1px solid #e2e8f0; 
+            color: var(--danger) !important; /* Rojo permanente */
+            font-weight: 700;
+            overflow: visible; /* Importante para que la flecha se salga del todo */
+        }
+        .btn-logout:hover { background: var(--danger-soft) !important; }
+
+        .logout-icon-wrapper {
+            width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: visible;
+        }
+
+        .custom-logout-icon { width: 24px; height: 24px; color: var(--danger); }
+        .door-frame { stroke-width: 2.5px; transition: stroke-width 0.3s ease; fill: none; }
+        .door-knob { stroke-width: 2.5px; fill: none; } /* Estilo del pomo */
+
+        /* --- TARJETA DE CONTENIDO --- */
+        .profile-card {
+            background: var(--bg-white);
+            border-radius: 28px;
+            padding: 30px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid #f1f5f9;
+            height: 100%;
+            position: relative;
+        }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        .user-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; }
+        .large-avatar { width: 70px; height: 70px; border-radius: 20px; background: #f97316; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: 700; }
+        .user-meta h2 { font-size: 20px; font-weight: 700; }
+        .user-meta span { font-size: 12px; color: var(--button-teal); font-weight: 700; background: #f0fdfa; padding: 3px 10px; border-radius: 8px; }
+
+        .section-title { margin-bottom: 15px; }
+        .section-title h3 { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+        .section-title p { font-size: 13px; color: var(--text-muted); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+        .input-group input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-family: 'Inter'; font-size: 13.5px; outline: none; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--button-teal); }
+        .input-group input[disabled] { background: #f8fafc; color: var(--text-muted); border-color: #f1f5f9; cursor: not-allowed; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid #f1f5f9; text-align: center; }
+        .stat-box h4 { font-size: 20px; font-weight: 800; color: var(--primary-teal); }
+        .stat-box p { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 2px; }
+
+        .btn-action {
+            background: var(--accent-gradient); color: white; border: none;
+            padding: 12px 30px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer;
+            width: fit-content; transition: transform 0.2s;
+        }
+        .btn-action:active { transform: scale(0.97); }
+
+    </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>
-        UniGear
-      </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          Mi Resumen
-        </a>
-        <a href="catalog_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-          CatÃ¡logo de Material
-        </a>
-        <a href="requests_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          Mis Solicitudes
-        </a>
-      </nav>
-      <div class="sidebar-footer">
-        <a href="profile_estudiante.html" class="nav-item active">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Mi Perfil
-        </a>
-        <a href="#" class="nav-item" data-action="logout">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          Cerrar SesiÃ³n
-        </a>
-      </div>
-    </aside>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="mobile-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-          </button>
-          <span style="font-weight: 500; color: var(--slate-600);">Ãrea de Estudiante / Mi Perfil</span>
+    <header class="main-header">
+        <a href="dashboard_estudiante.html" class="logo-section">
+            <div class="logo-icon"><i data-lucide="package"></i></div>
+            <span class="brand-name">UniGear</span>
+        </a>
+
+        <nav class="nav-menu">
+            <a href="dashboard_estudiante.html" class="nav-btn"><span>Dashboard</span></a>
+            <a href="catalogo_estudiante.html" class="nav-btn"><span>Catálogo</span></a>
+            <a href="calendario_estudiante.html" class="nav-btn"><span>Calendario</span></a>
+            <a href="requests_estudiante.html" class="nav-btn"><span>Solicitudes</span></a>
+            <a href="analitics_estudiante.html" class="nav-btn"><span>Analíticas</span></a>
+        </nav>
+
+        <div class="header-actions">
+            <a href="../public/landing.html" class="back-link" id="backHomeBtn">
+                <div class="arrow-back-wrapper" id="arrowBackWrapper">
+                    <div class="arrow-tail-back"></div>
+                    <div class="arrow-head-back"></div>
+                </div>
+                <span>Volver al inicio</span>
+            </a>
+            <a href="notifications_estudiante.html" class="notification-btn"><i data-lucide="bell" width="20"></i></a>
+            <div class="user-profile">
+                <div class="user-avatar">AG</div>
+            </div>
         </div>
-        <div class="topbar-right">
-          <button class="btn btn-secondary notif-bell-btn" id="notif-bell" style="border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0;" onclick="window.location.href='notifications_estudiante.html'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 15V9.524A6 6 0 0 0 12 3.5a6 6 0 0 0-6 6.024V15L4 18h16l-2-3Z"/>
-              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-            </svg>
-            <span class="notif-bell-badge" id="notif-bell-badge"></span>
-          </button>
-        </div>
-      </header>
+    </header>
 
-      <main class="main-content">
-        <div class="card" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-          
-          <div class="profile-header">
-            <div class="profile-avatar-large" id="profile-avatar-large">A</div>
-            <div>
-              <h1 style="font-size: 1.75rem; margin: 0; color: var(--slate-900);" id="profile-name">Cargando...</h1>
-              <p style="color: var(--slate-500); margin-top: 0.25rem;">Estudiante - Facultad de InformÃ¡tica</p>
-              <span class="chip chip-blue" style="margin-top: 0.5rem; display: inline-block;">Cuenta Verificada</span>
-            </div>
-          </div>
+    <main class="profile-workspace">
+        <aside class="profile-sidebar">
+            <button class="profile-nav-item active" data-section="account">
+                <i data-lucide="user" width="18"></i> Mi Cuenta
+            </button>
+            <button class="profile-nav-item" data-section="security">
+                <i data-lucide="shield" width="18"></i> Seguridad
+            </button>
+            <a href="notifications_estudiante.html" class="profile-nav-item">
+                <i data-lucide="bell" width="18"></i> Notificaciones
+            </a>
 
-          <form id="profile-form">
-            <div class="settings-section">
-              <h2 class="settings-section-title">InformaciÃ³n Personal</h2>
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label" for="prof-email">Correo ElectrÃ³nico</label>
-                  <input type="email" id="prof-email" class="form-input" disabled style="background-color: var(--slate-50); cursor: not-allowed; color: var(--slate-500);">
+            <a href="../public/landing.html" class="profile-nav-item btn-logout" id="logoutBtn">
+                <div class="logout-icon-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="custom-logout-icon">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" class="door-frame door-left"></path>
+                        
+                        <path d="M9 21h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H9" class="door-frame door-right" opacity="0"></path>
+                        
+                        <circle cx="8.5" cy="12" r="1.2" class="door-frame door-knob" opacity="0"></circle>
+                        
+                        <g class="arrow-group">
+                            <polyline points="16 17 21 12 16 7" stroke-width="2.5"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12" stroke-width="2.5"></line>
+                        </g>
+                    </svg>
                 </div>
-                <div class="form-group">
-                  <label class="form-label" for="prof-phone">TelÃ©fono de Contacto</label>
-                  <input type="tel" id="prof-phone" class="form-input" placeholder="+34 600 000 000">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="prof-address">DirecciÃ³n de EnvÃ­o / FacturaciÃ³n</label>
-                <input type="text" id="prof-address" class="form-input" placeholder="Calle Ejemplo, 123, Madrid">
-              </div>
-            </div>
+                <span>Cerrar Sesión</span>
+            </a>
+        </aside>
 
-            <div class="settings-section">
-              <h2 class="settings-section-title">MÃ©todos de Pago Guardados</h2>
-              <p style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 1rem;">Utilizados para el bloqueo rÃ¡pido de la fianza durante tus solicitudes.</p>
-              
-              <div class="pm-card">
-                <div class="pm-info">
-                  <div class="pm-icon-wrapper">
-                    <!-- Tarjeta Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--slate-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                  </div>
-                  <div>
-                    <div style="font-weight: 500; font-size: 0.95rem;">Visa terminada en â€¢â€¢â€¢â€¢ 4242</div>
-                    <div style="font-size: 0.8rem; color: var(--slate-500);">Expira en 12/26</div>
-                  </div>
+        <section class="profile-card" id="profileCard">
+            
+            <div id="account-section" class="view-section active">
+                <div class="user-header">
+                    <div class="large-avatar">AG</div>
+                    <div class="user-meta">
+                        <h2>Ana García Pérez</h2>
+                        <span>Estudiante de Comunicación</span>
+                    </div>
                 </div>
-                <button type="button" class="btn btn-secondary" style="color: var(--red-600); border-color: transparent;">Eliminar</button>
-              </div>
-
-              <div class="pm-card">
-                <div class="pm-info">
-                  <div class="pm-icon-wrapper" style="background-color: #000; border: none;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" style="height: 12px; filter: brightness(0) invert(1);">
-                  </div>
-                  <div>
-                    <div style="font-weight: 500; font-size: 0.95rem;">Apple Pay</div>
-                    <div style="font-size: 0.8rem; color: var(--slate-500);">Activo en tu dispositivo</div>
-                  </div>
+                <div class="section-title">
+                    <h3>Información Personal</h3>
+                    <p>Datos oficiales y de contacto.</p>
                 </div>
-                <button type="button" class="btn btn-secondary" style="color: var(--red-600); border-color: transparent;">Eliminar</button>
-              </div>
-
-              <button type="button" class="btn btn-secondary" style="margin-top: 0.5rem;">+ AÃ±adir MÃ©todo de Pago</button>
+                <div class="form-grid">
+                    <div class="input-group"><label>Nombre Completo</label><input type="text" value="Ana García Pérez"></div>
+                    <div class="input-group"><label>Correo</label><input type="email" value="ana.garcia01@estudiante.uni.es" disabled></div>
+                    <div class="input-group"><label>ID Estudiante</label><input type="text" value="U-2024-8842" disabled></div>
+                    <div class="input-group"><label>Teléfono</label><input type="text" value="+34 600 000 000"></div>
+                </div>
+                <div class="section-title"><h3>Resumen de Actividad</h3></div>
+                <div class="stats-grid">
+                    <div class="stat-box"><h4>14</h4><p>Préstamos</p></div>
+                    <div class="stat-box"><h4>100%</h4><p>Puntualidad</p></div>
+                    <div class="stat-box"><h4>0</h4><p>Sanciones</p></div>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button class="btn-action">Guardar Cambios</button>
+                </div>
             </div>
 
-            <div class="settings-section">
-              <h2 class="settings-section-title">Cambiar ContraseÃ±a</h2>
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label" for="prof-curr-pass">ContraseÃ±a Actual</label>
-                  <input type="password" id="prof-curr-pass" class="form-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+            <div id="security-section" class="view-section">
+                <div class="section-title">
+                    <h3>Seguridad de la cuenta</h3>
+                    <p>Enviaremos un enlace a tu correo institucional para restablecer tu contraseña.</p>
                 </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label" for="prof-new-pass">Nueva ContraseÃ±a</label>
-                  <input type="password" id="prof-new-pass" class="form-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="prof-new-pass2">Confirmar Nueva ContraseÃ±a</label>
-                  <input type="password" id="prof-new-pass2" class="form-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
-                </div>
-              </div>
+                <div id="securityMsg" style="display: none; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 14px; font-weight: 500;"></div>
+                <form id="securityForm" style="max-width: 400px; display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
+                    <div class="input-group">
+                        <label>Correo institucional</label>
+                        <input type="email" id="securityEmail" placeholder="usuario@univ.edu" required>
+                    </div>
+                    <button type="submit" id="securitySubmitBtn" class="btn-action">Enviar enlace de recuperación</button>
+                </form>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-              <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancelar</button>
-              <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            </div>
-          </form>
-        </div>
-      </main>
-    </div>
-  </div>
+        </section>
+    </main>
 
-    <script type="module" src="../../js/views/student/profile_estudiante.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // 1. Pestañas
+        const buttons = document.querySelectorAll('.profile-nav-item[data-section]');
+        const sections = document.querySelectorAll('.view-section');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-section');
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                gsap.to(sections, { opacity: 0, y: 5, duration: 0.2, onComplete: () => {
+                    sections.forEach(s => s.classList.remove('active'));
+                    const activeSec = document.getElementById(`${target}-section`);
+                    activeSec.classList.add('active');
+                    gsap.fromTo(activeSec, { opacity: 0, y: 5 }, { opacity: 1, y: 0, duration: 0.3 });
+                }});
+            });
+        });
+
+        // 2. Volver al inicio (Header)
+        const backBtn = document.getElementById('backHomeBtn');
+        const arrowW = document.getElementById('arrowBackWrapper');
+        backBtn.addEventListener('mouseenter', () => {
+            gsap.to("#backHomeBtn span", { x: 4, duration: 0.3 });
+            gsap.to(arrowW, { width: 15, opacity: 1, marginRight: 3, duration: 0.3 });
+            gsap.to(".arrow-tail-back", { width: 10, duration: 0.3 });
+        });
+        backBtn.addEventListener('mouseleave', () => {
+            gsap.to("#backHomeBtn span", { x: 0, duration: 0.3 });
+            gsap.to(arrowW, { width: 0, opacity: 0, marginRight: 0, duration: 0.3 });
+            gsap.to(".arrow-tail-back", { width: 0, duration: 0.3 });
+        });
+
+        // --- 3. LÓGICA ANIMACIÓN CERRAR SESIÓN (ESPEJO + POMO CON GSAP) ---
+        const logoutBtn = document.getElementById('logoutBtn');
+        const arrowGrp = logoutBtn.querySelector('.arrow-group');
+        const doorRight = logoutBtn.querySelector('.door-right');
+        const doorKnob = logoutBtn.querySelector('.door-knob'); // NUEVO
+
+        // Timeline Hover
+        const hoverTl = gsap.timeline({ paused: true });
+        hoverTl
+            // A. La flecha sale por la derecha y desaparece
+            .to(arrowGrp, { x: 40, opacity: 0, duration: 0.5, ease: "power2.in" })
+            // B. El espejo aparece y se desliza hacia la izquierda para unirse
+            .fromTo(doorRight, 
+                { opacity: 0, x: 10 }, 
+                { opacity: 1, x: 0, duration: 0.4, ease: "back.out(1.2)" }, 
+                "-=0.2"
+            )
+            // C. El pomo aparece suavemente (NUEVO)
+            .fromTo(doorKnob, 
+                { opacity: 0, scale: 0.1 }, 
+                { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.7)" }, 
+                "-=0.2" // Casi simultáneamente con la puerta
+            );
+
+        logoutBtn.addEventListener('mouseenter', () => hoverTl.play());
+        logoutBtn.addEventListener('mouseleave', () => hoverTl.reverse());
+
+        // 4. Seguridad
+        const securityForm = document.getElementById('securityForm');
+        if (securityForm) {
+            securityForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const msg = document.getElementById('securityMsg');
+                msg.style.display = 'block';
+                msg.style.backgroundColor = '#dcfce7';
+                msg.style.color = '#115e59';
+                msg.textContent = 'Enlace de recuperación enviado.';
+            });
+        }
+
+        gsap.from("#profileCard", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out" });
+    </script>
 </body>
 </html>

@@ -1,216 +1,297 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Resumen - Solicitar Material</title>
-  <link rel="stylesheet" href="../../css/globals.css">
-  <link rel="stylesheet" href="../../css/components.css">
-  <link rel="stylesheet" href="../../css/layout.css">
-    <link rel="stylesheet" href="../../css/student/notifications_estudiante.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniGear | Notificaciones</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f1f5f9;
+            --bg-white: #ffffff;
+            --primary-teal: #1c5b56; 
+            --primary-hover: #164743;
+            --button-teal: #0d9488;  
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --accent-gradient: linear-gradient(135deg, #1c5b56, #164743);
+        }
+
+        /* RESET CLAVE PARA ALINEACIÓN */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .main-header {
+            background-color: var(--bg-white);
+            height: 70px;
+            min-height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 60px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo-section { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .logo-icon { width: 38px; height: 38px; background: var(--accent-gradient); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+        .brand-name { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        .nav-btn { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; transition: 0.3s; position: relative; padding: 5px 0; }
+        .nav-btn:hover { color: var(--primary-teal); }
+
+        .header-actions { display: flex; align-items: center; gap: 25px; }
+
+        /* Botón Volver al inicio */
+        .back-link {
+            display: flex; align-items: center; gap: 2px;
+            text-decoration: none; color: var(--text-muted);
+            font-size: 14px; font-weight: 500; transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--button-teal); }
+        .arrow-back-wrapper { position: relative; width: 0; opacity: 0; display: inline-flex; align-items: center; justify-content: center; }
+        .arrow-head-back { position: absolute; left: 0; width: 7px; height: 7px; border-bottom: 2.5px solid var(--button-teal); border-left: 2.5px solid var(--button-teal); transform: rotate(45deg); }
+        .arrow-tail-back { position: absolute; left: 0; width: 0; height: 2.5px; background: var(--button-teal); border-radius: 2px; }
+
+        .notification-btn { color: var(--button-teal); transition: 0.3s; display: flex; align-items: center; }
+        
+        .user-profile { display: flex; align-items: center; gap: 12px; padding-left: 20px; border-left: 1px solid #e2e8f0; cursor: pointer; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #f97316; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+
+        /* --- CONTENIDO PRINCIPAL (GRID REFORZADO) --- */
+        .workspace {
+            flex: 1;
+            padding: 25px 60px;
+            display: grid;
+            grid-template-columns: 240px 1fr; /* Ancho fijo sidebar */
+            gap: 30px;
+            overflow: hidden;
+        }
+
+        /* Sidebar con alineación absoluta */
+        .sidebar { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            width: 100%; 
+        }
+        
+        .filter-item {
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; /* Texto izquierda, badge derecha */
+            padding: 14px 20px; 
+            border-radius: 14px; 
+            cursor: pointer;
+            color: var(--text-muted); 
+            font-size: 14px; 
+            font-weight: 600;
+            transition: all 0.25s ease;
+            width: 100%; /* Forzar ancho total del sidebar */
+            background: transparent;
+            border: 1px solid transparent; /* Evita saltos de pixel al activar borde */
+        }
+        
+        .filter-item:hover { background: rgba(203, 213, 225, 0.4); color: var(--text-main); }
+        
+        .filter-item.active { 
+            background: var(--bg-white); 
+            color: var(--primary-teal); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .count-badge { 
+            background: #e2e8f0; 
+            padding: 2px 10px; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            font-weight: 700;
+            min-width: 32px;
+            text-align: center;
+        }
+        .filter-item.active .count-badge { 
+            background: var(--button-teal); 
+            color: white; 
+        }
+
+        /* --- TARJETA DE NOTIFICACIONES --- */
+        .notifications-card {
+            background: var(--bg-white);
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 25px 35px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h2 { font-size: 18px; font-weight: 700; }
+        .btn-mark-read { background: none; border: none; color: var(--button-teal); font-size: 13px; font-weight: 600; cursor: pointer; }
+
+        .notifications-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .notif-item {
+            display: grid;
+            grid-template-columns: 50px 1fr 100px;
+            align-items: center;
+            padding: 18px 35px;
+            gap: 20px;
+            border-bottom: 1px solid #f8fafc;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .notif-item:hover { background: #f8fafc; }
+        .notif-item.unread { background: rgba(13, 148, 136, 0.02); }
+        .notif-item.unread::before {
+            content: ''; position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            width: 6px; height: 6px; background: var(--button-teal); border-radius: 50%;
+        }
+
+        .notif-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .icon-success { background: #ecfdf5; color: #10b981; }
+        .icon-warning { background: #fffbeb; color: #f59e0b; }
+        .icon-info { background: #eff6ff; color: #3b82f6; }
+
+        .notif-content h4 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+        .notif-content p { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+        .notif-time { font-size: 11px; color: #94a3b8; font-weight: 500; text-align: right; }
+
+        .notifications-list::-webkit-scrollbar { width: 6px; }
+        .notifications-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+    </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>
-        UniGear
-      </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard_estudiante.html" class="nav-item active">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          Mi Resumen
+
+    <header class="main-header">
+        <a href="dashboard_estudiante.html" class="logo-section">
+            <div class="logo-icon"><i data-lucide="package"></i></div>
+            <span class="brand-name">UniGear</span>
         </a>
-        <a href="catalog_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-          CatÃ¡logo de Material
-        </a>
-        <a href="requests_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          Mis Solicitudes
-        </a>
-      </nav>
-      <div class="sidebar-footer">
-        <a href="profile_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Mi Perfil
-        </a>
-        <a href="#" class="nav-item" data-action="logout">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          Cerrar SesiÃ³n
-        </a>
-      </div>
-    </aside>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="mobile-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-          </button>
-          <span style="font-weight: 500; color: var(--slate-600);">Ãrea de Estudiante / Mi Resumen</span>
+        <nav class="nav-menu">
+            <a href="dashboard_estudiante.html" class="nav-btn"><span>Dashboard</span></a>
+            <a href="catalogo_estudiante.html" class="nav-btn"><span>Catálogo</span></a>
+            <a href="calendario_estudiante.html" class="nav-btn"><span>Calendario</span></a>
+            <a href="requests_estudiante.html" class="nav-btn"><span>Solicitudes</span></a>
+            <a href="analitics_estudiante.html" class="nav-btn"><span>Analíticas</span></a>
+        </nav>
+
+        <div class="header-actions">
+            <a href="landing.html" class="back-link" id="backHomeBtn">
+                <div class="arrow-back-wrapper" id="arrowBackWrapper">
+                    <div class="arrow-tail-back"></div>
+                    <div class="arrow-head-back"></div>
+                </div>
+                <span>Volver al inicio</span>
+            </a>
+            <a href="notifications_estudiante.html" class="notification-btn"><i data-lucide="bell" width="20"></i></a>
+            <div class="user-profile" onclick="window.location.href='profile_estudiante.html'">
+                <div class="user-avatar">AG</div>
+            </div>
         </div>
-        <div class="topbar-right">
-          <button class="btn btn-secondary notif-bell-btn" id="notif-bell" style="border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0;" onclick="window.location.href='notifications_estudiante.html'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 15V9.524A6 6 0 0 0 12 3.5a6 6 0 0 0-6 6.024V15L4 18h16l-2-3Z"/>
-              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-            </svg>
-            <span class="notif-bell-badge" id="notif-bell-badge"></span>
-          </button>
-          <div class="user-profile">
-            <div class="avatar avatar-display">A</div>
-            <span class="user-name-display">Cargando...</span>
-          </div>
-        </div>
-      </header>
+    </header>
 
-      <main class="main-content">
-        <!-- Welcome Hero -->
-        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #1c5b56, #164743); color: white; border: none; padding: 2.5rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: stretch; border-radius: var(--radius-lg); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-          
-          <!-- Left Column: Welcome -->
-          <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
-            <h1 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; color: white;">Bienvenido, <span id="welcome-name">Aaa</span></h1>
-            <p style="color: rgba(255, 255, 255, 0.9); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; max-width: 90%;">
-              Gestiona tus prÃ©stamos de material de forma sencilla: solicita, sigue el estado y organiza tus devoluciones.
-            </p>
-            <div style="display: flex; gap: 1rem;">
-              <a href="requests_estudiante.html?new=true" class="btn" style="background-color: #0d9488; color: white; font-weight: 600; padding: 0.6rem 1.25rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Solicitar material</a>
-              <a href="catalog_estudiante.html" class="btn" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 600; padding: 0.6rem 1.25rem; border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">Ver inventario</a>
+    <main class="workspace">
+        <aside class="sidebar">
+            <div class="filter-item">
+                <span>Todas</span>
+                <span class="count-badge">12</span>
             </div>
-          </div>
+            <div class="filter-item active">
+                <span>No leídas</span>
+                <span class="count-badge">3</span>
+            </div>
+        </aside>
 
-          <!-- Right Column: Quick Search -->
-          <div style="flex: 1.2; min-width: 320px; background: rgba(15, 23, 42, 0.25); border-radius: 12px; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
-            <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: white;">BÃºsqueda rÃ¡pida</h2>
-            <p style="color: rgba(255, 255, 255, 0.75); font-size: 0.9rem; margin-bottom: 1rem;">Encuentra material por nombre o categorÃ­a.</p>
-            
-            <div style="position: relative; margin-bottom: 1.25rem;">
-              <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.7);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              </div>
-              <input type="text" id="quick-search-input" placeholder="Ej. cÃ¡mara, portÃ¡til, microscopio..." style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem 1rem 0.75rem 2.5rem; color: white; font-size: 0.95rem; outline: none; transition: all 0.2s;">
+        <section class="notifications-card" id="notifCard">
+            <div class="card-header">
+                <h2>Centro de Notificaciones</h2>
+                <button class="btn-mark-read">Marcar todas como leídas</button>
             </div>
 
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <a href="catalog_estudiante.html?category=portatil" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">PortÃ¡til</a>
-              <a href="catalog_estudiante.html?category=proyector" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">Proyector</a>
-              <a href="catalog_estudiante.html?category=camara" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">CÃ¡mara</a>
-              <a href="catalog_estudiante.html?category=laboratorio" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">Laboratorio</a>
-            </div>
-          </div>
-        </div>
+            <div class="notifications-list">
+                <div class="notif-item unread">
+                    <div class="notif-icon icon-success"><i data-lucide="check-circle" width="20"></i></div>
+                    <div class="notif-content">
+                        <h4>Solicitud Aprobada</h4>
+                        <p>Tu préstamo de <b>Canon EOS R</b> ha sido aprobado. Puedes recogerlo hoy a partir de las 16:00.</p>
+                    </div>
+                    <div class="notif-time">Hace 10 min</div>
+                </div>
 
-        <div class="dashboard-grid">
-          <!-- KPI: Activos -->
-          <div class="card" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem;">
-            <div style="background: var(--teal-50); color: var(--teal-700); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-            </div>
-            <div>
-              <h3 style="font-size: 2.5rem; color: var(--slate-900); font-weight: 700; line-height: 1;" id="active-count">0</h3>
-              <p style="color: var(--slate-500); font-weight: 500; margin-top: 0.25rem; font-size: 0.875rem;">PrÃ©stamos activos</p>
-            </div>
-          </div>
-          
-          <!-- KPI: Pendientes -->
-          <div class="card" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem;">
-            <div style="background: var(--yellow-50); color: var(--yellow-600); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            </div>
-            <div>
-              <h3 style="font-size: 2.5rem; color: var(--slate-900); font-weight: 700; line-height: 1;" id="pending-count">0</h3>
-              <p style="color: var(--slate-500); font-weight: 500; margin-top: 0.25rem; font-size: 0.875rem;">Solicitudes pendientes</p>
-            </div>
-          </div>
+                <div class="notif-item unread">
+                    <div class="notif-icon icon-warning"><i data-lucide="clock" width="20"></i></div>
+                    <div class="notif-content">
+                        <h4>Recordatorio de Devolución</h4>
+                        <p>Mañana finaliza el plazo para devolver el <b>Trípode Manfrotto</b>. Entrega antes de las 20:00.</p>
+                    </div>
+                    <div class="notif-time">Hace 2 horas</div>
+                </div>
 
-          <!-- KPI: Aprobadas -->
-          <div class="card" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem;">
-            <div style="background: var(--green-50); color: var(--green-600); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <div class="notif-item">
+                    <div class="notif-icon icon-success"><i data-lucide="package" width="20"></i></div>
+                    <div class="notif-content">
+                        <h4>Devolución Confirmada</h4>
+                        <p>Se ha procesado correctamente la devolución del <b>Kit de Iluminación Pro</b>.</p>
+                    </div>
+                    <div class="notif-time">15 Mar 2026</div>
+                </div>
             </div>
-            <div>
-              <h3 style="font-size: 2.5rem; color: var(--slate-900); font-weight: 700; line-height: 1;" id="approved-count">0</h3>
-              <p style="color: var(--slate-500); font-weight: 500; margin-top: 0.25rem; font-size: 0.875rem;">Listas para recoger</p>
-            </div>
-          </div>
-        </div>
+        </section>
+    </main>
 
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2 style="font-size: 1.25rem; margin: 0;">Movimientos recientes</h2>
-            <a href="requests_estudiante.html" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">Ver todo</a>
-          </div>
-          <div class="table-wrapper">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Material</th>
-                  <th>Periodo</th>
-                  <th>Finalidad</th>
-                  <th>Estado Actual</th>
-                </tr>
-              </thead>
-              <tbody id="recent-requests-body">
-                <!-- Javascript will populate this -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
+    <script>
+        lucide.createIcons();
 
-  <!-- Modal Detalles de PrÃ©stamo -->
-  <div id="loan-details-modal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="card" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden; animation: slideUp 0.3s ease-out;">
-      <div style="padding: 1.5rem; border-bottom: 1px solid var(--slate-200); display: flex; justify-content: space-between; align-items: center; background: var(--slate-50);">
-        <h3 style="margin: 0; font-size: 1.25rem; color: var(--slate-800); display: flex; align-items: center; gap: 0.5rem;" id="modal-item-name">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Detalles del PrÃ©stamo
-        </h3>
-        <button class="btn btn-secondary" style="border: none; padding: 0.5rem;" id="close-modal-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-      <div style="padding: 1.5rem;">
-        <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem;">
-          <div style="flex: 1;">
-            <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.25rem;">Estado</div>
-            <div id="modal-status-badge"></div>
-          </div>
-          <div style="flex: 1;">
-            <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.25rem;">Fechas</div>
-            <div style="font-weight: 500; color: var(--slate-800);" id="modal-dates">--</div>
-          </div>
-        </div>
+        // Animación Botón Volver
+        const backBtn = document.getElementById('backHomeBtn');
+        const arrowW = document.getElementById('arrowBackWrapper');
 
-        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;" id="modal-action-box">
-          <!-- Dynamic Action Box (e.g. QR code or return info) -->
-        </div>
+        backBtn.addEventListener('mouseenter', () => {
+            gsap.to("#backHomeBtn span", { x: 4, duration: 0.3 });
+            gsap.to(arrowW, { width: 15, opacity: 1, marginRight: 3, duration: 0.3 });
+            gsap.to(".arrow-tail-back", { width: 10, duration: 0.3 });
+        });
 
-        <div>
-          <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.5rem;">Finalidad de Uso</div>
-          <p style="margin: 0; color: var(--slate-700); font-size: 0.95rem; line-height: 1.5;" id="modal-purpose">--</p>
-        </div>
-      </div>
-      <div style="padding: 1.25rem 1.5rem; background: var(--slate-50); border-top: 1px solid var(--slate-200); display: flex; justify-content: space-between;">
-        <button class="btn btn-secondary" style="color: var(--red-600); border-color: transparent;" id="modal-report-issue">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          Reportar Incidencia
-        </button>
-        <button class="btn btn-primary" id="modal-primary-action">Entendido</button>
-      </div>
-    </div>
-  </div>
+        backBtn.addEventListener('mouseleave', () => {
+            gsap.to("#backHomeBtn span", { x: 0, duration: 0.3 });
+            gsap.to(arrowW, { width: 0, opacity: 0, marginRight: 0, duration: 0.3 });
+            gsap.to(".arrow-tail-back", { width: 0, duration: 0.3 });
+        });
 
-    <script type="module" src="../../js/views/student/notifications_estudiante.js"></script>
+        // Lógica visual de filtros
+        document.querySelectorAll('.filter-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        gsap.from("#notifCard", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out" });
+    </script>
 </body>
 </html>

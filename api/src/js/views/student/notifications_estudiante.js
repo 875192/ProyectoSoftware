@@ -1,6 +1,6 @@
 import { auth } from '../../js/core/auth.js';
-    import { db } from '../../js/core/db.js';
     import { ui } from '../../js/components/ui.js';
+    import { api } from '../../js/core/api.js';
 
     // 1. Auth Check - Allow student & profesor
     const user = auth.requireAuth(['estudiante', 'profesor']);
@@ -33,67 +33,74 @@ import { auth } from '../../js/core/auth.js';
     }
 
     // 3. Load Data
-    const userRequests = db.filter('requests', r => r.userId === user.id);
-    
-    // Sort descending by date
-    userRequests.sort((a,b) => new Date(b.startDate) - new Date(a.startDate));
+    async function loadNotifications() {
+      try {
+        const userRequests = await api.getSolicitudes(user.id);
+        
+        userRequests.sort((a,b) => new Date(b.startDate) - new Date(a.startDate));
 
-    const activeReqs = userRequests.filter(r => r.status === 'en_prestamo');
-    const pendingReqs = userRequests.filter(r => r.status === 'pendiente');
-    const approvedReqs = userRequests.filter(r => r.status === 'aprobada');
+        const activeReqs = userRequests.filter(r => r.status === 'entregado' || r.status === 'en_prestamo');
+        const pendingReqs = userRequests.filter(r => r.status === 'pendiente');
+        const approvedReqs = userRequests.filter(r => r.status === 'aprobada');
 
-    document.getElementById('active-count').textContent = activeReqs.length;
-    document.getElementById('pending-count').textContent = pendingReqs.length;
-    document.getElementById('approved-count').textContent = approvedReqs.length;
+        document.getElementById('active-count').textContent = activeReqs.length;
+        document.getElementById('pending-count').textContent = pendingReqs.length;
+        document.getElementById('approved-count').textContent = approvedReqs.length;
 
-    // Build Table
-    const tbody = document.getElementById('recent-requests-body');
-    const inventory = db.get('inventory');
-    
-    if (userRequests.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--slate-500); padding: 3rem;">No existen registros de movimientos en el sistema.</td></tr>`;
-    } else {
-      userRequests.slice(0, 5).forEach(req => {
-        const item = inventory.find(i => i.id === req.itemId);
-        let badgeClass = 'chip-blue';
-        let statusText = req.status;
-        if(req.status === 'pendiente') { badgeClass = 'chip-yellow'; statusText = 'Pendiente Validación' }
-        else if(req.status === 'aprobada') { badgeClass = 'chip-green'; statusText = 'Autorizada' }
-        else if(req.status === 'rechazada') { badgeClass = 'chip-red'; statusText = 'Declinada' }
-        else if(req.status === 'en_prestamo') { badgeClass = 'chip-blue'; statusText = 'En Posesión' }
-        else if(req.status === 'finalizada') { badgeClass = 'chip-green'; statusText = 'Devuelto' }
+        const tbody = document.getElementById('recent-requests-body');
+        
+        if (userRequests.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--slate-500); padding: 3rem;">No existen registros de movimientos en el sistema.</td></tr>`;
+        } else {
+          tbody.innerHTML = '';
+          userRequests.slice(0, 5).forEach(req => {
+            let badgeClass = 'chip-blue';
+            let statusText = req.status;
+            if(req.status === 'pendiente') { badgeClass = 'chip-yellow'; statusText = 'Pendiente' }
+            else if(req.status === 'aprobada') { badgeClass = 'chip-green'; statusText = 'Aprobada' }
+            else if(req.status === 'rechazada') { badgeClass = 'chip-red'; statusText = 'Rechazada' }
+            else if(req.status === 'entregado' || req.status === 'en_prestamo') { badgeClass = 'chip-blue'; statusText = 'En Posesión' }
+            else if(req.status === 'finalizada') { badgeClass = 'chip-green'; statusText = 'Devuelto' }
 
-        const tr = document.createElement('tr');
-        tr.style.cursor = 'pointer';
-        tr.style.transition = 'background-color 0.2s';
-        tr.onmouseover = () => tr.style.backgroundColor = 'var(--slate-50)';
-        tr.onmouseout = () => tr.style.backgroundColor = 'transparent';
-        tr.title = 'Haz clic para ver más detalles';
-        tr.onclick = () => openLoanDetails(req, item, badgeClass, statusText);
-        tr.innerHTML = `
-          <td style="font-weight: 500;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              ${item ? item.name : 'Elemento Removido'}
-            </div>
-          </td>
-          <td style="color: var(--slate-600);">${req.startDate} al ${req.endDate}</td>
-          <td style="color: var(--slate-500);">${req.purpose || 'No especificado'}</td>
-          <td><span class="chip ${badgeClass}">${statusText}</span></td>
-        `;
-        tbody.appendChild(tr);
-      });
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.style.transition = 'background-color 0.2s';
+            tr.onmouseover = () => tr.style.backgroundColor = 'var(--slate-50)';
+            tr.onmouseout = () => tr.style.backgroundColor = 'transparent';
+            tr.title = 'Haz clic para ver más detalles';
+            tr.onclick = () => openLoanDetails(req, badgeClass, statusText);
+            
+            const itemName = req.materialName || 'Elemento Desconocido';
+            tr.innerHTML = `
+              <td style="font-weight: 500;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  ${itemName}
+                </div>
+              </td>
+              <td style="color: var(--slate-600);">${req.startDate} al ${req.endDate}</td>
+              <td style="color: var(--slate-500);">${req.purpose || 'No especificado'}</td>
+              <td><span class="chip ${badgeClass}">${statusText}</span></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (err) {
+        console.error('Error', err);
+      }
     }
+    loadNotifications();
 
     // Modal Logic
     const modal = document.getElementById('loan-details-modal');
     const btnClose = document.getElementById('close-modal-btn');
     const btnPrimaryAction = document.getElementById('modal-primary-action');
 
-    function openLoanDetails(req, item, badgeClass, statusText) {
+    function openLoanDetails(req, badgeClass, statusText) {
+      const itemName = req.materialName || 'Elemento Desconocido';
       document.getElementById('modal-item-name').innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        ${item ? item.name : 'Elemento Desconocido'}
+        ${itemName}
       `;
       document.getElementById('modal-status-badge').innerHTML = `<span class="chip ${badgeClass}">${statusText}</span>`;
       document.getElementById('modal-dates').textContent = `${req.startDate} - ${req.endDate}`;
@@ -145,13 +152,16 @@ import { auth } from '../../js/core/auth.js';
     }
 
     // Notification badge logic
-    const mockNotifications = [
-      { id: 1, read: false },
-      { id: 2, read: false },
-      { id: 3, read: true }
-    ];
-    const notifBellBadge = document.getElementById('notif-bell-badge');
-    const unseenCount = mockNotifications.filter(n => !n.read).length;
-    if (unseenCount > 0) {
-      notifBellBadge.classList.add('show');
+    async function updateNotificationBadge() {
+      try {
+        const notifs = await api.getNotificaciones(user.id);
+        const unseenCount = notifs.filter(n => !n.read).length;
+        const notifBellBadge = document.getElementById('notif-bell-badge');
+        if (unseenCount > 0 && notifBellBadge) {
+          notifBellBadge.classList.add('show');
+        }
+      } catch (err) {
+        console.error('Error fetching notifs:', err);
+      }
     }
+    updateNotificationBadge();

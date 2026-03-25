@@ -1,216 +1,462 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Resumen - Solicitar Material</title>
-  <link rel="stylesheet" href="../../css/globals.css">
-  <link rel="stylesheet" href="../../css/components.css">
-  <link rel="stylesheet" href="../../css/layout.css">
-    <link rel="stylesheet" href="../../css/student/dashboard_estudiante.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniGear | Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f1f5f9;
+            --bg-white: #ffffff;
+            --primary-teal: #1c5b56; 
+            --primary-hover: #164743;
+            --button-teal: #0d9488;  
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --accent-gradient: linear-gradient(135deg, #1c5b56, #164743);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER (Estático) --- */
+        .main-header {
+            background-color: var(--bg-white);
+            height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 60px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .logo-section { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .logo-icon { 
+            width: 38px; height: 38px; 
+            background: var(--accent-gradient); 
+            border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; color: white; 
+        }
+        .brand-name { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        .nav-btn { 
+            text-decoration: none; 
+            color: var(--text-muted); 
+            font-size: 15px; 
+            font-weight: 500; 
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+        .nav-btn:hover { color: var(--primary-teal); }
+        .nav-btn.active { color: var(--primary-teal); font-weight: 700; }
+        .nav-btn.active::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 2px;
+            background-color: var(--primary-teal);
+            border-radius: 2px;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 25px; }
+
+        /* BOTÓN VOLVER (Minimalista) */
+        .back-link {
+            display: flex; align-items: center;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            background: none; border: none; padding: 0;
+            cursor: pointer;
+        }
+        .back-link:hover { color: var(--button-teal); }
+        
+        .arrow-back-wrapper { 
+            position: relative; 
+            width: 0; 
+            opacity: 0; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+        }
+        .arrow-head-back { 
+            position: absolute; left: 0; width: 7px; height: 7px; 
+            border-bottom: 2.5px solid var(--button-teal); 
+            border-left: 2.5px solid var(--button-teal); 
+            transform: rotate(45deg); 
+        }
+        .arrow-tail-back { 
+            position: absolute; left: 0; width: 0; height: 2.5px; 
+            background: var(--button-teal); border-radius: 2px; 
+        }
+
+        .notification-btn { color: var(--text-muted); transition: all 0.3s ease; text-decoration: none; }
+        .notification-btn:hover { color: var(--button-teal); transform: scale(1.1); }
+
+        .user-profile { display: flex; align-items: center; gap: 12px; padding-left: 20px; border-left: 1px solid #e2e8f0; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #f97316; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .dashboard-container {
+            max-width: 1200px; /* Reducido un poco para que no se pegue a los bordes */
+            margin: 40px auto; 
+            padding: 0 20px;
+            display: grid; 
+            grid-template-columns: 1fr 320px; 
+            column-gap: 30px;
+            row-gap: 25px;
+            align-items: start;
+        }
+
+        /* --- TÍTULO (SIN PADDING EXTRA) --- */
+        .welcome-title { 
+            grid-column: 1 / -1; 
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        } 
+
+        .main-content { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 25px; 
+        }
+
+        /* --- BUSCADOR --- */
+        .search-box { 
+            background: white; 
+            padding: 15px 25px; 
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            height: 55px;
+        }
+        .search-box input { border: none; outline: none; width: 100%; font-size: 16px; color: var(--text-main); }
+
+        /* --- STATS --- */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+        }
+        .stat-card { background: white; padding: 22px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .stat-card.active-gradient { background: var(--accent-gradient); color: white; }
+        .stat-val { font-size: 32px; font-weight: 700; margin-top: 5px; }
+        .stat-label { font-size: 14px; font-weight: 500; opacity: 0.8; }
+
+        /* --- GRID DE ACTIVIDAD Y GRÁFICA (ALINEACIÓN FIJA) --- */
+        .lower-main-grid { 
+            display: grid; 
+            grid-template-columns: 1.8fr 1fr; 
+            gap: 20px; 
+            align-items: start;
+        }
+
+        .card-common {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-header-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            height: 24px; /* Altura forzada para que ambos títulos empiecen igual */
+        }
+        .card-header-group h2 { font-size: 17px; font-weight: 700; }
+
+        .item-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
+        .item-row:last-of-type { border-bottom: none; }
+        .item-icon { width: 42px; height: 42px; background: #f0fdfa; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--button-teal); }
+
+        .view-more-link { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: var(--button-teal); 
+            text-decoration: none; 
+            font-size: 14px; 
+            font-weight: 600; 
+            margin-top: auto; 
+            padding-top: 20px;
+            width: fit-content; 
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar { display: flex; flex-direction: column; gap: 25px; }
+        
+        .calendar-card { 
+            background: white; 
+            border-radius: 28px; 
+            padding: 24px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-num { font-size: 13px; color: var(--button-teal); padding: 8px 0; border-radius: 10px; }
+        .day-num.today { background: #f1f5f9; font-weight: 800; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+        .day-name { font-size: 11px; color: var(--text-muted); font-weight: 700; padding-bottom: 8px; }
+        .full-month { height: 0; overflow: hidden; display: grid; }
+        
+        .toggle-cal-btn { background: none; border: none; width: 100%; display: flex; justify-content: center; padding: 10px 0; cursor: pointer; outline: none; }
+
+        .countdown-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #fff5f5; padding: 16px; border-radius: 20px; text-align: center; margin-bottom: 15px; }
+        .count-num { font-size: 18px; font-weight: 800; color: var(--danger); }
+        .count-label { font-size: 9px; font-weight: 700; color: var(--danger); }
+
+        /* --- BOTÓN SOLICITAR PRÉSTAMO --- */
+        .loan-cta-btn {
+            display: flex; align-items: center; justify-content: center;
+            background-color: var(--button-teal); color: white; text-decoration: none;
+            padding: 35px 25px; min-height: 100px; border-radius: 30px;
+            font-weight: 700; font-size: 18px; width: 100%;
+            box-shadow: 0 12px 24px rgba(13, 148, 136, 0.2);
+            position: relative; overflow: hidden;
+        }
+        .loan-cta-btn span { position: relative; z-index: 2; }
+        .arrow-wrapper { position: relative; width: 0; opacity: 0; display: inline-flex; align-items: center; z-index: 2; }
+        .arrow-head { position: absolute; left: 0; width: 10px; height: 10px; border-top: 3px solid white; border-right: 3px solid white; transform: translateY(-50%) rotate(45deg); top: 50%; }
+        .arrow-tail { position: absolute; left: 0; width: 0; height: 3px; background: white; top: 50%; transform: translateY(-50%); border-radius: 1.5px; }
+    </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>
-        UniGear
-      </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard_estudiante.html" class="nav-item active">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          Mi Resumen
-        </a>
-        <a href="catalog_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-          CatÃ¡logo de Material
-        </a>
-        <a href="requests_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          Mis Solicitudes
-        </a>
-      </nav>
-      <div class="sidebar-footer">
-        <a href="profile_estudiante.html" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Mi Perfil
-        </a>
-        <a href="#" class="nav-item" data-action="logout">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          Cerrar SesiÃ³n
-        </a>
-      </div>
-    </aside>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="mobile-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-          </button>
-          <span style="font-weight: 500; color: var(--slate-600);">Ãrea de Estudiante / Mi Resumen</span>
-        </div>
-        <div class="topbar-right">
-          <button class="btn btn-secondary notif-bell-btn" id="notif-bell" style="border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0;" onclick="window.location.href='notifications_estudiante.html'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 15V9.524A6 6 0 0 0 12 3.5a6 6 0 0 0-6 6.024V15L4 18h16l-2-3Z"/>
-              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-            </svg>
-            <span class="notif-bell-badge" id="notif-bell-badge"></span>
-          </button>
-          <div class="user-profile">
-            <div class="avatar avatar-display">A</div>
-            <span class="user-name-display">Cargando...</span>
-          </div>
-        </div>
-      </header>
-
-      <main class="main-content">
-        <!-- Welcome Hero -->
-        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #1c5b56, #164743); color: white; border: none; padding: 2.5rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: stretch; border-radius: var(--radius-lg); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-          
-          <!-- Left Column: Welcome -->
-          <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
-            <h1 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; color: white;">Bienvenido, <span id="welcome-name">Aaa</span></h1>
-            <p style="color: rgba(255, 255, 255, 0.9); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; max-width: 90%;">
-              Gestiona tus prÃ©stamos de material de forma sencilla: solicita, sigue el estado y organiza tus devoluciones.
-            </p>
-            <div style="display: flex; gap: 1rem;">
-              <a href="requests_estudiante.html?new=true" class="btn" style="background-color: #0d9488; color: white; font-weight: 600; padding: 0.6rem 1.25rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Solicitar material</a>
-              <a href="catalog_estudiante.html" class="btn" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 600; padding: 0.6rem 1.25rem; border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">Ver inventario</a>
-            </div>
-          </div>
-
-          <!-- Right Column: Quick Search -->
-          <div style="flex: 1.2; min-width: 320px; background: rgba(15, 23, 42, 0.25); border-radius: 12px; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
-            <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: white;">BÃºsqueda rÃ¡pida</h2>
-            <p style="color: rgba(255, 255, 255, 0.75); font-size: 0.9rem; margin-bottom: 1rem;">Encuentra material por nombre o categorÃ­a.</p>
+    <header class="main-header">
+        <a href="dashboard_estudiante.html" class="logo-section">
+            <div class="logo-icon"><i data-lucide="package"></i></div>
+            <span class="brand-name">UniGear</span>
+        </a>
+        <nav class="nav-menu">
+            <a href="dashboard_estudiante.html" class="nav-btn active">Dashboard</a>
+            <a href="catalog_estudiante.html" class="nav-btn">Catálogo</a>
+            <a href="calendario_estudiante.html" class="nav-btn">Calendario</a>
+            <a href="requests_estudiante.html" class="nav-btn">Solicitudes</a>
+            <a href="analitics_estudiante.html" class="nav-btn">Analíticas</a>
+        </nav>
+        <div class="header-actions">
+            <a href="../public/landing.html" class="back-link" id="backHomeBtn">
+                <div class="arrow-back-wrapper" id="arrowBackWrapper">
+                    <div class="arrow-tail-back"></div>
+                    <div class="arrow-head-back"></div>
+                </div>
+                <span>Volver al inicio</span>
+            </a>
             
-            <div style="position: relative; margin-bottom: 1.25rem;">
-              <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.7);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              </div>
-              <input type="text" id="quick-search-input" placeholder="Ej. cÃ¡mara, portÃ¡til, microscopio..." style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem 1rem 0.75rem 2.5rem; color: white; font-size: 0.95rem; outline: none; transition: all 0.2s;">
+            <a href="notifications_estudiante.html" class="notification-btn"><i data-lucide="bell"></i></a>
+            <div class="user-profile" style="cursor: pointer;" onclick="window.location.href='profile_estudiante.html'">
+                <div class="user-avatar avatar-display">A</div>
+                <div>
+                    <p style="font-size: 14px; font-weight: 700;" class="user-name-display">Ana García</p>
+                    <p style="font-size: 11px; color: var(--text-muted);">Estudiante</p>
+                </div>
             </div>
-
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <a href="catalog_estudiante.html?category=portatil" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">PortÃ¡til</a>
-              <a href="catalog_estudiante.html?category=proyector" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">Proyector</a>
-              <a href="catalog_estudiante.html?category=camara" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">CÃ¡mara</a>
-              <a href="catalog_estudiante.html?category=laboratorio" class="chip" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; padding: 0.35rem 0.85rem; font-size: 0.85rem; border-radius: 50px; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'">Laboratorio</a>
-            </div>
-          </div>
         </div>
+    </header>
 
-        <div class="dashboard-grid">
-          <!-- KPI: Activos -->
-          <div class="card" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem;">
-            <div style="background: var(--teal-50); color: var(--teal-700); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+    <main class="dashboard-container">
+        <h1 class="welcome-title">Hola de nuevo, <span class="user-name-display">Ana</span></h1>
+
+        <section class="main-content">
+            <div class="search-box">
+                <i data-lucide="search" style="color: var(--text-muted)"></i>
+                <input type="text" placeholder="¿Qué equipo buscas?">
             </div>
-            <div>
-              <h3 style="font-size: 2.5rem; color: var(--slate-900); font-weight: 700; line-height: 1;" id="active-count">0</h3>
-              <p style="color: var(--slate-500); font-weight: 500; margin-top: 0.25rem; font-size: 0.875rem;">PrÃ©stamos activos</p>
+
+            <div class="stats-grid">
+                <div class="stat-card active-gradient"><p class="stat-label">Préstamos Activos</p><p class="stat-val" id="stat-active-loans">...</p></div>
+                <div class="stat-card"><p class="stat-label">Solicitudes</p><p class="stat-val" id="stat-requests">...</p></div>
+                <div class="stat-card"><p class="stat-label">Sanciones</p><p class="stat-val" id="stat-sanctions">0</p></div>
             </div>
-          </div>
-          
-          <!-- KPI: Pendientes -->
-          <div class="card" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem;">
-            <div style="background: var(--yellow-50); color: var(--yellow-600); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+
+            <div class="lower-main-grid">
+                <div class="card-common">
+                    <div class="card-header-group">
+                        <h2>Actividad Reciente</h2>
+                    </div>
+                    <div style="flex-grow: 1;" id="recent-activity-list">
+                        <!-- Dynamic list -->
+                    </div>
+                    <a href="requests_estudiante.html" class="view-more-link">
+                        <i data-lucide="arrow-right" style="width: 16px;"></i>
+                        <span>Ver más solicitudes</span>
+                    </a>
+                </div>
+
+                <div class="card-common" style="cursor: pointer;" onclick="window.location.href='analitics_estudiante.html'">
+                    <div class="card-header-group">
+                        <h2>Uso de Equipos</h2>
+                        <i data-lucide="trending-up" style="width: 18px; color: var(--button-teal)"></i>
+                    </div>
+                    <div style="flex-grow: 1; min-height: 120px;">
+                        <canvas id="miniChart"></canvas>
+                    </div>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px; text-align: center;">
+                        Click para ver reporte detallado
+                    </p>
+                </div>
             </div>
-            <div>
-              <h3 style="font-size: 2.5rem; color: var(--slate-900); font-weight: 700; line-height: 1;" id="pending-count">0</h3>
-              <p style="color: var(--slate-500); font-weight: 500; margin-top: 0.25rem; font-size: 0.875rem;">Solicitudes pendientes</p>
+        </section>
+
+        <aside class="sidebar">
+            <div class="calendar-card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <span style="font-weight:700; color:var(--button-teal)">Entregas</span>
+                    <span style="font-size:12px; font-weight:800">MARZO</span>
+                </div>
+                <div class="cal-grid">
+                    <div class="day-name">L</div><div class="day-name">M</div><div class="day-name">M</div><div class="day-name">J</div><div class="day-name">V</div><div class="day-name">S</div><div class="day-name">D</div>
+                    <div class="day-num today">23</div><div class="day-num">24</div><div class="day-num">25</div><div class="day-num">26</div><div class="day-num">27</div><div class="day-num">28</div><div class="day-num">29</div>
+                </div>
+                <div class="cal-grid full-month" id="fullMonth">
+                    <div class="day-num">30</div><div class="day-num">31</div>
+                </div>
+                <button class="toggle-cal-btn" id="toggleCal">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" id="calendarArrow">
+                        <g stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 9 L12 14 L17 9"></path>
+                            <path d="M7 14 L12 19 L17 14"></path>
+                        </g>
+                    </svg>
+                </button>
+                <div class="countdown-box">
+                    <div class="count-unit"><span class="count-num">01</span><br><span class="count-label">DÍAS</span></div>
+                    <div class="count-unit"><span class="count-num">11</span><br><span class="count-label">HRS</span></div>
+                    <div class="count-unit"><span class="count-num">29</span><br><span class="count-label">MIN</span></div>
+                    <div class="count-unit"><span class="count-num">04</span><br><span class="count-label">SEG</span></div>
+                </div>
+                <a href="calendario_estudiante.html" class="view-more-link" style="margin-top: 5px;">
+                    <i data-lucide="arrow-right" style="width: 16px;"></i>
+                    <span>Ver calendario</span>
+                </a>
             </div>
-          </div>
 
-          <!-- KPI: Aprobadas -->
-          <div class="card" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem;">
-            <div style="background: var(--green-50); color: var(--green-600); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            </div>
-            <div>
-              <h3 style="font-size: 2.5rem; color: var(--slate-900); font-weight: 700; line-height: 1;" id="approved-count">0</h3>
-              <p style="color: var(--slate-500); font-weight: 500; margin-top: 0.25rem; font-size: 0.875rem;">Listas para recoger</p>
-            </div>
-          </div>
-        </div>
+            <a href="requests_estudiante.html" class="loan-cta-btn" id="loanBtn">
+                <div class="arrow-wrapper">
+                    <div class="arrow-tail"></div>
+                    <div class="arrow-head"></div>
+                </div>
+                <span>Solicitar Préstamo</span>
+            </a>
+        </aside>
+    </main>
 
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2 style="font-size: 1.25rem; margin: 0;">Movimientos recientes</h2>
-            <a href="requests_estudiante.html" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">Ver todo</a>
-          </div>
-          <div class="table-wrapper">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Material</th>
-                  <th>Periodo</th>
-                  <th>Finalidad</th>
-                  <th>Estado Actual</th>
-                </tr>
-              </thead>
-              <tbody id="recent-requests-body">
-                <!-- Javascript will populate this -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
+    <script>
+        lucide.createIcons();
 
-  <!-- Modal Detalles de PrÃ©stamo -->
-  <div id="loan-details-modal" class="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="card" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden; animation: slideUp 0.3s ease-out;">
-      <div style="padding: 1.5rem; border-bottom: 1px solid var(--slate-200); display: flex; justify-content: space-between; align-items: center; background: var(--slate-50);">
-        <h3 style="margin: 0; font-size: 1.25rem; color: var(--slate-800); display: flex; align-items: center; gap: 0.5rem;" id="modal-item-name">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Detalles del PrÃ©stamo
-        </h3>
-        <button class="btn btn-secondary" style="border: none; padding: 0.5rem;" id="close-modal-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-      <div style="padding: 1.5rem;">
-        <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem;">
-          <div style="flex: 1;">
-            <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.25rem;">Estado</div>
-            <div id="modal-status-badge"></div>
-          </div>
-          <div style="flex: 1;">
-            <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.25rem;">Fechas</div>
-            <div style="font-weight: 500; color: var(--slate-800);" id="modal-dates">--</div>
-          </div>
-        </div>
+        // GSAP Entrada (Header estático, resto animado)
+        window.addEventListener("load", () => {
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+            tl.from(".welcome-title", { x: -30, opacity: 0, duration: 0.6 })
+              .from(".search-box", { y: 20, opacity: 0, duration: 0.6 }, "-=0.4")
+              .from(".calendar-card", { y: 20, opacity: 0, duration: 0.6 }, "-=0.6")
+              .from(".stats-grid .stat-card", { y: 20, opacity: 0, duration: 0.8, stagger: 0.1 }, "-=0.4")
+              .from(".lower-main-grid .card-common", { y: 30, opacity: 0, duration: 0.8, stagger: 0.15 }, "-=0.6")
+              .from(".loan-cta-btn", { scale: 0.9, opacity: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=0.6");
+        });
 
-        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;" id="modal-action-box">
-          <!-- Dynamic Action Box (e.g. QR code or return info) -->
-        </div>
+        // Gráfica
+        const ctx = document.getElementById('miniChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
+                datasets: [{
+                    data: [12, 19, 10, 15, 22, 14, 25],
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#0d9488',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { display: false }, y: { display: false } }
+            }
+        });
 
-        <div>
-          <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.5rem;">Finalidad de Uso</div>
-          <p style="margin: 0; color: var(--slate-700); font-size: 0.95rem; line-height: 1.5;" id="modal-purpose">--</p>
-        </div>
-      </div>
-      <div style="padding: 1.25rem 1.5rem; background: var(--slate-50); border-top: 1px solid var(--slate-200); display: flex; justify-content: space-between;">
-        <button class="btn btn-secondary" style="color: var(--red-600); border-color: transparent;" id="modal-report-issue">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          Reportar Incidencia
-        </button>
-        <button class="btn btn-primary" id="modal-primary-action">Entendido</button>
-      </div>
-    </div>
-  </div>
+        // Lógica Calendario
+        const toggleBtn = document.getElementById('toggleCal');
+        const fullMonth = document.getElementById('fullMonth');
+        const calendarArrow = document.getElementById('calendarArrow');
+        let isOpen = false;
 
+        toggleBtn.addEventListener('click', () => {
+            isOpen = !isOpen;
+            gsap.to(fullMonth, { height: isOpen ? "auto" : 0, duration: 0.5, ease: "power2.inOut" });
+            gsap.to(calendarArrow, {
+                duration: 0.6, rotation: isOpen ? 180 : 0,
+                stroke: isOpen ? "#0d9488" : "#64748b",
+                ease: "power2.inOut", transformOrigin: "50% 50%" 
+            });
+        });
+
+        // Animación Flecha Botón
+        const loanBtn = document.getElementById('loanBtn');
+        loanBtn.addEventListener("mouseenter", () => {
+            gsap.to("#loanBtn span", { x: 10, duration: 0.4, ease: "power2.out" });
+            gsap.to(".arrow-wrapper", { width: 30, opacity: 1, marginRight: 12, duration: 0.4, ease: "power2.out" });
+            gsap.to(".arrow-head", { left: 15, duration: 0.4, ease: "back.out(2)" });
+            gsap.to(".arrow-tail", { width: 16, duration: 0.4, ease: "power2.out" });
+            gsap.to(loanBtn, { backgroundColor: "#0f766e", duration: 0.3 });
+        });
+
+        loanBtn.addEventListener("mouseleave", () => {
+            gsap.to("#loanBtn span", { x: 0, duration: 0.4 });
+            gsap.to(".arrow-wrapper", { width: 0, opacity: 0, marginRight: 0, duration: 0.3 });
+            gsap.to(".arrow-head", { left: 0, duration: 0.3 });
+            gsap.to(".arrow-tail", { width: 0, duration: 0.3 });
+            gsap.to(loanBtn, { backgroundColor: "#0d9488", duration: 0.3 });
+        });
+
+        // --- LÓGICA ANIMACIÓN BOTÓN VOLVER ---
+        const backBtn = document.getElementById('backHomeBtn');
+        const arrowW = document.getElementById('arrowBackWrapper');
+
+        if (backBtn && arrowW) {
+            backBtn.addEventListener('mouseenter', () => {
+                // Desplaza el texto ligeramente
+                gsap.to("#backHomeBtn span", { x: 4, duration: 0.3, ease: "power2.out" });
+                // Muestra la flecha
+                gsap.to(arrowW, { width: 15, opacity: 1, marginRight: 3, duration: 0.3, ease: "power2.out" });
+                gsap.to(".arrow-tail-back", { width: 10, duration: 0.3 });
+            });
+
+            backBtn.addEventListener('mouseleave', () => {
+                gsap.to("#backHomeBtn span", { x: 0, duration: 0.3 });
+                gsap.to(arrowW, { width: 0, opacity: 0, marginRight: 0, duration: 0.3 });
+                gsap.to(".arrow-tail-back", { width: 0, duration: 0.3 });
+            });
+        }
+    </script>
     <script type="module" src="../../js/views/student/dashboard_estudiante.js"></script>
 </body>
 </html>

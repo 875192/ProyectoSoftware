@@ -175,6 +175,13 @@ export const api = {
     });
   },
 
+  updateProfile: async (id, updates) => {
+    return request(`/usuarios/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+  },
+
   // Pagos (Stripe)
   getStripeConfig: async () => {
     return request('/pagos/config');
