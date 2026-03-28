@@ -21,7 +21,8 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'Email y contraseña son obligatorios' });
     }
 
-    const user = await usuariosDao.findByEmail(email);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user = await usuariosDao.findByEmail(normalizedEmail);
 
     if (!user) {
       return res.status(401).json({ message: 'Credenciales incorrectas' });

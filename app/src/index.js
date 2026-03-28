@@ -1,5 +1,12 @@
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const dotenv = require('dotenv');
+
+const appEnvPath = path.resolve(__dirname, '../.env');
+const rootEnvPath = path.resolve(__dirname, '../../.env');
+const envResult = dotenv.config({ path: appEnvPath });
+if (envResult.error) {
+  dotenv.config({ path: rootEnvPath });
+}
 
 const express = require('express');
 const categoriasRoutes = require('./routes/categoriasRoutes');

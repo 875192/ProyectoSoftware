@@ -10,7 +10,7 @@ const usuariosDao = {
       FROM usuarios u
       JOIN usuario_roles ur ON u.id = ur.usuario_id
       JOIN roles r ON ur.rol_id = r.id
-      WHERE u.email_institucional = $1
+            WHERE LOWER(u.email_institucional) = LOWER($1)
     `, [email]);
     return result.rows[0] || null;
   },
