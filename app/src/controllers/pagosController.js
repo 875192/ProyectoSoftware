@@ -42,11 +42,33 @@ const createCheckoutSession = async (req, res) => {
   }
 };
 
+const createPaymentIntent = async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    if (!amount || typeof amount !== 'number' || amount <= 0) {
+      return res.status(400).json({ message: 'El importe debe ser un número positivo en céntimos' });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: 'eur',
+      payment_method_types: ['card'],
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error('Error al crear PaymentIntent:', error);
+    res.status(500).json({ message: 'No se pudo crear el intento de pago' });
+  }
+};
+
 const getPublishableKey = (req, res) => {
   res.json({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY });
 };
 
 module.exports = {
   createCheckoutSession,
+  createPaymentIntent,
   getPublishableKey,
 };

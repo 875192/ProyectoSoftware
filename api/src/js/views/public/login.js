@@ -1,4 +1,11 @@
-import { auth } from '../../js/core/auth.js';
+import { auth } from '../../core/auth.js';
+
+console.log("Login.js cargado correctamente");
+
+    // Inicializar iconos de Lucide
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 
     /* =============================================
        CONFIGURACIÓN — Pon aquí tus Client IDs reales
@@ -19,23 +26,72 @@ import { auth } from '../../js/core/auth.js';
     }
 
     /* ---------- Email / password login ---------- */
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const emailInput = document.getElementById('email');
-      const passInput  = document.getElementById('password');
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passInput  = document.getElementById('password');
+    const rememberCheckbox = document.getElementById('rememberMe');
+    const submitBtn = document.getElementById('submitBtn');
 
-      try {
-        const user = await auth.login(emailInput.value, passInput.value);
-        redirectByRole(user);
-      } catch (err) {
-        emailInput.setAttribute('aria-invalid', 'true');
-        passInput.setAttribute('aria-invalid', 'true');
-        emailInput.addEventListener('input', () => {
-          emailInput.setAttribute('aria-invalid', 'false');
-          passInput.setAttribute('aria-invalid', 'false');
-        }, { once: true });
-      }
-    });
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Guardar o borrar según checkbox
+        if (rememberCheckbox && rememberCheckbox.checked) {
+            localStorage.setItem('unigear_remember', JSON.stringify({ 
+                email: emailInput.value.trim(), 
+                password: passInput.value 
+            }));
+        } else {
+            localStorage.removeItem('unigear_remember');
+        }
+
+        // Estado de carga del botón
+        const originalBtnContent = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 0.8s linear infinite;">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+            </svg>
+        `;
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.85';
+
+        try {
+          const user = await auth.login(emailInput.value.trim(), passInput.value);
+          
+          // Animación de éxito
+          submitBtn.innerHTML = `
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>¡Bienvenido!</span>
+          `;
+          submitBtn.style.background = '#059669';
+          submitBtn.style.opacity = '1';
+
+          // Esperar un momento para mostrar la animación antes de redirigir
+          setTimeout(() => {
+              redirectByRole(user);
+          }, 800);
+          
+        } catch (err) {
+          // Mostrar error y restaurar botón
+          submitBtn.innerHTML = originalBtnContent;
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = '1';
+          
+          // Mostrar mensaje de error (usando alert u otra forma en el DOM)
+          alert(err.message || 'Credenciales incorrectas');
+          
+          emailInput.style.borderColor = 'var(--danger)';
+          passInput.style.borderColor = 'var(--danger)';
+          emailInput.addEventListener('input', () => {
+            emailInput.style.borderColor = '';
+            passInput.style.borderColor = '';
+          }, { once: true });
+        }
+      });
+    }
 
     /* ---------- Google Sign-In (real OAuth popup) ---------- */
     let googleTokenClient = null;

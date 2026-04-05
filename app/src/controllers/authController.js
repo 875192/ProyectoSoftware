@@ -111,6 +111,7 @@ const forgotPassword = async (req, res) => {
 
     // Siempre respondemos igual para evitar enumeración de correos
     if (!user) {
+      console.log(`[forgot-password] Usuario no encontrado para: ${email}`);
       return res.json({ message: 'Si el correo existe, recibirás un enlace de recuperación' });
     }
 
@@ -120,11 +121,22 @@ const forgotPassword = async (req, res) => {
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
     const resetUrl = `${frontendUrl}/api/src/pages/public/reset_password.html?token=${token}`;
-    await sendPasswordResetEmail(user.email_institucional, resetUrl);
+    
+    console.log(`[forgot-password] Enviando enlace a: ${user.email_institucional}`);
+    console.log(`[forgot-password] URL: ${resetUrl}`);
+    
+    try {
+      await sendPasswordResetEmail(user.email_institucional, resetUrl);
+      console.log(`[forgot-password] ✅ Correo enviado exitosamente a ${user.email_institucional}`);
+    } catch (emailError) {
+      console.error(`[forgot-password] ❌ Error al enviar correo:`, emailError);
+      throw emailError;
+    }
 
     res.json({ message: 'Si el correo existe, recibirás un enlace de recuperación' });
   } catch (error) {
-    console.error('Error en forgot-password:', error);
+    console.error('❌ Error en forgot-password:', error.message);
+    console.error(error);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };

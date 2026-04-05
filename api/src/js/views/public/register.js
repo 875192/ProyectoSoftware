@@ -1,171 +1,79 @@
-import { api } from '../../js/core/api.js';
+const API_BASE = 'http://localhost:3000';
 
-        // DOM Elements
-        const form = document.getElementById('register-form');
-        const stepSubtitle = document.getElementById('step-subtitle');
-        const step1 = document.getElementById('step-1');
-        const step2 = document.getElementById('step-2');
-        const stepIndicators = document.querySelectorAll('.step');
-        
-        const btnSiguiente = document.getElementById('btn-siguiente');
-        const btnAtras = document.getElementById('btn-atras');
-        
-        const nombreInput = document.getElementById('nombre');
-        const rolSelect = document.getElementById('rol');
-        const correoInput = document.getElementById('correo');
-        const passwordInput = document.getElementById('password');
-        const passwordConfirmInput = document.getElementById('password-confirm');
-        const aceptarTerminosCheckbox = document.getElementById('aceptar-terminos');
-        
-        const nombreError = document.getElementById('nombre-error');
-        const rolError = document.getElementById('rol-error');
-        const correoError = document.getElementById('correo-error');
-        const passwordError = document.getElementById('password-error');
-        const passwordConfirmError = document.getElementById('password-confirm-error');
-        const terminosError = document.getElementById('terminos-error');
-        
-        const registerStatus = document.getElementById('register-status');
-        const togglePasswordBtns = document.querySelectorAll('.toggle-password-btn');
+const registerForm = document.getElementById('registerForm');
+const errorMsg3 = document.getElementById('errorMsg3');
+const submitBtn = document.getElementById('submitBtn');
 
-        let currentStep = 1;
-        const STEP_SUBTITLES = {
-            1: '¿Cómo te llamas?',
-            2: 'Configura tu acceso'
-        };
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg3.style.display = 'none';
 
-        function showError(input, errorElement, message) {
-            input.setAttribute('aria-invalid', 'true');
-            if(errorElement) errorElement.textContent = message;
-        }
+    const nombre = document.getElementById('nombre').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const rol = document.querySelector('input[name="rol"]:checked').value;
 
-        function clearError(input, errorElement) {
-            input.removeAttribute('aria-invalid');
-            if(errorElement) errorElement.textContent = '';
-        }
+    // Validaciones
+    if (password.length < 8) {
+        showStepError('errorMsg3', 'La contraseña debe tener al menos 8 caracteres');
+        return;
+    }
 
-        function setStatus(message, isSuccess = false) {
-            registerStatus.textContent = message;
-            registerStatus.className = 'register-status ' + (isSuccess ? 'register-status--success' : '');
-        }
+    if (password !== confirmPassword) {
+        showStepError('errorMsg3', 'Las contraseñas no coinciden');
+        return;
+    }
 
-        function goToStep(stepNumber) {
-            currentStep = stepNumber;
-            step1.classList.toggle('form-step--active', stepNumber === 1);
-            step2.classList.toggle('form-step--active', stepNumber === 2);
-            
-            stepIndicators.forEach(indicator => {
-                const indicatorStep = parseInt(indicator.dataset.step);
-                indicator.classList.remove('step--active', 'step--completed');
-                if (indicatorStep === stepNumber) {
-                    indicator.classList.add('step--active');
-                } else if (indicatorStep < stepNumber) {
-                    indicator.classList.add('step--completed');
-                }
-            });
-            
-            stepSubtitle.textContent = STEP_SUBTITLES[stepNumber];
-            if (stepNumber === 1) nombreInput.focus();
-            if (stepNumber === 2) correoInput.focus();
-        }
+    // Loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 0.8s linear infinite;">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <span>Creando cuenta...</span>
+    `;
 
-        function validateStep1() {
-            let isValid = true;
-            const nombre = nombreInput.value.trim();
-            if (!nombre || nombre.split(' ').length < 2) {
-                showError(nombreInput, nombreError, 'Incluye tu nombre y apellido.');
-                isValid = false;
-            } else {
-                clearError(nombreInput, nombreError);
-            }
-
-            if (!rolSelect.value) {
-                showError(rolSelect, rolError, 'Selecciona un rol.');
-                isValid = false;
-            } else {
-                clearError(rolSelect, rolError);
-            }
-            return isValid;
-        }
-
-        function validateStep2() {
-            let isValid = true;
-            
-            const correo = correoInput.value.trim();
-            if (!correo || !correo.includes('@')) {
-                showError(correoInput, correoError, 'Ingresa un correo válido.');
-                isValid = false;
-            } else {
-                clearError(correoInput, correoError);
-            }
-
-            const pass = passwordInput.value;
-            if (pass.length < 8) {
-                showError(passwordInput, passwordError, 'Mínimo 8 caracteres.');
-                isValid = false;
-            } else {
-                clearError(passwordInput, passwordError);
-            }
-
-            if (pass !== passwordConfirmInput.value) {
-                showError(passwordConfirmInput, passwordConfirmError, 'Las contraseñas no coinciden.');
-                isValid = false;
-            } else {
-                clearError(passwordConfirmInput, passwordConfirmError);
-            }
-
-            if (!aceptarTerminosCheckbox.checked) {
-                terminosError.textContent = 'Debes aceptar los términos.';
-                isValid = false;
-            } else {
-                terminosError.textContent = '';
-            }
-
-            return isValid;
-        }
-
-        // DOM Events
-        btnSiguiente.addEventListener('click', () => {
-            if (validateStep1()) goToStep(2);
+    try {
+        const res = await fetch(`${API_BASE}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nombre_completo: nombre,
+                email,
+                password,
+                rol
+            }),
         });
 
-        btnAtras.addEventListener('click', () => {
-            goToStep(1);
-        });
+        const data = await res.json();
 
-        togglePasswordBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const input = document.getElementById(btn.dataset.target);
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    btn.textContent = 'Ocultar';
-                } else {
-                    input.type = 'password';
-                    btn.textContent = 'Mostrar';
-                }
-            });
-        });
+        if (!res.ok) {
+            throw new Error(data.message || 'Error al crear la cuenta');
+        }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            setStatus('');
+        // Éxito
+        submitBtn.innerHTML = `
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>¡Cuenta creada!</span>
+        `;
+        submitBtn.style.background = '#059669';
 
-            if (!validateStep2()) return;
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1200);
 
-            try {
-                setStatus('Creando cuenta...');
-                await api.register({
-                    nombre_completo: nombreInput.value.trim(),
-                    email: correoInput.value.trim(),
-                    password: passwordInput.value,
-                    rol: rolSelect.value
-                });
-                setStatus('¡Cuenta creada con éxito! Redirigiendo...', true);
-                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-            } catch (err) {
-                if (err.message && err.message.toLowerCase().includes('correo')) {
-                    showError(correoInput, correoError, err.message);
-                } else {
-                    setStatus(err.message || 'Error al crear la cuenta. Inténtalo de nuevo.');
-                }
-            }
-        });
+    } catch (err) {
+        showStepError('errorMsg3', err.message);
+
+        submitBtn.disabled = false;
+        submitBtn.style.background = '';
+        submitBtn.innerHTML = `
+            <span>Crear Cuenta</span>
+            <div class="btn-arrow"><i data-lucide="arrow-right"></i></div>
+        `;
+        lucide.createIcons();
+    }
+});
