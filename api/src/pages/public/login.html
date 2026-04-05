@@ -5,777 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniGear | Iniciar Sesión</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-
-    <style>
-        :root {
-            --bg-page: #f1f5f9;
-            --bg-white: #ffffff;
-            --primary-teal: #1c5b56;
-            --primary-hover: #164743;
-            --button-teal: #0d9488;
-            --button-hover: #0f766e;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --danger: #ef4444;
-            --border-light: #e2e8f0;
-            --accent-gradient: linear-gradient(135deg, #1c5b56, #164743);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-page);
-            font-family: 'Inter', sans-serif;
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 20px;
-        }
-
-        /* --- FONDO DECORATIVO --- */
-        .bg-decoration {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .bg-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.12;
-        }
-
-        .bg-blob-1 {
-            width: 500px; height: 500px;
-            background: var(--button-teal);
-            top: -15%; right: -10%;
-        }
-
-        .bg-blob-2 {
-            width: 400px; height: 400px;
-            background: var(--primary-teal);
-            bottom: -10%; left: -8%;
-        }
-
-        .bg-blob-3 {
-            width: 250px; height: 250px;
-            background: #f97316;
-            top: 50%; left: 60%;
-            opacity: 0.06;
-        }
-
-        /* --- CONTENEDOR PRINCIPAL --- */
-        .login-wrapper {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            width: 920px;
-            max-width: 95vw;
-            background: var(--bg-white);
-            border-radius: 32px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
-            overflow: hidden;
-        }
-
-        /* --- PANEL IZQUIERDO (BRANDING) --- */
-        .brand-panel {
-            width: 380px;
-            min-width: 380px;
-            background: var(--accent-gradient);
-            padding: 50px 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .brand-panel::before {
-            content: '';
-            position: absolute;
-            width: 300px; height: 300px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.04);
-            top: -80px; right: -100px;
-        }
-
-        .brand-panel::after {
-            content: '';
-            position: absolute;
-            width: 200px; height: 200px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.03);
-            bottom: -50px; left: -60px;
-        }
-
-        .brand-top {
-            position: relative;
-            z-index: 1;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 50px;
-        }
-
-        .brand-logo-icon {
-            width: 42px; height: 42px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            backdrop-filter: blur(10px);
-        }
-
-        .brand-logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            color: white;
-            letter-spacing: -0.5px;
-        }
-
-        .brand-headline {
-            font-size: 28px;
-            font-weight: 800;
-            color: white;
-            line-height: 1.3;
-            letter-spacing: -0.5px;
-            margin-bottom: 16px;
-        }
-
-        .brand-subtitle {
-            font-size: 14px;
-            color: rgba(255,255,255,0.65);
-            line-height: 1.7;
-            max-width: 280px;
-        }
-
-        .brand-bottom {
-            position: relative;
-            z-index: 1;
-        }
-
-        .brand-features {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .brand-feature {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: rgba(255,255,255,0.75);
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .brand-feature-icon {
-            width: 32px; height: 32px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .brand-feature-icon i {
-            width: 16px; height: 16px;
-        }
-
-        /* --- PANEL DERECHO (FORMULARIO) --- */
-        .form-panel {
-            flex: 1;
-            padding: 50px 48px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            overflow-y: auto;
-        }
-
-        .form-title {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
-
-        .form-subtitle {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-        }
-
-        /* --- SOCIAL BUTTONS --- */
-        .social-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-
-        .social-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 13px 20px;
-            border-radius: 14px;
-            border: 1.5px solid var(--border-light);
-            background: var(--bg-white);
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            cursor: pointer;
-            transition: all 0.25s ease;
-            text-decoration: none;
-        }
-
-        .social-btn:hover {
-            border-color: var(--button-teal);
-            background: #f0fdfa;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.08);
-        }
-
-        .social-btn svg {
-            flex-shrink: 0;
-        }
-
-        /* --- DIVIDER --- */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: var(--border-light);
-        }
-
-        .divider-text {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* --- FORM FIELDS --- */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper .input-icon {
-            position: absolute;
-            left: 16px;
-            color: var(--text-muted);
-            pointer-events: none;
-            transition: color 0.25s ease;
-        }
-
-        .input-wrapper .input-icon i {
-            width: 18px; height: 18px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 14px 16px 14px 46px;
-            border: 1.5px solid var(--border-light);
-            border-radius: 14px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            color: var(--text-main);
-            background: var(--bg-white);
-            outline: none;
-            transition: all 0.25s ease;
-        }
-
-        .form-input::placeholder {
-            color: #94a3b8;
-        }
-
-        .form-input:focus {
-            border-color: var(--button-teal);
-            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
-        }
-
-        .form-input:focus ~ .input-icon,
-        .form-input:focus + .input-icon {
-            color: var(--button-teal);
-        }
-
-        /* Reorder for sibling selector: icon before input won't work, use JS or parent */
-        .input-wrapper:focus-within .input-icon {
-            color: var(--button-teal);
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 16px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            transition: color 0.25s ease;
-        }
-
-        .toggle-password:hover {
-            color: var(--button-teal);
-        }
-
-        .toggle-password i {
-            width: 18px; height: 18px;
-        }
-
-        /* --- REMEMBER & FORGOT ROW --- */
-        .form-options {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 28px;
-        }
-
-        .remember-check {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .remember-check input[type="checkbox"] {
-            display: none;
-        }
-
-        .checkmark {
-            width: 18px; height: 18px;
-            border: 1.5px solid var(--border-light);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.25s ease;
-            flex-shrink: 0;
-        }
-
-        .checkmark svg {
-            width: 12px; height: 12px;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s ease;
-        }
-
-        .remember-check input:checked + .checkmark {
-            background: var(--button-teal);
-            border-color: var(--button-teal);
-        }
-
-        .remember-check input:checked + .checkmark svg {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .remember-text {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .forgot-link {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--button-teal);
-            text-decoration: none;
-            transition: color 0.25s ease;
-        }
-
-        .forgot-link:hover {
-            color: var(--primary-teal);
-        }
-
-        /* --- SUBMIT BUTTON --- */
-        .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--button-teal);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .submit-btn:hover {
-            background: var(--button-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.25);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .submit-btn .btn-arrow {
-            display: inline-flex;
-            transition: transform 0.3s ease;
-        }
-
-        .submit-btn:hover .btn-arrow {
-            transform: translateX(4px);
-        }
-
-        .submit-btn .btn-arrow i {
-            width: 18px; height: 18px;
-        }
-
-        /* --- REGISTER LINK --- */
-        .register-row {
-            text-align: center;
-            margin-top: 28px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .register-link {
-            color: var(--button-teal);
-            font-weight: 700;
-            text-decoration: none;
-            transition: color 0.25s ease;
-        }
-
-        .register-link:hover {
-            color: var(--primary-teal);
-        }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 860px) {
-            .brand-panel {
-                display: none;
-            }
-
-            .login-wrapper {
-                border-radius: 24px;
-            }
-
-            .form-panel {
-                padding: 40px 28px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                align-items: flex-start;
-                padding: 16px;
-            }
-
-            .login-wrapper {
-                border-radius: 20px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            }
-
-            .form-panel {
-                padding: 32px 22px;
-            }
-
-            .social-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .form-title {
-                font-size: 22px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../../css/public/login.css">
 </head>
 <body>
 
-    <!-- Fondo decorativo -->
-    <div class="bg-decoration">
-        <div class="bg-blob bg-blob-1"></div>
-        <div class="bg-blob bg-blob-2"></div>
-        <div class="bg-blob bg-blob-3"></div>
-    </div>
+    <div class="container" id="container">
 
-    <div class="login-wrapper">
-
-        <!-- Panel Izquierdo: Branding -->
-        <div class="brand-panel">
-            <div class="brand-top">
-                <div class="brand-logo">
-                    <div class="brand-logo-icon">
-                        <i data-lucide="package"></i>
-                    </div>
-                    <span class="brand-logo-text">UniGear</span>
+        <!-- Panel: Crear Cuenta -->
+        <div class="form-container sign-up">
+            <form id="registerForm" autocomplete="off">
+                <h1>Crear Cuenta</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon" id="btnGoogleReg" title="Google"><i class="fa-brands fa-google"></i></a>
+                    <a href="#" class="icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
-                <h2 class="brand-headline">Gestiona tus préstamos de forma sencilla</h2>
-                <p class="brand-subtitle">Solicita equipos, consulta disponibilidad y haz seguimiento de tus préstamos universitarios desde un solo lugar.</p>
-            </div>
-
-            <div class="brand-bottom">
-                <div class="brand-features">
-                    <div class="brand-feature">
-                        <div class="brand-feature-icon"><i data-lucide="zap"></i></div>
-                        <span>Solicitudes en segundos</span>
-                    </div>
-                    <div class="brand-feature">
-                        <div class="brand-feature-icon"><i data-lucide="shield-check"></i></div>
-                        <span>Control y trazabilidad total</span>
-                    </div>
-                    <div class="brand-feature">
-                        <div class="brand-feature-icon"><i data-lucide="bell-ring"></i></div>
-                        <span>Notificaciones en tiempo real</span>
-                    </div>
+                <span>o usa tu email para registrarte</span>
+                <input type="text" id="reg-nombre" placeholder="Nombre completo" required>
+                <input type="email" id="reg-email" placeholder="Email" required>
+                <input type="password" id="reg-password" placeholder="Contraseña" required>
+                <input type="password" id="reg-confirm" placeholder="Confirmar contraseña" required>
+                <div class="role-selector">
+                    <label class="role-option">
+                        <input type="radio" name="reg-rol" value="estudiante" checked>
+                        <div class="role-card">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Estudiante</span>
+                        </div>
+                    </label>
+                    <label class="role-option">
+                        <input type="radio" name="reg-rol" value="profesor">
+                        <div class="role-card">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            <span>Profesor</span>
+                        </div>
+                    </label>
                 </div>
-            </div>
+                <p class="error-msg" id="reg-error"></p>
+                <button type="submit" id="registerBtn">Registrarse</button>
+            </form>
         </div>
 
-        <!-- Panel Derecho: Formulario -->
-        <div class="form-panel">
-            <h1 class="form-title">Iniciar Sesión</h1>
-            <p class="form-subtitle">Accede a tu cuenta para continuar</p>
-
-            <!-- Botones sociales -->
-            <div class="social-buttons">
-                <button type="button" class="social-btn" id="googleBtn">
-                    <svg width="20" height="20" viewBox="0 0 48 48">
-                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                        <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.03 24.03 0 0 0 0 21.56l7.98-6.19z"/>
-                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    </svg>
-                    Google
-                </button>
-                <button type="button" class="social-btn" id="appleBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                    </svg>
-                    Apple
-                </button>
-            </div>
-
-            <!-- Divisor -->
-            <div class="divider">
-                <div class="divider-line"></div>
-                <span class="divider-text">o continúa con email</span>
-                <div class="divider-line"></div>
-            </div>
-
-            <!-- Formulario -->
+        <!-- Panel: Iniciar Sesión -->
+        <div class="form-container sign-in">
             <form id="loginForm" autocomplete="on">
-                <div class="form-group">
-                    <label class="form-label" for="email">Correo electrónico</label>
-                    <div class="input-wrapper">
-                        <div class="input-icon"><i data-lucide="mail"></i></div>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email"
-                            class="form-input" 
-                            placeholder="tu.correo@unizar.es" 
-                            autocomplete="email"
-                            required
-                        >
-                    </div>
+                <h1>Iniciar Sesión</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon" id="btnGoogle" title="Google"><i class="fa-brands fa-google"></i></a>
+                    <a href="#" class="icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="password">Contraseña</label>
-                    <div class="input-wrapper">
-                        <div class="input-icon"><i data-lucide="lock"></i></div>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password"
-                            class="form-input" 
-                            placeholder="Introduce tu contraseña" 
-                            autocomplete="current-password"
-                            required
-                        >
-                        <button type="button" class="toggle-password" id="togglePass" aria-label="Mostrar contraseña">
-                            <i data-lucide="eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-options">
+                <span>o usa tu email y contraseña</span>
+                <input type="email" id="email" name="email" placeholder="Email" autocomplete="email" required>
+                <input type="password" id="password" name="password" placeholder="Contraseña" autocomplete="current-password" required>
+                <div class="remember-row">
                     <label class="remember-check">
                         <input type="checkbox" id="rememberMe" name="remember">
-                        <div class="checkmark">
-                            <svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="2 6 5 9 10 3"></polyline>
-                            </svg>
-                        </div>
-                        <span class="remember-text">Recordar contraseña</span>
+                        <span class="remember-label">Recordar contraseña</span>
                     </label>
-                    <a href="forgot_password.html" class="forgot-link">¿Olvidaste tu clave?</a>
+                    <a href="forgot_password.html" class="forgot-link">¿Olvidaste tu contraseña?</a>
                 </div>
-
-                <div class="submit-wrapper">
-                    <button type="submit" class="submit-btn" id="submitBtn">
-                        <span>Iniciar Sesión</span>
-                        <div class="btn-arrow"><i data-lucide="arrow-right"></i></div>
-                    </button>
-                </div>
+                <p class="error-msg" id="login-error"></p>
+                <button type="submit" id="submitBtn">Iniciar Sesión</button>
             </form>
-
-            <p class="register-row">
-                ¿No tienes cuenta? <a href="register.html" class="register-link">Crear Cuenta</a>
-            </p>
         </div>
+
+        <!-- Panel decorativo animado -->
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>¡Bienvenido de nuevo!</h1>
+                    <p>Introduce tus datos personales para usar todas las funciones del sitio</p>
+                    <button class="hidden" id="login" type="button">Iniciar Sesión</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>¡Hola, bienvenido!</h1>
+                    <p>Regístrate con tus datos personales y únete a nuestra comunidad</p>
+                    <button class="hidden" id="register" type="button">Registrarse</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <script>
-        lucide.createIcons();
-
-        // --- ANIMACIONES DE ENTRADA ---
-        window.addEventListener('load', () => {
-            const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-            tl.from('.brand-top', { y: 30, opacity: 0, duration: 0.7 })
-              .from('.brand-feature', { x: -20, opacity: 0, duration: 0.5, stagger: 0.1 }, '-=0.3')
-              .from('.form-title', { y: 20, opacity: 0, duration: 0.5 }, '-=0.6')
-              .from('.form-subtitle', { y: 15, opacity: 0, duration: 0.4 }, '-=0.3')
-              .from('.social-buttons', { y: 15, opacity: 0, duration: 0.5 }, '-=0.3')
-              .from('.divider', { opacity: 0, duration: 0.4 }, '-=0.3')
-              .from('.form-group', { y: 15, opacity: 0, duration: 0.5, stagger: 0.1 }, '-=0.3')
-              .from('.form-options', { y: 10, opacity: 0, duration: 0.4 }, '-=0.2')
-              .from('.submit-wrapper', { y: 15, opacity: 0, duration: 0.5 }, '-=0.2')
-              .from('.register-row', { y: 10, opacity: 0, duration: 0.4 }, '-=0.2');
-
-            // Blobs flotantes
-            gsap.to('.bg-blob-1', { y: 20, x: -15, duration: 6, yoyo: true, repeat: -1, ease: 'sine.inOut' });
-            gsap.to('.bg-blob-2', { y: -20, x: 10, duration: 8, yoyo: true, repeat: -1, ease: 'sine.inOut' });
-            gsap.to('.bg-blob-3', { y: 15, x: -10, duration: 7, yoyo: true, repeat: -1, ease: 'sine.inOut' });
-        });
-
-        // --- TOGGLE VISIBILIDAD CONTRASEÑA ---
-        const togglePass = document.getElementById('togglePass');
-        const passwordInput = document.getElementById('password');
-        let passVisible = false;
-
-        togglePass.addEventListener('click', () => {
-            passVisible = !passVisible;
-            passwordInput.type = passVisible ? 'text' : 'password';
-            togglePass.innerHTML = passVisible
-                ? '<i data-lucide="eye-off"></i>'
-                : '<i data-lucide="eye"></i>';
-            lucide.createIcons();
-        });
-
-        // --- RECORDAR CONTRASEÑA (localStorage) ---
-        const emailInput = document.getElementById('email');
-        const rememberCheckbox = document.getElementById('rememberMe');
-
-        // Al cargar, restaurar datos guardados
-        window.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('unigear_remember');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    emailInput.value = data.email || '';
-                    passwordInput.value = data.password || '';
-                    rememberCheckbox.checked = true;
-                } catch (e) {
-                    localStorage.removeItem('unigear_remember');
-                }
-            }
-        });
-
-        // Comentamos o eliminamos este código porque usaremos login.js
-        /*
-        const loginForm = document.getElementById('loginForm');
-
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-
-            // Guardar o borrar según checkbox
-            if (rememberCheckbox.checked) {
-                localStorage.setItem('unigear_remember', JSON.stringify({ email, password }));
-            } else {
-                localStorage.removeItem('unigear_remember');
-            }
-
-            // Animación del botón al enviar
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = `
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 0.8s linear infinite;">
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                </svg>
-            `;
-            btn.disabled = true;
-            btn.style.opacity = '0.85';
-
-            // Simular redirección tras login
-            setTimeout(() => {
-                btn.innerHTML = `
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    <span>¡Bienvenido!</span>
-                `;
-                btn.style.background = '#059669';
-                btn.style.opacity = '1';
-            }, 1500);
-        });
-        */
-    </script>
-    
-    <!-- Incluimos el script real que conecta con el backend -->
     <script type="module" src="../../js/views/public/login.js"></script>
 
-    <style>
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-    </style>
 </body>
 </html>
