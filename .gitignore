@@ -1,2 +1,4 @@
 .env
-pgdata/
+pgdata/.claude
+.claude
+.claude
