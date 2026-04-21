@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniGear | Iniciar Sesión</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="container" id="container">
+
+        <!-- Panel: Crear Cuenta -->
+        <div class="form-container sign-up">
+            <form id="registerForm" autocomplete="off">
+                <h1>Crear Cuenta</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon" id="btnGoogleReg" title="Google"><i class="fa-brands fa-google"></i></a>
+                    <a href="#" class="icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>o usa tu email para registrarte</span>
+                <input type="text" id="reg-nombre" placeholder="Nombre completo" required>
+                <input type="email" id="reg-email" placeholder="Email" required>
+                <input type="password" id="reg-password" placeholder="Contraseña" required>
+                <input type="password" id="reg-confirm" placeholder="Confirmar contraseña" required>
+                <div class="role-selector">
+                    <label class="role-option">
+                        <input type="radio" name="reg-rol" value="estudiante" checked>
+                        <div class="role-card">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Estudiante</span>
+                        </div>
+                    </label>
+                    <label class="role-option">
+                        <input type="radio" name="reg-rol" value="profesor">
+                        <div class="role-card">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            <span>Profesor</span>
+                        </div>
+                    </label>
+                </div>
+                <p class="error-msg" id="reg-error"></p>
+                <button type="submit" id="registerBtn">Registrarse</button>
+            </form>
+        </div>
+
+        <!-- Panel: Iniciar Sesión -->
+        <div class="form-container sign-in">
+            <form id="loginForm" autocomplete="on">
+                <h1>Iniciar Sesión</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon" id="btnGoogle" title="Google"><i class="fa-brands fa-google"></i></a>
+                    <a href="#" class="icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>o usa tu email y contraseña</span>
+                <input type="email" id="email" name="email" placeholder="Email" autocomplete="email" required>
+                <input type="password" id="password" name="password" placeholder="Contraseña" autocomplete="current-password" required>
+                <div class="remember-row">
+                    <label class="remember-check">
+                        <input type="checkbox" id="rememberMe" name="remember">
+                        <span class="remember-label">Recordar contraseña</span>
+                    </label>
+                    <a href="../recuperar-password/recuperar-password.html" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                </div>
+                <p class="error-msg" id="login-error"></p>
+                <button type="submit" id="submitBtn">Iniciar Sesión</button>
+            </form>
+        </div>
+
+        <!-- Panel decorativo animado -->
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>¡Bienvenido de nuevo!</h1>
+                    <p>Introduce tus datos personales para usar todas las funciones del sitio</p>
+                    <button class="hidden" id="login" type="button">Iniciar Sesión</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>¡Hola, bienvenido!</h1>
+                    <p>Regístrate con tus datos personales y únete a nuestra comunidad</p>
+                    <button class="hidden" id="register" type="button">Registrarse</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="login.js"></script>
+
+</body>
+</html>

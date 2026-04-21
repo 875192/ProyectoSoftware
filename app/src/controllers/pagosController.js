@@ -1,11 +1,36 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+let stripe = null;
+
+const getStripeClient = () => {
+  if (stripe) return stripe;
+
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) return null;
+
+  stripe = require('stripe')(secretKey);
+  return stripe;
+};
+
+const ensureStripeConfigured = (res) => {
+  const stripeClient = getStripeClient();
+  if (!stripeClient) {
+    res.status(503).json({
+      message: 'Pagos no disponibles: falta STRIPE_SECRET_KEY en la configuración del servidor',
+    });
+    return null;
+  }
+
+  return stripeClient;
+};
 
 const createCheckoutSession = async (req, res) => {
   try {
+    const stripeClient = ensureStripeConfigured(res);
+    if (!stripeClient) return;
+
     const { equipment, pickupDate, reason } = req.body;
 
     // Creamos la sesión de Checkout
-    const session = await stripe.checkout.sessions.create({
+    const session = await stripeClient.checkout.sessions.create({
       payment_method_types: ['card'], // Puedes añadir 'bizum' si lo tienes activo en Stripe
       line_items: [
         {
@@ -44,13 +69,16 @@ const createCheckoutSession = async (req, res) => {
 
 const createPaymentIntent = async (req, res) => {
   try {
+    const stripeClient = ensureStripeConfigured(res);
+    if (!stripeClient) return;
+
     const { amount } = req.body;
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
       return res.status(400).json({ message: 'El importe debe ser un número positivo en céntimos' });
     }
 
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await stripeClient.paymentIntents.create({
       amount,
       currency: 'eur',
       payment_method_types: ['card'],

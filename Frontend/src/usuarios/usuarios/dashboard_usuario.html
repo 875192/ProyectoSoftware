@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UniGear — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f0fdfa;
+    --card: #ffffff;
+    --text: #1F2937;
+    --text-muted: #9CA3AF;
+    --text-light: #4B5563;
+    --teal: #0f766e;
+    --teal-dark: #115e59;
+    --teal-light: #ccfbf1;
+    --teal-mid: #14b8a6;
+    --green: #16a34a;
+    --red: #dc2626;
+    --navy: #111827;
+    --navy-2: #1F2937;
+    --border: #E5E7EB;
+    --shadow: 0 3.5px 5.5px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 2px 12px rgba(0, 0, 0, 0.06);
+    --sidebar-w: 260px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, .brand-name, .page-title, .stat-value, .promo-title, .active-users-title, .sales-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--bg);
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    border-right: 1px solid var(--border);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-logo {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--teal);
+    display: grid; place-items: center;
+    color: #fff;
+  }
+  .brand-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--navy);
+  }
+
+  .menu { display: flex; flex-direction: column; gap: 4px; }
+  .menu-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 14px 12px 6px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+  .menu-item:hover { background: rgba(15, 118, 110, 0.06); }
+  .menu-item .icon-box {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--card);
+    display: grid; place-items: center;
+    color: var(--teal);
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+  }
+  .menu-item.active {
+    background: var(--card);
+    color: var(--navy);
+    font-weight: 600;
+    box-shadow: var(--shadow);
+  }
+  .menu-item.active .icon-box {
+    background: var(--teal);
+    color: #fff;
+  }
+
+  .badge {
+    margin-left: auto;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .help-card {
+    margin-top: auto;
+    background: linear-gradient(310deg, var(--teal) 0%, var(--teal-mid) 100%);
+    border-radius: 16px;
+    padding: 18px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .help-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><circle cx='180' cy='40' r='80' fill='none' stroke='rgba(255,255,255,0.12)' stroke-width='1'/><circle cx='30' cy='180' r='60' fill='none' stroke='rgba(255,255,255,0.12)' stroke-width='1'/></svg>");
+    background-size: cover;
+    pointer-events: none;
+  }
+  .help-card > * { position: relative; }
+  .help-icon {
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .help-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .help-text { font-size: 12px; opacity: 0.88; margin-bottom: 14px; line-height: 1.45; }
+  .help-btn {
+    display: block;
+    background: #fff;
+    color: var(--teal-dark);
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .help-btn:hover { opacity: 0.9; }
+
+  /* ===== MAIN ===== */
+  .main {
+    margin-left: var(--sidebar-w);
+    padding: 22px 30px 30px;
+  }
+
+  /* Topbar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .breadcrumb { font-size: 12px; color: var(--text-muted); }
+  .breadcrumb .sep { margin: 0 4px; }
+  .page-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-top: 2px; }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 14px;
+    width: 210px;
+    color: var(--text-muted);
+  }
+  .search input {
+    border: none; outline: none;
+    font-family: 'DM Sans', inherit;
+    font-size: 12px;
+    background: transparent;
+    width: 100%;
+    color: var(--text);
+  }
+  .search input::placeholder { color: var(--text-muted); }
+
+  .tb-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-light);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    transition: background 0.18s;
+  }
+  .tb-action:hover { background: var(--teal-light); color: var(--teal-dark); }
+  .tb-icon {
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    transition: color 0.18s;
+    position: relative;
+  }
+  .tb-icon:hover { color: var(--teal); }
+  .tb-icon .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 7px; height: 7px;
+    background: var(--teal);
+    border-radius: 50%;
+    border: 1.5px solid var(--card);
+  }
+
+  /* Cards base */
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 22px;
+  }
+
+  /* Stat row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .stat-value .delta { margin-left: 6px; font-size: 13px; font-weight: 600; }
+  .delta.up { color: var(--green); }
+  .delta.down { color: var(--red); }
+  .stat-icon {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    background: var(--teal);
+    color: #fff;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .stat-icon.yellow { background: var(--teal); }
+  .stat-icon.green  { background: var(--teal); }
+  .stat-icon.slate  { background: #9CA3AF; }
+
+  /* Info row */
+  .info-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  .info-left {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .info-left-text {
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 260px;
+  }
+  .info-tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+  }
+  .info-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.4px;
+    margin-bottom: 10px;
+  }
+  .info-desc {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--teal-dark);
+    font-weight: 700;
+    font-size: 12px;
+    margin-top: 18px;
+    cursor: pointer;
+  }
+  .read-more .arrow { transition: transform 0.2s; }
+  .read-more:hover .arrow { transform: translateX(4px); }
+
+  .info-left-visual {
+    background: linear-gradient(310deg, var(--teal) 0%, var(--teal-mid) 100%);
+    margin: 14px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    padding: 20px;
+  }
+  .brand-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+  .brand-visual-icon {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 14px;
+    display: grid; place-items: center;
+  }
+  .brand-visual-name {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .brand-visual-sub {
+    font-size: 11px;
+    opacity: 0.8;
+    letter-spacing: 0.5px;
+  }
+
+  .info-right {
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    min-height: 260px;
+    background-image:
+      linear-gradient(180deg, rgba(15,118,110,0.2) 0%, rgba(0,0,0,0.65) 100%),
+      url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+  }
+  .info-right-inner {
+    padding: 26px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .info-right .info-title { color: #fff; font-size: 17px; }
+  .info-right .info-desc { color: rgba(255,255,255,0.82); max-width: 100%; }
+  .info-right .read-more { color: #fff; }
+
+  /* Charts row */
+  .charts {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 18px;
+  }
+  .chart-card { padding: 0; overflow: hidden; }
+
+  .chart-dark {
+    background: linear-gradient(126deg, #0a4642 0%, #0f766e 100%);
+    border-radius: 12px;
+    margin: 18px;
+    padding: 18px;
+    height: 210px;
+  }
+  .loans-wrap { padding: 0 22px 22px; }
+  .loans-title {
+    font-size: 16px; font-weight: 700; color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .loans-sub { font-size: 13px; color: var(--text-muted); }
+  .loans-sub .up { color: var(--green); font-weight: 700; }
+
+  .overview-card { padding: 22px; }
+  .overview-header { margin-bottom: 4px; }
+  .overview-title { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .overview-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    margin-bottom: 14px;
+  }
+  .overview-sub .up { color: var(--green); font-weight: 700; }
+  .overview-chart-wrap { height: 270px; position: relative; }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .info-row, .charts { grid-template-columns: 1fr; }
+    .info-left { grid-template-columns: 1fr; }
+    .info-left-visual { min-height: 160px; margin: 0 14px 14px; }
+  }
+  @media (max-width: 780px) {
+    .sidebar { transform: translateX(-100%); transition: transform 0.25s; z-index: 50; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 16px; }
+    .stats { grid-template-columns: 1fr; }
+    .search { width: 140px; }
+    .topbar-right .tb-action span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10H4V10z"/>
+        <path d="M9 6V5a3 3 0 0 1 6 0v1"/>
+        <line x1="4" y1="15" x2="20" y2="15"/>
+      </svg>
+    </div>
+    <div class="brand-name">UNIGear</div>
+  </div>
+
+  <nav class="menu">
+    <div class="menu-label">Páginas</div>
+
+    <a class="menu-item active" href="#">
+      <span class="icon-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+      </span>
+      Dashboard
+    </a>
+
+    <a class="menu-item" href="#">
+      <span class="icon-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </span>
+      Catálogo
+    </a>
+
+    <a class="menu-item" href="#">
+      <span class="icon-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </span>
+      Mis Solicitudes
+      <span class="badge">2</span>
+    </a>
+
+    <a class="menu-item" href="#">
+      <span class="icon-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10a4 4 0 014-4h8a4 4 0 014 4v10H4V10z"/><path d="M9 6V5a3 3 0 016 0v1"/><line x1="4" y1="15" x2="20" y2="15"/></svg>
+      </span>
+      Mis Préstamos
+    </a>
+
+    <a class="menu-item" href="#">
+      <span class="icon-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+      </span>
+      Notificaciones
+    </a>
+
+    <div class="menu-label">Mi cuenta</div>
+
+    <a class="menu-item" href="#">
+      <span class="icon-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>
+      </span>
+      Mi Perfil
+    </a>
+
+    <a class="menu-item" href="#">
+      <span class="icon-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </span>
+      Cerrar sesión
+    </a>
+  </nav>
+
+  <div class="help-card">
+    <div class="help-icon">?</div>
+    <div class="help-title">¿Necesitas ayuda?</div>
+    <div class="help-text">Contacta con el personal o consulta la guía de usuario de UniGear.</div>
+    <div class="help-btn">VER AYUDA</div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <div class="breadcrumb">Páginas <span class="sep">/</span> Dashboard</div>
+      <div class="page-title">Dashboard</div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar material..." />
+      </div>
+      <a class="tb-action" href="#">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>
+        <span>Mi cuenta</span>
+      </a>
+      <div class="tb-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <section class="stats">
+    <div class="card stat-card">
+      <div>
+        <div class="stat-label">Préstamos activos</div>
+        <div class="stat-value">3 <span class="delta up">+1</span></div>
+      </div>
+      <div class="stat-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10a4 4 0 014-4h8a4 4 0 014 4v10H4V10z"/><path d="M9 6V5a3 3 0 016 0v1"/><line x1="4" y1="15" x2="20" y2="15"/></svg>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div>
+        <div class="stat-label">Solicitudes pendientes</div>
+        <div class="stat-value">2 <span class="delta up">+2</span></div>
+      </div>
+      <div class="stat-icon yellow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div>
+        <div class="stat-label">Materiales disponibles</div>
+        <div class="stat-value">48 <span class="delta up">+6</span></div>
+      </div>
+      <div class="stat-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div>
+        <div class="stat-label">Sanciones pendientes</div>
+        <div class="stat-value">0 € <span class="delta up">Sin deuda</span></div>
+      </div>
+      <div class="stat-icon slate">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="15" r="1.5" fill="currentColor"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Info row -->
+  <section class="info-row">
+    <div class="card info-left">
+      <div class="info-left-text">
+        <div>
+          <div class="info-tag">Sistema de préstamos universitario</div>
+          <div class="info-title">UniGear Dashboard</div>
+          <div class="info-desc">Gestiona tus préstamos de equipamiento, solicita material del catálogo y sigue el estado de tus peticiones desde un único lugar.</div>
+        </div>
+        <a class="read-more" href="#">Ver catálogo <span class="arrow">→</span></a>
+      </div>
+      <div class="info-left-visual">
+        <div class="brand-visual">
+          <div class="brand-visual-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 10a4 4 0 014-4h8a4 4 0 014 4v10H4V10z"/>
+              <path d="M9 6V5a3 3 0 016 0v1"/>
+              <line x1="4" y1="15" x2="20" y2="15"/>
+            </svg>
+          </div>
+          <div class="brand-visual-name">UNIGear</div>
+          <div class="brand-visual-sub">Material universitario</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card info-right">
+      <div class="info-right-inner">
+        <div>
+          <div class="info-title">Devuelve a tiempo</div>
+          <div class="info-desc">Recuerda que los préstamos tienen un plazo máximo. Devolver el material a tiempo evita sanciones y permite que otros estudiantes lo usen.</div>
+        </div>
+        <a class="read-more" href="#">Ver mis préstamos <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts row -->
+  <section class="charts">
+    <div class="card chart-card">
+      <div class="chart-dark">
+        <canvas id="prestamosChart"></canvas>
+      </div>
+      <div class="loans-wrap">
+        <div class="loans-title">Mis préstamos</div>
+        <div class="loans-sub"><span class="up">(+2)</span> solicitudes este mes</div>
+      </div>
+    </div>
+
+    <div class="card overview-card">
+      <div class="overview-header">
+        <div class="overview-title">Actividad del catálogo</div>
+        <div class="overview-sub"><span class="up">(+12%)</span> más disponibilidad este semestre</div>
+      </div>
+      <div class="overview-chart-wrap">
+        <canvas id="catalogoChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ===== MIS PRÉSTAMOS (bar chart, dark card) =====
+  const barCtx = document.getElementById('prestamosChart').getContext('2d');
+  new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
+      datasets: [{
+        data: [1, 3, 2, 1, 4, 2, 3, 2],
+        backgroundColor: '#ffffff',
+        borderRadius: 8,
+        barPercentage: 0.4,
+        categoryPercentage: 0.85,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: true } },
+      scales: {
+        x: {
+          grid: { display: false, drawBorder: false },
+          ticks: { color: 'rgba(255,255,255,0.55)', font: { size: 10, family: "'DM Sans'" } }
+        },
+        y: {
+          beginAtZero: true,
+          max: 6,
+          grid: { display: false, drawBorder: false },
+          ticks: {
+            color: 'rgba(255,255,255,0.55)',
+            font: { size: 10, family: "'DM Sans'" },
+            stepSize: 2,
+          },
+          border: { display: false }
+        }
+      }
+    }
+  });
+
+  // ===== ACTIVIDAD DEL CATÁLOGO (dual line chart) =====
+  const lineCtx = document.getElementById('catalogoChart').getContext('2d');
+
+  const gradTeal = lineCtx.createLinearGradient(0, 0, 0, 270);
+  gradTeal.addColorStop(0, 'rgba(15, 118, 110, 0.28)');
+  gradTeal.addColorStop(1, 'rgba(15, 118, 110, 0.02)');
+
+  const gradSlate = lineCtx.createLinearGradient(0, 0, 0, 270);
+  gradSlate.addColorStop(0, 'rgba(71, 85, 105, 0.2)');
+  gradSlate.addColorStop(1, 'rgba(71, 85, 105, 0.02)');
+
+  new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: ['Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago'],
+      datasets: [
+        {
+          label: 'Préstamos realizados',
+          data: [8, 14, 11, 6, 18, 15, 20, 17, 22, 19, 25, 28],
+          borderColor: '#0f766e',
+          backgroundColor: gradTeal,
+          borderWidth: 3,
+          fill: true,
+          tension: 0.45,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#0f766e',
+        },
+        {
+          label: 'Devoluciones',
+          data: [7, 13, 10, 5, 16, 14, 18, 16, 20, 18, 23, 25],
+          borderColor: '#475569',
+          backgroundColor: gradSlate,
+          borderWidth: 3,
+          fill: true,
+          tension: 0.45,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#475569',
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#fff',
+          titleColor: '#111827',
+          bodyColor: '#4B5563',
+          borderColor: '#E5E7EB',
+          borderWidth: 1,
+          padding: 10,
+          titleFont: { family: "'Bricolage Grotesque'", weight: '700' },
+          bodyFont: { family: "'DM Sans'" },
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false, drawBorder: false },
+          ticks: { color: '#9CA3AF', font: { size: 11, family: "'DM Sans'" } }
+        },
+        y: {
+          beginAtZero: true,
+          max: 32,
+          grid: { color: '#F3F4F6', drawBorder: false, borderDash: [4, 4] },
+          ticks: {
+            color: '#9CA3AF',
+            font: { size: 11, family: "'DM Sans'" },
+            stepSize: 8,
+          },
+          border: { display: false }
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
