@@ -122,7 +122,7 @@ Two `.env` files are required (not committed):
 | File | Contains |
 |------|---------|
 | `app/.env` | `DATABASE_URL`, `PORT`, `SMTP_*`, `STRIPE_SECRET_KEY`, `FRONTEND_URL` |
-| Root `.env` | Docker Postgres credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`) |
+| Root `.env.docker` | Docker Postgres credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`) |
 
 Default DB connection: `postgresql://unigear_app:unigear_password@localhost:5433/unigear`  
 Default frontend URL (for password-reset links): `http://127.0.0.1:5500`
