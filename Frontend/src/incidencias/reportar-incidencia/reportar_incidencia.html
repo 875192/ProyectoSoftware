@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UniGear — Reportar incidencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: var(--font-body);
+    background: var(--off-white);
+    color: var(--text);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, .page-title, .section-title { font-family: var(--font-display); }
+  a { text-decoration: none; color: inherit; }
+  button, input, select, textarea, label { font-family: inherit; }
+
+  .main { margin-left: var(--sidebar-w); padding: 22px 30px 60px; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px; flex-wrap: wrap; gap: 12px;
+  }
+  .breadcrumb { font-size: 12px; color: var(--text-muted); }
+  .breadcrumb .sep { margin: 0 6px; }
+  .page-title { font-size: 20px; font-weight: 700; color: var(--navy); margin-top: 4px; letter-spacing: -0.3px; }
+  .page-desc { font-size: 13.5px; color: var(--text-light); max-width: 620px; line-height: 1.55; margin-top: 6px; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 22px;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 26px;
+  }
+
+  .section-title {
+    font-size: 15px; font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .section-help {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .field { margin-bottom: 22px; }
+  .field label.field-label {
+    display: block;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase; letter-spacing: 0.4px;
+    margin-bottom: 8px;
+  }
+  .field-help {
+    font-size: 12px; color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    background: var(--card);
+    color: var(--text);
+    transition: border-color 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                box-shadow 180ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  select:focus, input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+  }
+  textarea {
+    min-height: 130px;
+    resize: vertical;
+    line-height: 1.55;
+    font-family: inherit;
+  }
+  .char-count {
+    font-size: 11.5px; color: var(--text-muted);
+    text-align: right;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tipo de incidencia (radios como cards) */
+  .types {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .type-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                background 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                transform 180ms cubic-bezier(0.25, 1, 0.5, 1);
+    text-align: left;
+  }
+  .type-option:hover { border-color: var(--teal-100); background: var(--teal-50); }
+  .type-option input { position: absolute; opacity: 0; pointer-events: none; }
+  .type-option .type-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    display: grid; place-items: center;
+    transition: background 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                color 180ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .type-option .type-name {
+    font-size: 13px; font-weight: 700;
+    color: var(--navy);
+  }
+  .type-option .type-desc {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .type-option:has(input:checked) {
+    border-color: var(--teal);
+    background: var(--teal-50);
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.10);
+  }
+  .type-option:has(input:checked) .type-icon {
+    background: var(--teal); color: #fff;
+  }
+
+  /* Upload de fotos */
+  .uploader {
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                background 180ms cubic-bezier(0.25, 1, 0.5, 1);
+    background: var(--gray-50);
+  }
+  .uploader:hover { border-color: var(--teal); background: var(--teal-50); }
+  .uploader.dragover { border-color: var(--teal); background: var(--teal-50); }
+  .uploader-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--teal);
+    display: grid; place-items: center;
+    margin: 0 auto 10px;
+    border: 1px solid var(--border);
+  }
+  .uploader-text {
+    font-size: 13.5px; font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 3px;
+  }
+  .uploader-text .link { color: var(--teal-dark); text-decoration: underline; }
+  .uploader-sub {
+    font-size: 11.5px; color: var(--text-muted);
+  }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--gray-100);
+    border: 1px solid var(--border);
+  }
+  .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .preview-remove {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: background 180ms;
+  }
+  .preview-remove:hover { background: var(--error-text); }
+
+  /* Acciones */
+  .actions {
+    display: flex; gap: 10px;
+    justify-content: flex-end;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-soft);
+    margin-top: 8px;
+  }
+  .btn {
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 11px 22px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                color 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                transform 180ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-light);
+  }
+  .btn-ghost:hover { background: var(--gray-50); color: var(--navy); }
+  .btn-primary {
+    background: var(--teal);
+    color: #fff;
+    box-shadow: var(--shadow-teal);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+
+  /* Aside informativo */
+  .aside-card {
+    position: sticky;
+    top: 22px;
+  }
+  .aside-title {
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .tip {
+    display: flex; gap: 10px;
+    margin-bottom: 14px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--text-light);
+  }
+  .tip:last-child { margin-bottom: 0; }
+  .tip svg {
+    flex-shrink: 0;
+    color: var(--teal);
+    margin-top: 2px;
+  }
+  .tip strong { color: var(--navy); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid var(--success-border);
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-size: 14px; font-weight: 600;
+    box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 280ms cubic-bezier(0.25, 1, 0.5, 1),
+                transform 280ms cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    .aside-card { position: static; }
+    .types { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .main { margin-left: 0; padding: 16px; }
+    .types { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="breadcrumb">Páginas <span class="sep">/</span> Incidencias <span class="sep">/</span> Reportar</div>
+      <div class="page-title">Reportar incidencia</div>
+      <div class="page-desc">
+        Comunica cualquier avería, pérdida o desperfecto del material que tienes en préstamo. El equipo de gestión revisará tu reporte y te contactará si necesita más información.
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <form class="card" id="incidenceForm" novalidate>
+      <!-- Préstamo -->
+      <div class="field">
+        <label for="loanSelect" class="field-label">Préstamo afectado</label>
+        <select id="loanSelect" required>
+          <option value="" disabled selected>Selecciona el préstamo…</option>
+          <option value="1024">#1024 · Cámara Canon EOS R50 (devolución hoy)</option>
+          <option value="1018">#1018 · Portátil Dell Latitude 7430 (devolución mañana)</option>
+          <option value="1011">#1011 · Trípode Manfrotto 290 (devolución en 4 días)</option>
+        </select>
+        <div class="field-help">Solo aparecen tus préstamos activos. Si tu material no está aquí, contacta con préstamo audiovisual.</div>
+      </div>
+
+      <!-- Tipo -->
+      <div class="field">
+        <label class="field-label">Tipo de incidencia</label>
+        <div class="types" role="radiogroup" aria-label="Tipo de incidencia">
+          <label class="type-option">
+            <input type="radio" name="type" value="averia" required />
+            <span class="type-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+            </span>
+            <span class="type-name">Avería</span>
+            <span class="type-desc">El material no funciona o tiene algún fallo.</span>
+          </label>
+          <label class="type-option">
+            <input type="radio" name="type" value="desperfecto" />
+            <span class="type-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </span>
+            <span class="type-name">Desperfecto</span>
+            <span class="type-desc">Daños físicos visibles que no afectan al funcionamiento.</span>
+          </label>
+          <label class="type-option">
+            <input type="radio" name="type" value="perdida" />
+            <span class="type-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </span>
+            <span class="type-name">Pérdida</span>
+            <span class="type-desc">No encuentras el material o un accesorio.</span>
+          </label>
+          <label class="type-option">
+            <input type="radio" name="type" value="otro" />
+            <span class="type-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+            <span class="type-name">Otro</span>
+            <span class="type-desc">Cualquier otra cosa que debamos saber.</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="field">
+        <label for="description" class="field-label">Descripción</label>
+        <textarea id="description" maxlength="600" placeholder="Cuéntanos qué ha pasado con el mayor detalle posible. ¿Cuándo ocurrió? ¿En qué circunstancias? ¿Qué intentaste hacer?" required></textarea>
+        <div class="char-count"><span id="charCount">0</span> / 600</div>
+      </div>
+
+      <!-- Fotos -->
+      <div class="field">
+        <label class="field-label">Fotos (opcional)</label>
+        <div class="uploader" id="uploader" tabindex="0" role="button" aria-label="Subir fotos">
+          <div class="uploader-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="uploader-text">
+            <span class="link">Haz clic para subir</span> o arrastra y suelta
+          </div>
+          <div class="uploader-sub">PNG, JPG o WEBP · máx 5 MB cada una · hasta 5 fotos</div>
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden />
+        </div>
+        <div class="preview-grid" id="previewGrid"></div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="actions">
+        <a class="btn btn-ghost" href="../../paneles/panel-usuario/panel_usuarios.html">Cancelar</a>
+        <button type="submit" class="btn btn-primary" id="btnSubmit" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Enviar reporte
+        </button>
+      </div>
+    </form>
+
+    <!-- Aside -->
+    <aside class="card aside-card">
+      <div class="aside-title">Antes de enviar</div>
+      <div class="tip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <div><strong>Sé específico.</strong> Indica fecha, lugar y qué estabas haciendo cuando ocurrió.</div>
+      </div>
+      <div class="tip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div><strong>Adjunta fotos</strong> si hay daños visibles. Aceleran mucho la revisión.</div>
+      </div>
+      <div class="tip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div><strong>No tardes en reportar.</strong> Reportar pronto reduce la posibilidad de sanción.</div>
+      </div>
+      <div class="tip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <div>Recibirás una <strong>notificación</strong> cuando se actualice el estado de la incidencia.</div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+  Incidencia enviada. Te notificaremos en cuanto la revisemos.
+</div>
+
+<script type="module">
+  import { auth } from '../../compartido/nucleo/auth.js';
+  import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
+  auth.requireAuth(['estudiante', 'profesor']);
+  mountSidebar({ activePage: 'incidencias', basePath: '../..' });
+</script>
+
+<script>
+(() => {
+  const form = document.getElementById('incidenceForm');
+  const loanSel = document.getElementById('loanSelect');
+  const description = document.getElementById('description');
+  const charCount = document.getElementById('charCount');
+  const btnSubmit = document.getElementById('btnSubmit');
+  const fileInput = document.getElementById('fileInput');
+  const uploader = document.getElementById('uploader');
+  const previewGrid = document.getElementById('previewGrid');
+  const toast = document.getElementById('toast');
+
+  const MAX_FILES = 5;
+  const MAX_SIZE = 5 * 1024 * 1024;
+  let files = [];
+
+  description.addEventListener('input', () => {
+    charCount.textContent = description.value.length;
+    revalidate();
+  });
+  loanSel.addEventListener('change', revalidate);
+  document.querySelectorAll('input[name="type"]').forEach(r => r.addEventListener('change', revalidate));
+
+  function revalidate() {
+    const type = document.querySelector('input[name="type"]:checked');
+    const ok = loanSel.value && type && description.value.trim().length >= 10;
+    btnSubmit.disabled = !ok;
+  }
+
+  // Uploader
+  uploader.addEventListener('click', () => fileInput.click());
+  uploader.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+  });
+  ['dragenter', 'dragover'].forEach(ev =>
+    uploader.addEventListener(ev, (e) => { e.preventDefault(); uploader.classList.add('dragover'); })
+  );
+  ['dragleave', 'drop'].forEach(ev =>
+    uploader.addEventListener(ev, (e) => { e.preventDefault(); uploader.classList.remove('dragover'); })
+  );
+  uploader.addEventListener('drop', (e) => addFiles(e.dataTransfer.files));
+  fileInput.addEventListener('change', (e) => addFiles(e.target.files));
+
+  function addFiles(fileList) {
+    for (const f of fileList) {
+      if (files.length >= MAX_FILES) break;
+      if (!f.type.startsWith('image/')) continue;
+      if (f.size > MAX_SIZE) continue;
+      files.push(f);
+    }
+    renderPreviews();
+  }
+
+  function renderPreviews() {
+    previewGrid.innerHTML = '';
+    files.forEach((f, idx) => {
+      const url = URL.createObjectURL(f);
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+      item.innerHTML = `
+        <img src="${url}" alt="Foto ${idx + 1}" />
+        <button type="button" class="preview-remove" aria-label="Eliminar foto">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>`;
+      item.querySelector('.preview-remove').addEventListener('click', () => {
+        URL.revokeObjectURL(url);
+        files.splice(idx, 1);
+        renderPreviews();
+      });
+      previewGrid.appendChild(item);
+    });
+  }
+
+  // Submit (mock)
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (btnSubmit.disabled) return;
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span style="opacity:0.85">Enviando…</span>';
+    setTimeout(() => {
+      toast.classList.add('show');
+      setTimeout(() => {
+        window.location.href = '../../paneles/panel-usuario/panel_usuarios.html';
+      }, 1300);
+    }, 800);
+  });
+})();
+</script>
+
+</body>
+</html>

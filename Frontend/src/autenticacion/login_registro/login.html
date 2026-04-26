@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniGear | Iniciar Sesión</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
@@ -17,10 +21,10 @@
             <form id="registerForm" autocomplete="off">
                 <h1>Crear Cuenta</h1>
                 <div class="social-icons">
-                    <a href="#" class="icon" id="btnGoogleReg" title="Google"><i class="fa-brands fa-google"></i></a>
-                    <a href="#" class="icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="icon" title="GitHub"><i class="fa-brands fa-github"></i></a>
-                    <a href="#" class="icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <button type="button" class="icon" id="btnGoogleReg" aria-label="Continuar con Google">
+                        <i class="fa-brands fa-google" aria-hidden="true"></i>
+                        <span>Continuar con Google</span>
+                    </button>
                 </div>
                 <span>o usa tu email para registrarte</span>
                 <input type="text" id="reg-nombre" placeholder="Nombre completo" required>
@@ -53,10 +57,10 @@
             <form id="loginForm" autocomplete="on">
                 <h1>Iniciar Sesión</h1>
                 <div class="social-icons">
-                    <a href="#" class="icon" id="btnGoogle" title="Google"><i class="fa-brands fa-google"></i></a>
-                    <a href="#" class="icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="icon" title="GitHub"><i class="fa-brands fa-github"></i></a>
-                    <a href="#" class="icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <button type="button" class="icon" id="btnGoogle" aria-label="Continuar con Google">
+                        <i class="fa-brands fa-google" aria-hidden="true"></i>
+                        <span>Continuar con Google</span>
+                    </button>
                 </div>
                 <span>o usa tu email y contraseña</span>
                 <input type="email" id="email" name="email" placeholder="Email" autocomplete="email" required>

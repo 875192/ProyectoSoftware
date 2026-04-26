@@ -35,19 +35,20 @@ export const auth = {
       window.location.href = '../../autenticacion/login_registro/login.html';
       return null;
     }
-    
+
     if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
       alert("No tienes permiso para ver esta página.");
       // Redirigir según su rol
       const roleDbs = {
-        'estudiante':       '../../paneles/panel-estudiante/panel-estudiante.html',
-        'personal_gestion': '../../paneles/panel-staff/panel-staff.html',
-        'mantenimiento':    '../../mantenimiento/mantenimiento.html'
+        'estudiante': '../../paneles/panel-usuario/panel_usuarios.html',
+        'profesor': '../../paneles/panel-usuario/panel_usuarios.html',
+        'personal_gestion': '../../paneles/panel-staff/panel_staff.html',
+        'admin': '../../paneles/panel-admin/panel_admin.html'
       };
-      window.location.href = roleDbs[user.role] || '../public/login.html';
+      window.location.href = roleDbs[user.role] || '../../autenticacion/login_registro/login.html';
       return null;
     }
-    
+
     return user;
   }
 };

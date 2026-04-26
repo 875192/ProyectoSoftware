@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UniGear — Detalle de material</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
+<style>
+  /* Paleta y tokens en compartido/estilos-base/tokens.css. */
+  :root {
+    --teal-light: var(--teal-100);
+    --teal-mid:   var(--teal);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: var(--font-body);
+    background: var(--off-white);
+    color: var(--text);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, .page-title, .hero-title, .section-title, .form-title {
+    font-family: var(--font-display);
+  }
+
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; }
+
+  /* Sidebar viene del componente compartido. */
+
+  /* ===== MAIN ===== */
+  .main {
+    margin-left: var(--sidebar-w);
+    padding: 22px 30px 60px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .breadcrumb { font-size: 12px; color: var(--text-muted); }
+  .breadcrumb .sep { margin: 0 6px; }
+  .breadcrumb a:hover { color: var(--teal); }
+  .page-title { font-size: 18px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--text-light);
+    font-size: 13px; font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+  .back-link:hover { background: var(--teal-50); color: var(--teal-dark); }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 22px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+    margin-bottom: 22px;
+    min-height: 360px;
+  }
+
+  .hero-visual {
+    position: relative;
+    background: linear-gradient(135deg, var(--teal-deep) 0%, var(--teal) 60%, var(--teal-dark) 100%);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    min-height: 320px;
+  }
+  .hero-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 20% 80%, rgba(255,255,255,0.10), transparent 50%),
+      radial-gradient(circle at 85% 15%, rgba(255,255,255,0.08), transparent 45%);
+    pointer-events: none;
+  }
+  .hero-object {
+    position: relative;
+    z-index: 1;
+    width: 70%;
+    max-width: 320px;
+    aspect-ratio: 1;
+    border-radius: 28px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.20);
+    display: grid; place-items: center;
+    color: var(--white);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.30);
+    animation: heroFloat 6s ease-in-out infinite;
+  }
+  .hero-object svg { width: 50%; height: 50%; }
+
+  .hero-content {
+    padding: 38px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    background: var(--teal-light);
+    padding: 6px 12px;
+    border-radius: 20px;
+    width: fit-content;
+  }
+  .hero-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.6px;
+    line-height: 1.1;
+  }
+  .hero-desc {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.65;
+    max-width: 480px;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    padding: 14px 0;
+    margin-top: 4px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .meta-value {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .meta-value .unit { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-left: 3px; }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+  .status-pill .d {
+    width: 8px; height: 8px; border-radius: 50%; background: currentColor;
+  }
+  .status-pill.disponible           { background: var(--success-bg); color: var(--success-text); }
+  .status-pill.reservado            { background: var(--warning-bg); color: var(--gray-800); }
+  .status-pill.prestado             { background: var(--info-bg);    color: var(--info-text); }
+  .status-pill.averiado,
+  .status-pill.mantenimiento,
+  .status-pill.fuera_servicio       { background: var(--error-bg);   color: var(--error-text); }
+
+  .hero-actions { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+  }
+  .btn-primary {
+    background: var(--teal);
+    color: var(--white);
+    box-shadow: 0 8px 20px -6px rgba(15,118,110,0.45);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--teal-dark);
+    transform: translateY(-1px);
+  }
+  .btn-primary:disabled {
+    background: var(--gray-200);
+    color: var(--gray-500);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .btn-ghost {
+    background: var(--card);
+    color: var(--teal-dark);
+    border-color: var(--border);
+  }
+  .btn-ghost:hover { background: var(--teal-50); }
+
+  /* ===== ALERT (incidencias previas) ===== */
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    color: var(--gray-800);
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  .alert svg { flex-shrink: 0; margin-top: 2px; }
+
+  /* ===== GRID INFERIOR ===== */
+  .grid-bottom {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 22px;
+  }
+  .col-main { display: flex; flex-direction: column; gap: 18px; }
+  .col-side { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 22px; align-self: flex-start; }
+
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.2px;
+    margin-bottom: 10px;
+  }
+  .body-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-light);
+  }
+  .bullet-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bullet-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.55;
+  }
+  .bullet-list li::before {
+    content: '';
+    width: 6px; height: 6px;
+    margin-top: 8px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+
+  /* Pasos numerados */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--gray-50);
+  }
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    background: var(--teal);
+    color: var(--white);
+    display: grid; place-items: center;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .step-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .step-text {
+    font-size: 12.5px;
+    color: var(--text-light);
+    line-height: 1.55;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .info-cell {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--gray-50);
+    border: 1px solid var(--border-soft);
+  }
+  .info-cell .l {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .info-cell .v {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  /* ===== FORMULARIO DE RESERVA ===== */
+  .form-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .form-sub {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(15,118,110,0.15);
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .field-help {
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+  .field-error {
+    display: none;
+    font-size: 12px;
+    color: var(--error-text);
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+  }
+  .field-error:not(:empty) { display: block; }
+
+  .form-disabled-msg {
+    background: var(--info-bg);
+    color: var(--info-text);
+    border: 1px solid var(--info-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* ===== MATERIAL SIMILAR ===== */
+  .similar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .similar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    transition: background 0.18s ease, border-color 0.18s ease;
+  }
+  .similar-item:hover { background: var(--teal-50); border-color: var(--teal-100); }
+  .similar-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--teal-50);
+    color: var(--teal);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .similar-icon svg { width: 18px; height: 18px; }
+  .similar-info { min-width: 0; flex: 1; }
+  .similar-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .similar-meta {
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+
+  /* ===== EMPTY STATE (id no encontrado) ===== */
+  .not-found {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--card);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lg);
+  }
+  .not-found .nf-icon {
+    width: 64px; height: 64px;
+    border-radius: 16px;
+    background: var(--gray-100);
+    color: var(--gray-500);
+    display: grid; place-items: center;
+    margin: 0 auto 16px;
+  }
+  .not-found .nf-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .not-found .nf-desc {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 18px;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--gray-900);
+    color: var(--white);
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 100;
+  }
+  .toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.success { background: var(--success-text); }
+
+  /* ===== ANIMACIONES ===== */
+  @keyframes heroFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001s !important;
+    }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { min-height: 240px; }
+    .hero-content { padding: 28px 24px; }
+    .hero-title { font-size: 28px; }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+    .grid-bottom { grid-template-columns: 1fr; }
+    .col-side { position: static; }
+  }
+  @media (max-width: 768px) {
+    .main { margin-left: 0; padding: 16px 16px 40px; }
+    .hero-meta { grid-template-columns: 1fr; gap: 10px; }
+    .steps { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar inyectado por compartido/componentes-ui/sidebar/sidebar.js -->
+
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <div class="breadcrumb">
+        <a href="../listado-materiales/listado_materiales.html">Catálogo</a>
+        <span class="sep">/</span>
+        <span id="bcName">Material</span>
+      </div>
+      <div class="page-title" id="pageTitle">Detalle de material</div>
+    </div>
+    <div class="topbar-right">
+      <a class="back-link" href="../listado-materiales/listado_materiales.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Volver al catálogo
+      </a>
+    </div>
+  </div>
+
+  <div id="content"></div>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+  import { auth } from '../../compartido/nucleo/auth.js';
+  import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
+  auth.requireAuth(['estudiante', 'profesor']);
+  mountSidebar({ activePage: 'catalogo', basePath: '../..' });
+</script>
+
+<script>
+  // ===== DATOS (mock) =====
+  // Hoy fijo para que la simulación de stock/reservas tenga sentido.
+  const today = new Date('2026-04-25');
+
+  const categoryLabels = {
+    informatica:  'Informática',
+    audio:        'Audio',
+    video:        'Vídeo',
+    herramientas: 'Herramientas',
+    deporte:      'Deporte',
+  };
+
+  const icons = {
+    laptop:    '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M10 17v4M14 17v4"/><line x1="6" y1="8" x2="18" y2="8"/>',
+    tablet:    '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/>',
+    monitor:   '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    keyboard:  '<rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="10"/><line x1="10" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="14" y2="10"/><line x1="18" y1="10" x2="18" y2="10"/><line x1="7" y1="14" x2="17" y2="14"/>',
+    mouse:     '<rect x="7" y="2" width="10" height="20" rx="5"/><line x1="12" y1="6" x2="12" y2="10"/>',
+    drive:     '<rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="6" cy="12" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/>',
+    cable:     '<path d="M4 12a4 4 0 014-4h8a4 4 0 014 4v4H4z"/><line x1="8" y1="16" x2="8" y2="20"/><line x1="16" y1="16" x2="16" y2="20"/>',
+    mic:       '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 17v4M8 21h8"/>',
+    headphones:'<path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 18a2 2 0 01-2 2h-1v-6h3zM3 18a2 2 0 002 2h1v-6H3z"/>',
+    mixer:     '<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="16" y1="8" x2="16" y2="16"/><circle cx="8" cy="11" r="1.3"/><circle cx="12" cy="14" r="1.3"/><circle cx="16" cy="10" r="1.3"/>',
+    speaker:   '<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="14" r="3"/><circle cx="12" cy="7" r="1" fill="currentColor"/>',
+    camera:    '<path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="4"/>',
+    projector: '<rect x="2" y="7" width="16" height="10" rx="2"/><circle cx="9" cy="12" r="2"/><line x1="18" y1="11" x2="22" y2="11"/><line x1="18" y1="13" x2="22" y2="13"/>',
+    tripod:    '<line x1="12" y1="3" x2="12" y2="12"/><line x1="12" y1="12" x2="6" y2="21"/><line x1="12" y1="12" x2="18" y2="21"/><line x1="12" y1="12" x2="12" y2="21"/><circle cx="12" cy="4" r="2"/>',
+    gimbal:    '<circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>',
+    gopro:     '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="10" cy="12" r="3"/><rect x="15" y="9" width="3" height="2" rx="0.5"/>',
+    drill:     '<path d="M4 10h8l4-3v10l-4-3H4z"/><line x1="16" y1="12" x2="22" y2="12"/>',
+    tools:     '<path d="M14 6l4-4 3 3-4 4M14 6l-8 8a2.8 2.8 0 104 4l8-8"/>',
+    multimeter:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="7" y1="16" x2="17" y2="16"/>',
+    ball:      '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+    racket:    '<circle cx="9" cy="9" r="6"/><line x1="13" y1="13" x2="20" y2="20"/><path d="M5 9h8M9 5v8" stroke-width="0.8"/>',
+    weights:   '<rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="10" width="14" height="4" rx="1"/>'
+  };
+
+  // Catálogo extendido (mismo subset que listado_materiales.html, ampliado).
+  const items = [
+    { id: 1, nombre: 'MacBook Pro 14"', categoria: 'informatica', icon: 'laptop', estado: 'disponible', stock: 6, total: 10, popularidad: 142,
+      codigo: 'PORT-014', plazo: 7, incidencias: 0,
+      descripcion: 'Equipo Apple M3 Pro con 18 GB de RAM y 512 GB de almacenamiento. Ideal para edición de vídeo, desarrollo y trabajos académicos exigentes. Hasta 18 horas de autonomía para sesiones largas en biblioteca.',
+      condiciones: ['Cargador MagSafe USB-C incluido', 'Adaptador USB-C → HDMI bajo petición', 'Recogida en conserjería de tu facultad', 'No se permite cambio de SO']
+    },
+    { id: 2, nombre: 'iPad Pro 11"', categoria: 'informatica', icon: 'tablet', estado: 'disponible', stock: 4, total: 6, popularidad: 98,
+      codigo: 'TAB-006', plazo: 5, incidencias: 0,
+      descripcion: 'Tablet con chip M2, pantalla Liquid Retina y compatibilidad con Apple Pencil de 2ª generación. Pensada para apuntes, dibujo técnico y presentaciones interactivas.',
+      condiciones: ['Apple Pencil incluido', 'Funda con teclado bajo disponibilidad', 'Recogida en conserjería']
+    },
+    { id: 3, nombre: 'Monitor Dell 27" 4K', categoria: 'informatica', icon: 'monitor', estado: 'reservado', stock: 1, total: 4, popularidad: 54,
+      codigo: 'MON-004', plazo: 14, incidencias: 1,
+      descripcion: 'Monitor IPS 4K UHD con cobertura sRGB del 99 %, ideal para diseño y edición. Conexiones HDMI, DisplayPort y USB-C con carga.',
+      condiciones: ['Cable HDMI y DP incluidos', 'No se incluye soporte adicional', 'Retirar y entregar en sala A-103']
+    },
+    { id: 4, nombre: 'Teclado mecánico Keychron', categoria: 'informatica', icon: 'keyboard', estado: 'disponible', stock: 8, total: 8, popularidad: 42,
+      codigo: 'INF-031', plazo: 7, incidencias: 0,
+      descripcion: 'Teclado inalámbrico bluetooth con switches Brown. Compatible con macOS, Windows y Linux. Perfecto si trabajas largas horas escribiendo código o redacciones.',
+      condiciones: ['Cable USB-C incluido', 'Pilas no necesarias (batería interna)']
+    },
+    { id: 5, nombre: 'Ratón Logitech MX Master', categoria: 'informatica', icon: 'mouse', estado: 'disponible', stock: 5, total: 6, popularidad: 37,
+      codigo: 'INF-027', plazo: 7, incidencias: 0,
+      descripcion: 'Ratón ergonómico con scroll magnético y botones laterales programables. Sincroniza con dos dispositivos a la vez.',
+      condiciones: ['Cable de carga USB-C incluido']
+    },
+    { id: 6, nombre: 'Disco SSD externo 1TB', categoria: 'informatica', icon: 'drive', estado: 'disponible', stock: 3, total: 4, popularidad: 61,
+      codigo: 'INF-052', plazo: 14, incidencias: 0,
+      descripcion: 'Unidad externa NVMe USB-C de alta velocidad. Lectura hasta 1 050 MB/s. Útil para backups y proyectos pesados de vídeo o datos.',
+      condiciones: ['Cable USB-C → USB-C incluido', 'Devolver vacío si contenía datos personales']
+    },
+    { id: 7, nombre: 'Adaptador USB-C multi', categoria: 'informatica', icon: 'cable', estado: 'fuera_servicio', stock: 0, total: 2, popularidad: 26,
+      codigo: 'INF-061', plazo: 5, incidencias: 3,
+      descripcion: 'Hub USB-C con HDMI, lector SD, USB-A x 2 y carga PD. Pendiente de revisión técnica tras varias incidencias.',
+      condiciones: ['Recogida temporalmente suspendida']
+    },
+    { id: 8, nombre: 'Micrófono Rode NT-USB', categoria: 'audio', icon: 'mic', estado: 'disponible', stock: 3, total: 3, popularidad: 75,
+      codigo: 'AUD-008', plazo: 7, incidencias: 0,
+      descripcion: 'Micrófono de condensador USB para grabación vocal y podcasts. Incluye trípode de mesa, antipop y cable de 6 m.',
+      condiciones: ['Cable USB y soporte incluidos', 'No mojar la cápsula']
+    },
+    { id: 9, nombre: 'Auriculares Sony WH-1000', categoria: 'audio', icon: 'headphones', estado: 'reservado', stock: 1, total: 4, popularidad: 88,
+      codigo: 'AUD-014', plazo: 7, incidencias: 0,
+      descripcion: 'Auriculares inalámbricos con cancelación activa de ruido. Hasta 30 horas de autonomía. Cómodos para sesiones largas.',
+      condiciones: ['Estuche rígido y cable jack incluidos', 'No usar bajo la lluvia']
+    },
+    { id: 10, nombre: 'Interfaz de audio Focusrite', categoria: 'audio', icon: 'mixer', estado: 'reservado', stock: 1, total: 2, popularidad: 41,
+      codigo: 'AUD-022', plazo: 14, incidencias: 0,
+      descripcion: 'Interfaz USB con dos previos micro de baja distorsión. Ideal para grabar voz, guitarra o sintetizador con calidad de estudio.',
+      condiciones: ['Cable USB-B incluido', 'Software de descarga vinculado a tu cuenta']
+    },
+    { id: 11, nombre: 'Altavoz Bluetooth JBL', categoria: 'audio', icon: 'speaker', estado: 'disponible', stock: 4, total: 4, popularidad: 52,
+      codigo: 'AUD-031', plazo: 5, incidencias: 0,
+      descripcion: 'Altavoz portátil con resistencia al agua IP67 y hasta 12 horas de autonomía. Perfecto para presentaciones al aire libre.',
+      condiciones: ['Cargador USB-C incluido']
+    },
+    { id: 12, nombre: 'Cámara Sony A7 III', categoria: 'video', icon: 'camera', estado: 'disponible', stock: 3, total: 4, popularidad: 119,
+      codigo: 'VID-005', plazo: 5, incidencias: 1,
+      descripcion: 'Cámara mirrorless full-frame de 24 MP con vídeo 4K. Incluye objetivo zoom 28-70mm y dos baterías.',
+      condiciones: ['Tarjeta SD 64 GB incluida', 'Devolver con las baterías cargadas', 'Coste de sustitución alto: usar con cuidado']
+    },
+    { id: 13, nombre: 'Proyector Epson HD', categoria: 'video', icon: 'projector', estado: 'reservado', stock: 1, total: 3, popularidad: 67,
+      codigo: 'VID-011', plazo: 3, incidencias: 0,
+      descripcion: 'Proyector 1080p con 3 600 lúmenes. Conexión HDMI y wireless. Adecuado para aulas medianas y grandes.',
+      condiciones: ['Cable HDMI 5 m incluido', 'Mando a distancia incluido']
+    },
+    { id: 14, nombre: 'Trípode Manfrotto', categoria: 'video', icon: 'tripod', estado: 'disponible', stock: 6, total: 6, popularidad: 31,
+      codigo: 'VID-019', plazo: 7, incidencias: 0,
+      descripcion: 'Trípode profesional con cabezal de bola y rótula fluida. Ideal para foto y vídeo. Soporta hasta 8 kg.',
+      condiciones: ['Funda de transporte incluida']
+    },
+    { id: 15, nombre: 'Gimbal DJI Ronin', categoria: 'video', icon: 'gimbal', estado: 'reservado', stock: 1, total: 2, popularidad: 58,
+      codigo: 'VID-023', plazo: 5, incidencias: 0,
+      descripcion: 'Estabilizador para cámaras mirrorless de hasta 4,5 kg. Permite seguir movimientos suaves en grabaciones cinematográficas.',
+      condiciones: ['Estuche rígido y baterías incluidas', 'Calibrar antes de cada uso']
+    },
+    { id: 16, nombre: 'GoPro Hero 12', categoria: 'video', icon: 'gopro', estado: 'disponible', stock: 4, total: 4, popularidad: 82,
+      codigo: 'VID-029', plazo: 5, incidencias: 0,
+      descripcion: 'Cámara de acción con grabación 5.3K, estabilización HyperSmooth y resistencia al agua. Trae soporte y baterías extra.',
+      condiciones: ['Microsd 64 GB incluida', 'Devolver limpia y seca']
+    },
+    { id: 17, nombre: 'Taladro Bosch', categoria: 'herramientas', icon: 'drill', estado: 'disponible', stock: 3, total: 3, popularidad: 24,
+      codigo: 'HER-007', plazo: 3, incidencias: 0,
+      descripcion: 'Taladro percutor 18 V con dos baterías y maletín. Incluye juego de brocas para metal, madera y pared.',
+      condiciones: ['Maletín y cargador incluidos', 'Solo uso académico autorizado']
+    },
+    { id: 18, nombre: 'Kit destornilladores', categoria: 'herramientas', icon: 'tools', estado: 'disponible', stock: 6, total: 6, popularidad: 33,
+      codigo: 'HER-012', plazo: 7, incidencias: 0,
+      descripcion: 'Kit de 32 piezas con destornilladores Phillips, planos, Torx y precisión. Ideal para prácticas de electrónica y mantenimiento.',
+      condiciones: ['Estuche enrollable incluido']
+    },
+    { id: 19, nombre: 'Multímetro digital', categoria: 'herramientas', icon: 'multimeter', estado: 'mantenimiento', stock: 0, total: 2, popularidad: 18,
+      codigo: 'HER-018', plazo: 5, incidencias: 2,
+      descripcion: 'Multímetro auto-rango con medición de tensión, corriente, resistencia y continuidad. Pantalla retroiluminada.',
+      condiciones: ['Sondas y pilas incluidas', 'Comprobar antes de uso en alta tensión']
+    },
+    { id: 20, nombre: 'Balón de baloncesto', categoria: 'deporte', icon: 'ball', estado: 'disponible', stock: 7, total: 8, popularidad: 44,
+      codigo: 'DEP-002', plazo: 3, incidencias: 0,
+      descripcion: 'Balón oficial talla 7 para entrenamiento y partidos amistosos.',
+      condiciones: ['Recogida en pabellón']
+    },
+    { id: 21, nombre: 'Raqueta de pádel', categoria: 'deporte', icon: 'racket', estado: 'disponible', stock: 4, total: 6, popularidad: 39,
+      codigo: 'DEP-009', plazo: 3, incidencias: 0,
+      descripcion: 'Raqueta de pádel intermedia, balance medio. Pala de carbono para mayor durabilidad.',
+      condiciones: ['Funda incluida', 'Pelotas no incluidas']
+    },
+    { id: 22, nombre: 'Set de pesas rusas', categoria: 'deporte', icon: 'weights', estado: 'reservado', stock: 1, total: 2, popularidad: 21,
+      codigo: 'DEP-014', plazo: 7, incidencias: 0,
+      descripcion: 'Juego de kettlebells 8 kg + 12 kg + 16 kg. Mango ergonómico, ideal para entrenamiento funcional.',
+      condiciones: ['Devolver limpias']
+    }
+  ];
+
+  // ===== HELPERS =====
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'), 10);
+  const item = items.find(x => x.id === id);
+
+  function svg(body, opts = {}) {
+    const w = opts.w || 18;
+    const h = opts.h || 18;
+    const sw = opts.stroke || 1.8;
+    const cls = opts.cls ? ` class="${opts.cls}"` : '';
+    return `<svg${cls} width="${w}" height="${h}" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  }
+  function statusLabel(estado) {
+    return ({
+      disponible:     'Disponible',
+      reservado:      'Reservado',
+      prestado:       'Prestado',
+      averiado:       'Averiado',
+      mantenimiento:  'En mantenimiento',
+      fuera_servicio: 'Fuera de servicio'
+    })[estado] || estado;
+  }
+  function isReservable(estado, stock) {
+    return (estado === 'disponible' || estado === 'reservado') && stock > 0;
+  }
+  function fmtDateInput(d) {
+    return d.toISOString().slice(0, 10);
+  }
+  function showToast(text, kind) {
+    const el = document.getElementById('toast');
+    el.textContent = text;
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    requestAnimationFrame(() => el.classList.add('is-visible'));
+    setTimeout(() => el.classList.remove('is-visible'), 2400);
+  }
+
+  // ===== RENDER =====
+  const content = document.getElementById('content');
+
+  if (!item) {
+    document.getElementById('bcName').textContent = 'No encontrado';
+    document.getElementById('pageTitle').textContent = 'Material no encontrado';
+    content.innerHTML = `
+      <section class="not-found">
+        <div class="nf-icon">
+          ${svg('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>', { w: 30, h: 30, stroke: 1.6 })}
+        </div>
+        <div class="nf-title">No encontramos ese material</div>
+        <div class="nf-desc">Puede que el enlace esté caducado o que el material ya no esté en el catálogo.</div>
+        <a class="btn btn-primary" href="../listado-materiales/listado_materiales.html">Volver al catálogo</a>
+      </section>`;
+  } else {
+    document.getElementById('bcName').textContent = item.nombre;
+    document.getElementById('pageTitle').textContent = item.nombre;
+
+    const reservable = isReservable(item.estado, item.stock);
+    const minDate = fmtDateInput(today);
+    const maxDate = fmtDateInput(new Date(today.getTime() + (item.plazo + 30) * 86400000));
+
+    const similar = items
+      .filter(x => x.categoria === item.categoria && x.id !== item.id)
+      .slice(0, 3);
+
+    content.innerHTML = `
+      <section class="card hero">
+        <div class="hero-visual">
+          <div class="hero-object">${svg(icons[item.icon] || icons.tools, { w: 120, h: 120, stroke: 1.4 })}</div>
+        </div>
+        <div class="hero-content">
+          <span class="hero-eyebrow">${categoryLabels[item.categoria] || 'Material'}</span>
+          <h1 class="hero-title">${item.nombre}</h1>
+          <p class="hero-desc">${item.descripcion}</p>
+
+          <div class="hero-meta">
+            <div class="meta-item">
+              <div class="meta-label">Disponibles</div>
+              <div class="meta-value">${item.stock}<span class="unit">/${item.total}</span></div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Plazo máximo</div>
+              <div class="meta-value">${item.plazo}<span class="unit">días</span></div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Código</div>
+              <div class="meta-value">${item.codigo}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Popularidad</div>
+              <div class="meta-value">${item.popularidad}<span class="unit">/mes</span></div>
+            </div>
+          </div>
+
+          <span class="status-pill ${item.estado}">
+            <span class="d"></span>${statusLabel(item.estado)}
+          </span>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="ctaSolicitar" ${reservable ? '' : 'disabled'}>
+              ${reservable ? 'Solicitar préstamo' : (item.stock === 0 ? 'Sin stock' : 'No disponible')}
+              ${reservable ? svg('<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>', { w: 14, h: 14, stroke: 2.4 }) : ''}
+            </button>
+            <a class="btn btn-ghost" href="../listado-materiales/listado_materiales.html">
+              ${svg('<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>', { w: 14, h: 14, stroke: 2.4 })}
+              Volver al catálogo
+            </a>
+          </div>
+
+          ${item.incidencias >= 2 ? `
+            <div class="alert" role="status">
+              ${svg('<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>', { w: 18, h: 18, stroke: 2 })}
+              <div>
+                <b>Atención:</b> este material ha tenido ${item.incidencias} incidencias recientes. Inspecciónalo bien al recogerlo y reporta cualquier desperfecto.
+              </div>
+            </div>` : ''}
+        </div>
+      </section>
+
+      <div class="grid-bottom">
+        <div class="col-main">
+          <section class="card">
+            <h2 class="section-title">Descripción</h2>
+            <p class="body-text">${item.descripcion}</p>
+            <ul class="bullet-list">
+              ${(item.condiciones || []).map(c => `<li>${c}</li>`).join('')}
+            </ul>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">Cómo solicitarlo</h2>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-title">Elige las fechas</div>
+                <div class="step-text">Indica cuándo necesitas el material. Máximo ${item.plazo} días por préstamo.</div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-title">Confirma el motivo</div>
+                <div class="step-text">Una breve nota ayuda al personal a priorizar tu solicitud.</div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-title">Recoge en conserjería</div>
+                <div class="step-text">Cuando se apruebe, recibirás un aviso con el sitio y horario de recogida.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">Información de uso</h2>
+            <div class="info-grid">
+              <div class="info-cell">
+                <div class="l">Plazo máximo</div>
+                <div class="v">${item.plazo} días</div>
+              </div>
+              <div class="info-cell">
+                <div class="l">Categoría</div>
+                <div class="v">${categoryLabels[item.categoria] || '—'}</div>
+              </div>
+              <div class="info-cell">
+                <div class="l">Código de inventario</div>
+                <div class="v">${item.codigo}</div>
+              </div>
+              <div class="info-cell">
+                <div class="l">Estado actual</div>
+                <div class="v">${statusLabel(item.estado)}</div>
+              </div>
+            </div>
+            <p class="body-text" style="margin-top:14px">
+              Devuelve el material en el mismo estado en el que lo recibiste. Los retrasos generan
+              sanciones automáticas y los daños deben reportarse al devolverlo. Cualquier duda,
+              consulta el reglamento de préstamos de UniGear.
+            </p>
+          </section>
+        </div>
+
+        <aside class="col-side">
+          <section class="card">
+            <h2 class="form-title">Reserva tu préstamo</h2>
+            <p class="form-sub">${reservable ? 'Indica las fechas y un motivo opcional. La solicitud quedará pendiente de revisión.' : ''}</p>
+
+            ${reservable ? `
+              <div class="field-error" id="formError" aria-live="polite"></div>
+              <form id="reservaForm" novalidate>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="fDesde">Desde</label>
+                    <input type="date" id="fDesde" name="desde" required min="${minDate}" max="${maxDate}" value="${minDate}">
+                  </div>
+                  <div class="field">
+                    <label for="fHasta">Hasta</label>
+                    <input type="date" id="fHasta" name="hasta" required min="${minDate}" max="${maxDate}">
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="fPrioridad">Prioridad</label>
+                  <select id="fPrioridad" name="prioridad">
+                    <option value="normal">Normal</option>
+                    <option value="alta">Alta — necesidad urgente</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="fMotivo">Motivo (opcional)</label>
+                  <textarea id="fMotivo" name="motivo" maxlength="280" placeholder="Para qué lo necesitas, asignatura o profesor responsable…"></textarea>
+                  <span class="field-help">Máx. 280 caracteres.</span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center">
+                  ${svg('<polyline points="20 6 9 17 4 12"/>', { w: 14, h: 14, stroke: 2.6 })}
+                  Confirmar solicitud
+                </button>
+              </form>
+            ` : `
+              <div class="form-disabled-msg">
+                ${item.estado === 'reservado' && item.stock === 0
+                  ? 'Todas las unidades están reservadas. Te avisaremos cuando se libere alguna.'
+                  : (item.stock === 0
+                      ? 'No hay unidades disponibles en este momento.'
+                      : 'Este material no está disponible para préstamo (estado: ' + statusLabel(item.estado) + ').')}
+              </div>
+            `}
+          </section>
+
+          ${similar.length ? `
+          <section class="card">
+            <h2 class="section-title">Material similar</h2>
+            <div class="similar-list">
+              ${similar.map(s => `
+                <a class="similar-item" href="?id=${s.id}">
+                  <span class="similar-icon">${svg(icons[s.icon] || icons.tools, { w: 18, h: 18, stroke: 1.6 })}</span>
+                  <div class="similar-info">
+                    <div class="similar-name">${s.nombre}</div>
+                    <div class="similar-meta">${categoryLabels[s.categoria]} · ${s.stock} disponibles</div>
+                  </div>
+                </a>
+              `).join('')}
+            </div>
+          </section>` : ''}
+        </aside>
+      </div>
+    `;
+
+    // ===== FORM HANDLING =====
+    const form = document.getElementById('reservaForm');
+    if (form) {
+      const desde = document.getElementById('fDesde');
+      const hasta = document.getElementById('fHasta');
+      const errBox = document.getElementById('formError');
+
+      // Default Hasta = Desde + min(plazo, 1) días
+      const defaultHasta = new Date(today.getTime() + Math.min(item.plazo, 3) * 86400000);
+      hasta.value = fmtDateInput(defaultHasta);
+
+      function validate() {
+        errBox.textContent = '';
+        const d = new Date(desde.value);
+        const h = new Date(hasta.value);
+        const minD = new Date(minDate);
+        if (Number.isNaN(d.getTime()) || Number.isNaN(h.getTime())) {
+          errBox.textContent = 'Indica las dos fechas.';
+          return false;
+        }
+        if (d < minD) { errBox.textContent = 'La fecha de inicio no puede ser anterior a hoy.'; return false; }
+        if (h <= d)   { errBox.textContent = 'La fecha de devolución debe ser posterior a la de inicio.'; return false; }
+        const dias = Math.round((h - d) / 86400000);
+        if (dias > item.plazo) {
+          errBox.textContent = `El plazo máximo para este material es de ${item.plazo} días (estás pidiendo ${dias}).`;
+          return false;
+        }
+        return true;
+      }
+
+      desde.addEventListener('change', validate);
+      hasta.addEventListener('change', validate);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!validate()) return;
+        showToast('Solicitud creada (mock). Revisa "Mis solicitudes" para seguirla.', 'success');
+        form.reset();
+        desde.value = minDate;
+        hasta.value = fmtDateInput(defaultHasta);
+      });
+
+      const cta = document.getElementById('ctaSolicitar');
+      if (cta) {
+        cta.addEventListener('click', () => {
+          desde.focus({ preventScroll: false });
+          desde.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

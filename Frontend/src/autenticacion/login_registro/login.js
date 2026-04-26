@@ -17,7 +17,8 @@ loginBtn.addEventListener('click',    () => container.classList.remove('active')
    ========================================================= */
 function redirectByRole(user) {
     const routes = {
-        estudiante:       '../../paneles/panel-estudiante/panel-estudiante.html',
+        estudiante:       '../../paneles/panel-usuario/panel_usuarios.html',
+        profesor:         '../../paneles/panel-usuario/panel_usuarios.html',
         personal_gestion: '../../paneles/panel-staff/panel-staff.html',
         mantenimiento:    '../../mantenimiento/mantenimiento.html'
     };

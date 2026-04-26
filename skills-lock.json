@@ -21,6 +21,36 @@
       "sourceType": "github",
       "computedHash": "1787478962577c9d5bde26e89e47c1654aa9c8f3c47c316a026731db0000a92e"
     },
+    "ckm:banner-design": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "2237d5aafec7ab0223a91a9c4a13a8d25a4bd8a29b4ae9f9ea74d2cbfb9c6f91"
+    },
+    "ckm:brand": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "a5f623ca3998b832a4a254426bc184479bf1cfbf4275b786a6319d014d06803c"
+    },
+    "ckm:design": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "356a9ffc8ae2174dee4ac0b35458b383756e349dfa00de17b79394154cc99905"
+    },
+    "ckm:design-system": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "0206bc1d866ba6a93c6683d28b801314979fd164939d53830a7592ce0fb7a8a2"
+    },
+    "ckm:slides": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "f3e6594f5dd3f341afbd2b6c71d8b7cc44a97cdb85f76d5868b715f650c97ac2"
+    },
+    "ckm:ui-styling": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "b5f892864e479f969820c353f44faeedc61981bf2d7a854367069a80e0a264e1"
+    },
     "clarify": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
@@ -49,7 +79,7 @@
     "impeccable": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
-      "computedHash": "a26b3dd377c4572b1c34c68f82ab9a1cb806f21c7157060327fe60e9b6d2e277"
+      "computedHash": "b0e7591172750104fd9df64913b513e942bf78bd45814f2eeeb25c2aa47bd970"
     },
     "layout": {
       "source": "pbakaus/impeccable",
@@ -89,7 +119,7 @@
     "ui-ux-pro-max": {
       "source": "nextlevelbuilder/ui-ux-pro-max-skill",
       "sourceType": "github",
-      "computedHash": "0a413bf988d06481f69bb81df2070741c3ba12dd9f1be2706d57f259c905992d"
+      "computedHash": "6337038fe1fe6bbe1b9f252ab678ee575859190bab6f0f246f4061824eb40875"
     }
   }
 }

@@ -1,0 +1,105 @@
+/* =============================================================
+   UniGear · Design Tokens
+   Paleta única definida en CLAUDE.md.
+   No declares :root en páginas — importa este archivo y consume
+   las variables. Si falta un token, añádelo aquí, no en la página.
+   ============================================================= */
+
+:root {
+  /* ===== Primarios — Teal ===== */
+  --teal:        #0f766e;
+  --teal-dark:   #115e59;
+  --teal-deep:   #0a4642;
+  --teal-100:    #ccfbf1;
+  --teal-50:     #f0fdfa;
+
+  /* ===== Acento — Amarillo ===== */
+  --yellow:      #FACC15;
+  --yellow-dark: #EAB308;
+  --yellow-50:   #FEFCE8;
+
+  /* ===== Neutros ===== */
+  --white:       #ffffff;
+  --off-white:   #F8FAFC;
+  --gray-50:     #F9FAFB;
+  --gray-100:    #F3F4F6;
+  --gray-200:    #E5E7EB;
+  --gray-300:    #D1D5DB;
+  --gray-400:    #9CA3AF;
+  --gray-500:    #6B7280;
+  --gray-600:    #4B5563;
+  --gray-700:    #374151;
+  --gray-800:    #1F2937;
+  --gray-900:    #111827;
+
+  /* ===== Estado / Feedback (de la tabla en CLAUDE.md) ===== */
+  --success-bg:     #ecfdf5;
+  --success-border: #10b981;
+  --success-text:   #047857;
+
+  --error-bg:     #fef2f2;
+  --error-border: #f87171;
+  --error-text:   #b91c1c;
+
+  --warning-bg:     var(--yellow-50);
+  --warning-border: var(--yellow-dark);
+  --warning-text:   var(--gray-800);
+
+  --info-bg:     var(--teal-50);
+  --info-border: var(--teal);
+  --info-text:   var(--teal-dark);
+
+  /* ===== Aliases semánticos ===== */
+  --bg:          var(--off-white);
+  --card:        var(--white);
+  --border:      var(--gray-200);
+  --border-soft: var(--gray-100);
+
+  --text:        var(--gray-800);
+  --text-light:  var(--gray-600);
+  --text-muted:  var(--gray-400);
+  --navy:        var(--gray-900);
+
+  /* ===== Layout ===== */
+  --sidebar-w:   260px;
+  --r:           12px;
+  --r-lg:        16px;
+  --r-xl:        20px;
+
+  /* ===== Sombras (paleta permitida) ===== */
+  --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow:      0 3.5px 5.5px rgba(0, 0, 0, 0.05);
+  --shadow-lg:   0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-xl:   0 20px 48px rgba(0, 0, 0, 0.10);
+  --shadow-teal: 0 8px 28px rgba(15, 118, 110, 0.28);
+
+  /* ===== Tipografía ===== */
+  --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Bricolage Grotesque', sans-serif;
+}
+
+/* =============================================================
+   Foco visible global — WCAG 2.4.7
+   ============================================================= */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.menu-item:focus-visible,
+.chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.22);
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--teal);
+}

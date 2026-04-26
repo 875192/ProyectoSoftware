@@ -1,0 +1,163 @@
+/* =============================================================
+   Sidebar compartido (rol: estudiante / profesor)
+   Importado por sidebar.js — no incluyas este archivo a mano.
+   ============================================================= */
+
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--card);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-right: 1px solid var(--border);
+  z-index: 30;
+  font-family: var(--font-body);
+}
+
+.app-sidebar .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 18px;
+  border-bottom: 1px solid var(--border);
+  color: inherit;
+  text-decoration: none;
+}
+.app-sidebar .brand-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--teal);
+  display: grid;
+  place-items: center;
+  color: var(--white);
+}
+.app-sidebar .brand-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--navy);
+}
+
+.app-sidebar .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.app-sidebar .menu-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 14px 12px 6px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.app-sidebar .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 13.5px;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+}
+.app-sidebar .menu-item:hover {
+  background: var(--teal-50);
+  color: var(--teal-dark);
+}
+.app-sidebar .menu-item .icon-box {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--gray-50);
+  display: grid;
+  place-items: center;
+  color: var(--teal);
+  flex-shrink: 0;
+  transition: background 0.18s, color 0.18s;
+}
+.app-sidebar .menu-item[aria-current="page"] {
+  background: var(--teal-50);
+  color: var(--navy);
+  font-weight: 600;
+}
+.app-sidebar .menu-item[aria-current="page"] .icon-box {
+  background: var(--teal);
+  color: var(--white);
+}
+
+.app-sidebar .menu-item .badge {
+  margin-left: auto;
+  background: var(--teal-100);
+  color: var(--teal-dark);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.app-sidebar .logout {
+  margin-top: auto;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text-light);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.app-sidebar .logout:hover {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border-color: var(--error-border);
+}
+
+/* ===== Toggle móvil + backdrop ===== */
+.app-sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text-light);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.app-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.35);
+  z-index: 25;
+}
+.app-sidebar-backdrop.is-open { display: block; }
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .app-sidebar.is-open { transform: translateX(0); }
+  .app-sidebar-toggle { display: inline-flex; }
+}
