@@ -1,11 +1,17 @@
 const path = require('path');
 const dotenv = require('dotenv');
 
+// Intentar cargar .env en orden de prioridad: src/.env → app/.env → raíz/.env
+const srcEnvPath = path.resolve(__dirname, '.env');
 const appEnvPath = path.resolve(__dirname, '../.env');
 const rootEnvPath = path.resolve(__dirname, '../../.env');
-const envResult = dotenv.config({ path: appEnvPath });
+
+let envResult = dotenv.config({ path: srcEnvPath });
 if (envResult.error) {
-  dotenv.config({ path: rootEnvPath });
+  envResult = dotenv.config({ path: appEnvPath });
+  if (envResult.error) {
+    dotenv.config({ path: rootEnvPath });
+  }
 }
 
 const express = require('express');

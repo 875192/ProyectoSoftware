@@ -1122,9 +1122,14 @@
 
 <script type="module">
   import { auth } from '../../compartido/nucleo/auth.js';
+  import { api } from '../../compartido/nucleo/api.js';
   import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
-  auth.requireAuth(['estudiante', 'profesor']);
+  const currentUser = auth.requireAuth(['estudiante', 'profesor']);
   mountSidebar({ activePage: 'solicitudes', basePath: '../..' });
+
+  // Exponer api y currentUser globalmente para el script inline
+  window.__api = api;
+  window.__currentUser = currentUser;
 </script>
 
 <script>
@@ -1276,7 +1281,7 @@
   });
 
   // ===== Submit =====
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Marcar todo como tocado y revalidar
@@ -1295,11 +1300,59 @@
       return;
     }
 
-    showToast('¡Datos guardados! Pasando al siguiente paso…');
-    // Simular transición al paso 2
-    setTimeout(() => {
-      // window.location.href = 'detalles_solicitud.html';
-    }, 1200);
+    // Deshabilitar botón y mostrar estado de carga
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Redirigiendo a pago…';
+
+    try {
+      // Datos de la solicitud (material hardcodeado por ahora)
+      const currentUser = window.__currentUser;
+      const materialNombre = 'MacBook Pro 14"';
+
+      // Fechas por defecto: desde hoy+3 hasta hoy+10
+      const hoy = new Date();
+      const desde = new Date(hoy); desde.setDate(hoy.getDate() + 3);
+      const hasta = new Date(hoy); hasta.setDate(hoy.getDate() + 10);
+      const fechaInicio = desde.toISOString().slice(0, 10);
+      const fechaFin = hasta.toISOString().slice(0, 10);
+
+      const motivo = document.getElementById('motivo').value.trim();
+
+      // Guardar datos en localStorage para poder recuperarlos tras el pago
+      const draftData = {
+        usuarioId: currentUser?.id,
+        materialNombre,
+        fechaInicio,
+        fechaFin,
+        motivo
+      };
+      localStorage.setItem('unigear:checkout:pending', JSON.stringify(draftData));
+
+      // Crear sesión de Stripe Checkout
+      const api = window.__api;
+      const session = await api.createCheckoutSession({
+        usuarioId: currentUser?.id,
+        materialNombre,
+        fechaInicio,
+        fechaFin,
+        motivo
+      });
+
+      // Redirigir a Stripe
+      if (session.url) {
+        window.location.href = session.url;
+      } else {
+        throw new Error('No se recibió URL de pago');
+      }
+    } catch (err) {
+      console.error('Error al crear sesión de pago:', err);
+      showToast('Error al conectar con el sistema de pagos: ' + err.message, false);
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `
+        Continuar a detalles del préstamo
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      `;
+    }
   });
 
   // ===== Toast =====

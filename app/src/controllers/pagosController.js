@@ -27,18 +27,22 @@ const createCheckoutSession = async (req, res) => {
     const stripeClient = ensureStripeConfigured(res);
     if (!stripeClient) return;
 
-    const { equipment, pickupDate, reason } = req.body;
+    const { usuario_id, material_nombre, fecha_inicio, fecha_fin, motivo } = req.body;
+
+    if (!usuario_id || !material_nombre) {
+      return res.status(400).json({ message: 'usuario_id y material_nombre son obligatorios' });
+    }
 
     // Creamos la sesión de Checkout
     const session = await stripeClient.checkout.sessions.create({
-      payment_method_types: ['card'], // Puedes añadir 'bizum' si lo tienes activo en Stripe
+      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
             currency: 'eur',
             product_data: {
-              name: `Fianza de Préstamo: ${equipment}`,
-              description: `Recogida programada: ${pickupDate}`,
+              name: `Fianza de Préstamo: ${material_nombre}`,
+              description: `Período: ${fecha_inicio} a ${fecha_fin}`,
             },
             unit_amount: 1000, // 1000 céntimos = 10,00 €
           },
@@ -47,15 +51,16 @@ const createCheckoutSession = async (req, res) => {
       ],
       mode: 'payment',
       // URLs a las que Stripe enviará al usuario tras el proceso
-      // Asegúrate de tener FRONTEND_URL en tu .env (ej: http://localhost:5500)
-      success_url: `${process.env.FRONTEND_URL}/api/src/pages/student/requests_estudiante.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/api/src/pages/student/requests_estudiante.html?status=cancelled`,
-      
+      success_url: `${process.env.FRONTEND_URL}/src/solicitudes-prestamo/mis-solicitudes/mis_solicitudes.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/src/solicitudes-prestamo/mis-solicitudes/mis_solicitudes.html?status=cancelled`,
+
       // Guardamos la info de la solicitud en los metadatos de Stripe para consultarlos luego
       metadata: {
-        equipo: equipment,
-        fecha_recogida: pickupDate,
-        motivo: reason
+        usuario_id: String(usuario_id),
+        material_nombre,
+        fecha_inicio: fecha_inicio || '',
+        fecha_fin: fecha_fin || '',
+        motivo: motivo || ''
       },
     });
 
@@ -64,6 +69,38 @@ const createCheckoutSession = async (req, res) => {
   } catch (error) {
     console.error('Error al crear Checkout Session:', error);
     res.status(500).json({ message: 'No se pudo crear la sesión de pago' });
+  }
+};
+
+const verifyCheckoutSession = async (req, res) => {
+  try {
+    const stripeClient = ensureStripeConfigured(res);
+    if (!stripeClient) return;
+
+    const { session_id } = req.query;
+
+    if (!session_id) {
+      return res.status(400).json({ message: 'session_id es obligatorio' });
+    }
+
+    const session = await stripeClient.checkout.sessions.retrieve(session_id);
+
+    if (session.payment_status !== 'paid') {
+      return res.status(400).json({
+        message: 'El pago no se ha completado',
+        payment_status: session.payment_status,
+      });
+    }
+
+    // Devolvemos los metadatos guardados + el payment_intent para vincular a la solicitud
+    res.json({
+      paid: true,
+      payment_intent_id: session.payment_intent,
+      metadata: session.metadata,
+    });
+  } catch (error) {
+    console.error('Error al verificar Checkout Session:', error);
+    res.status(500).json({ message: 'No se pudo verificar la sesión de pago' });
   }
 };
 
@@ -97,6 +134,7 @@ const getPublishableKey = (req, res) => {
 
 module.exports = {
   createCheckoutSession,
+  verifyCheckoutSession,
   createPaymentIntent,
   getPublishableKey,
 };

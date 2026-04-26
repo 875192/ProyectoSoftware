@@ -193,4 +193,21 @@ export const api = {
       body: JSON.stringify({ amount }),
     });
   },
+
+  createCheckoutSession: async ({ usuarioId, materialNombre, fechaInicio, fechaFin, motivo }) => {
+    return request('/pagos/create-checkout-session', {
+      method: 'POST',
+      body: JSON.stringify({
+        usuario_id: parseInt(usuarioId),
+        material_nombre: materialNombre,
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin,
+        motivo: motivo || '',
+      }),
+    });
+  },
+
+  verifyCheckoutSession: async (sessionId) => {
+    return request(`/pagos/verify-session?session_id=${encodeURIComponent(sessionId)}`);
+  },
 };

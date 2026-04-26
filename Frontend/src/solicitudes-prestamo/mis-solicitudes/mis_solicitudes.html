@@ -745,11 +745,24 @@
 
 </main>
 
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast" style="position:fixed;bottom:24px;right:24px;background:var(--navy,#1F2937);color:#fff;padding:14px 18px;border-radius:14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 20px 40px -12px rgba(0,0,0,0.35);transform:translateY(120%);opacity:0;transition:all 0.35s cubic-bezier(.2,.9,.3,1);z-index:50;">
+  <div class="t-icon" style="width:26px;height:26px;border-radius:8px;background:var(--teal);color:#fff;display:grid;place-items:center;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <span id="toastText">Solicitud creada</span>
+</div>
+
 <script type="module">
   import { auth } from '../../compartido/nucleo/auth.js';
+  import { api } from '../../compartido/nucleo/api.js';
   import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
-  auth.requireAuth(['estudiante', 'profesor']);
+  const currentUser = auth.requireAuth(['estudiante', 'profesor']);
   mountSidebar({ activePage: 'solicitudes', basePath: '../..' });
+
+  // Exponer api y currentUser globalmente para el script inline
+  window.__api = api;
+  window.__currentUser = currentUser;
 </script>
 
 <script>
@@ -1123,6 +1136,76 @@
   renderCounts();
   renderSummary();
   render();
+
+  // ===== TOAST =====
+  const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toastText');
+  let toastTimer;
+  function showToast(msg, ok = true) {
+    toastText.textContent = msg;
+    toast.querySelector('.t-icon').style.background = ok ? 'var(--teal)' : '#b91c1c';
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.style.transform = 'translateY(120%)';
+      toast.style.opacity = '0';
+    }, 4000);
+  }
+
+  // ===== STRIPE RETURN HANDLING =====
+  (async function handleStripeReturn() {
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    const status = params.get('status');
+
+    // Limpiar URL para que no se repita al recargar
+    if (sessionId || status) {
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, '', cleanUrl);
+    }
+
+    if (status === 'cancelled') {
+      showToast('Pago cancelado. La solicitud no se ha creado.', false);
+      return;
+    }
+
+    if (!sessionId) return;
+
+    try {
+      const api = window.__api;
+      const currentUser = window.__currentUser;
+
+      // 1. Verificar con el backend que el pago se completó
+      const result = await api.verifyCheckoutSession(sessionId);
+
+      if (!result.paid) {
+        showToast('El pago no se completó correctamente.', false);
+        return;
+      }
+
+      // 2. Crear la solicitud con los datos de los metadatos de Stripe
+      const meta = result.metadata;
+      await api.createSolicitud({
+        userId: meta.usuario_id || currentUser?.id,
+        materialName: meta.material_nombre,
+        startDate: meta.fecha_inicio,
+        endDate: meta.fecha_fin,
+        purpose: meta.motivo,
+        stripePaymentIntentId: result.payment_intent_id,
+      });
+
+      // 3. Limpiar drafts de localStorage
+      localStorage.removeItem('unigear:draft:crear-solicitud');
+      localStorage.removeItem('unigear:checkout:pending');
+
+      showToast('¡Pago completado y solicitud creada con éxito!');
+
+    } catch (err) {
+      console.error('Error al procesar vuelta de Stripe:', err);
+      showToast('Error al crear la solicitud: ' + err.message, false);
+    }
+  })();
 </script>
 
 </body>
