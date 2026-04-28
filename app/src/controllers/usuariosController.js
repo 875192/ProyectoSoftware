@@ -1,5 +1,10 @@
 const crypto = require('crypto');
 const usuariosDao = require('../dao/usuariosDao');
+const prestamosDao = require('../dao/prestamosDao');
+const sancionesDao = require('../dao/sancionesDao');
+const solicitudesDao = require('../dao/solicitudesDao');
+const notificacionesDao = require('../dao/notificacionesDao');
+const pool = require('../db/pool');
 
 const getProfile = async (req, res) => {
   try {
@@ -14,6 +19,11 @@ const getProfile = async (req, res) => {
       id: user.id,
       nombre_completo: user.nombre_completo,
       email_institucional: user.email_institucional,
+      telefono: user.telefono,
+      bio: user.bio,
+      avatar_url: user.avatar_url,
+      ultimo_login_at: user.ultimo_login_at,
+      created_at: user.created_at,
       rol: user.rol_nombre
     });
   } catch (error) {
@@ -25,20 +35,15 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre_completo, telefono, direccion } = req.body;
+    const { nombre_completo, telefono, bio, avatar_url } = req.body;
 
-    // At least one field should be provided
     const user = await usuariosDao.findById(id);
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // Only update nombre_completo if provided (telefono/direccion not in schema yet)
-    if (nombre_completo) {
-      await usuariosDao.updateProfile(id, { nombre_completo });
-    }
-
-    res.json({ message: 'Perfil actualizado correctamente' });
+    const updated = await usuariosDao.updateProfile(id, { nombre_completo, telefono, bio, avatar_url });
+    res.json(updated || { message: 'Sin cambios' });
   } catch (error) {
     console.error('Error al actualizar perfil:', error);
     res.status(500).json({ message: 'Error al actualizar perfil' });
@@ -85,4 +90,51 @@ const updatePassword = async (req, res) => {
   }
 };
 
-module.exports = { getProfile, updateProfile, updatePassword };
+const getDashboard = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await usuariosDao.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const [prestamosByEstado, solicitudesByEstado, deudaCentimos, noLeidas, materialesDisponibles] = await Promise.all([
+      prestamosDao.countByEstadoByUsuario(id),
+      solicitudesDao.countByUsuarioByEstado(id),
+      sancionesDao.totalDeudaPendienteCentimos(id),
+      notificacionesDao.countNoLeidas(id),
+      pool.query(`
+        SELECT COUNT(*)::int AS total
+        FROM unidades_material
+        WHERE estado = 'disponible'
+      `)
+    ]);
+
+    const sumByEstados = (rows, estados) =>
+      rows.filter(r => estados.includes(r.estado)).reduce((s, r) => s + r.total, 0);
+
+    res.json({
+      prestamos: {
+        activos: sumByEstados(prestamosByEstado, ['activo', 'retrasado']),
+        finalizados: sumByEstados(prestamosByEstado, ['finalizado']),
+        pendientes: sumByEstados(prestamosByEstado, ['pendiente']),
+        retrasados: sumByEstados(prestamosByEstado, ['retrasado']),
+        total: prestamosByEstado.reduce((s, r) => s + r.total, 0)
+      },
+      solicitudes: {
+        pendientes: sumByEstados(solicitudesByEstado, ['pendiente']),
+        en_espera: sumByEstados(solicitudesByEstado, ['en_espera']),
+        aprobadas: sumByEstados(solicitudesByEstado, ['aprobada']),
+        total: solicitudesByEstado.reduce((s, r) => s + r.total, 0)
+      },
+      deuda_centimos: deudaCentimos,
+      notificaciones_sin_leer: noLeidas,
+      materiales_disponibles: materialesDisponibles.rows[0].total
+    });
+  } catch (error) {
+    console.error('Error al obtener dashboard:', error);
+    res.status(500).json({ message: 'Error al obtener dashboard' });
+  }
+};
+
+module.exports = { getProfile, updateProfile, updatePassword, getDashboard };

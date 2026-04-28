@@ -750,19 +750,54 @@
 
 <script type="module">
   import { auth } from '../../compartido/nucleo/auth.js';
+  import { api } from '../../compartido/nucleo/api.js';
   import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
-  auth.requireAuth(['estudiante', 'profesor']);
+  const currentUser = auth.requireAuth(['estudiante', 'profesor']);
   mountSidebar({ activePage: 'prestamos', basePath: '../..' });
+
+  window.__api = api;
+  window.__currentUser = currentUser;
 </script>
 
 <script>
-  // ===== DATOS (mock) =====
+  // Los préstamos se cargan async desde el backend
+  let prestamos = [];
+  let currentUser = null;
+
+  (async function init() {
+    currentUser = window.__currentUser;
+    const api = window.__api;
+
+    if (currentUser && api) {
+      try {
+        const data = await api.getPrestamos(currentUser.id);
+        prestamos = data.map(p => ({
+          id: p.id,
+          solicitudId: p.solicitudId,
+          material_id: parseInt(p.materialId),
+          material: p.materialName,
+          categoria: (p.categoria || 'informatica').toLowerCase(),
+          icon: p.materialIcon || 'laptop',
+          codigo: p.codigoInventario || p.materialCodigo || '—',
+          fecha_entrega: p.fechaEntrega ? new Date(p.fechaEntrega) : null,
+          fecha_devolucion_prevista: p.fechaDevolucionPrevista ? new Date(p.fechaDevolucionPrevista) : null,
+          fecha_devolucion_real: p.fechaDevolucionReal ? new Date(p.fechaDevolucionReal) : null,
+          estado: p.estado
+        }));
+      } catch (err) {
+        console.error('Error cargando préstamos:', err);
+      }
+    }
+    render();
+  })();
+
+  // ===== DATOS =====
   const today = new Date('2026-04-25');
 
   const day = 86400000;
   const addDays = (d, n) => new Date(d.getTime() + n * day);
-  const fmtShort = (d) => d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-  const fmtLong  = (d) => d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+  const fmtShort = (d) => d ? d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : '—';
+  const fmtLong  = (d) => d ? d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
   const categoryLabels = {
     informatica: 'Informática', audio: 'Audio', video: 'Vídeo',
@@ -781,42 +816,6 @@
     drill:     '<path d="M4 10h8l4-3v10l-4-3H4z"/><line x1="16" y1="12" x2="22" y2="12"/>',
     racket:    '<circle cx="9" cy="9" r="6"/><line x1="13" y1="13" x2="20" y2="20"/><path d="M5 9h8M9 5v8" stroke-width="0.8"/>'
   };
-
-  // 8 préstamos cubriendo todos los estados.
-  const prestamos = [
-    { id: 'PRES-2026-103', solicitud_id: 'SOL-2026-061', material_id: 1,  material: 'MacBook Pro 14"',
-      categoria: 'informatica', icon: 'laptop', codigo: 'PORT-014',
-      fecha_entrega: addDays(today, -3), fecha_devolucion_prevista: addDays(today, 4), fecha_devolucion_real: null,
-      estado: 'activo' },
-    { id: 'PRES-2026-101', solicitud_id: 'SOL-2026-058', material_id: 12, material: 'Cámara Sony A7 III',
-      categoria: 'video', icon: 'camera', codigo: 'VID-005',
-      fecha_entrega: addDays(today, -4), fecha_devolucion_prevista: addDays(today, 1), fecha_devolucion_real: null,
-      estado: 'activo' /* próximo a vencer (≤2) */ },
-    { id: 'PRES-2026-097', solicitud_id: 'SOL-2026-053', material_id: 17, material: 'Taladro Bosch',
-      categoria: 'herramientas', icon: 'drill', codigo: 'HER-007',
-      fecha_entrega: addDays(today, -5), fecha_devolucion_prevista: addDays(today, -2), fecha_devolucion_real: null,
-      estado: 'retrasado' },
-    { id: 'PRES-2026-088', solicitud_id: 'SOL-2026-046', material_id: 8,  material: 'Micrófono Rode NT-USB',
-      categoria: 'audio', icon: 'mic', codigo: 'AUD-008',
-      fecha_entrega: addDays(today, -14), fecha_devolucion_prevista: addDays(today, -7), fecha_devolucion_real: addDays(today, -7),
-      estado: 'finalizado' },
-    { id: 'PRES-2026-079', solicitud_id: 'SOL-2026-038', material_id: 13, material: 'Proyector Epson HD',
-      categoria: 'video', icon: 'projector', codigo: 'VID-011',
-      fecha_entrega: addDays(today, -22), fecha_devolucion_prevista: addDays(today, -19), fecha_devolucion_real: addDays(today, -18),
-      estado: 'finalizado' },
-    { id: 'PRES-2026-072', solicitud_id: 'SOL-2026-031', material_id: 21, material: 'Raqueta de pádel',
-      categoria: 'deporte', icon: 'racket', codigo: 'DEP-009',
-      fecha_entrega: addDays(today, -30), fecha_devolucion_prevista: addDays(today, -27), fecha_devolucion_real: null,
-      estado: 'cancelado' },
-    { id: 'PRES-2026-110', solicitud_id: 'SOL-2026-066', material_id: 9,  material: 'Auriculares Sony WH-1000',
-      categoria: 'audio', icon: 'headphones', codigo: 'AUD-014',
-      fecha_entrega: addDays(today, 2), fecha_devolucion_prevista: addDays(today, 9), fecha_devolucion_real: null,
-      estado: 'pendiente' /* esperando recogida */ },
-    { id: 'PRES-2026-100', solicitud_id: 'SOL-2026-055', material_id: 6,  material: 'Disco SSD externo 1TB',
-      categoria: 'informatica', icon: 'drive', codigo: 'INF-052',
-      fecha_entrega: addDays(today, -2), fecha_devolucion_prevista: addDays(today, 12), fecha_devolucion_real: null,
-      estado: 'activo' }
-  ];
 
   // ===== HELPERS =====
   function svg(body, opts = {}) {
@@ -1073,13 +1072,12 @@
   });
 
   // ===== INIT =====
-  function refresh() {
+  function render() {
     const c = counts();
     renderHero(c);
     renderSummary(c);
     renderList();
   }
-  refresh();
 </script>
 
 </body>

@@ -60,7 +60,7 @@ const login = async (req, res) => {
   }
 };
 
-const ROLES_VALIDOS = ['estudiante', 'profesor', 'personal_gestion', 'mantenimiento'];
+const ROLES_VALIDOS = ['estudiante', 'profesor', 'personal_gestion', 'mantenimiento', 'admin'];
 
 const register = async (req, res) => {
   try {

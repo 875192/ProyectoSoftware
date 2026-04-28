@@ -921,12 +921,51 @@
 
 <script type="module">
   import { auth } from '../../compartido/nucleo/auth.js';
+  import { api } from '../../compartido/nucleo/api.js';
   import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
-  auth.requireAuth(['estudiante', 'profesor']);
+  const currentUser = auth.requireAuth(['estudiante', 'profesor']);
   mountSidebar({ activePage: 'perfil', basePath: '../..' });
+
+  window.__api = api;
+  window.__currentUser = currentUser;
 </script>
 
 <script>
+  (async function init() {
+    const currentUser = window.__currentUser;
+    const api = window.__api;
+
+    if (currentUser && api) {
+      try {
+        const profile = await api.getProfile(currentUser.id);
+        if (profile) {
+          document.querySelectorAll('.profile-name').forEach(el => el.textContent = profile.nombre_completo || currentUser.name);
+          document.querySelectorAll('.profile-email').forEach(el => el.textContent = profile.email_institucional || currentUser.email);
+          document.querySelectorAll('.user-name').forEach(el => el.textContent = (profile.nombre_completo || currentUser.name).split(' ')[0]);
+          document.querySelectorAll('.user-role').forEach(el => el.textContent = profile.rol || currentUser.role);
+          if (profile.dni) {
+            const dniEl = document.getElementById('dniValue');
+            if (dniEl) dniEl.textContent = profile.dni;
+          }
+          if (profile.telefono) {
+            const telEl = document.getElementById('telefonoValue');
+            if (telEl) telEl.textContent = profile.telefono;
+          }
+          if (profile.titulacion) {
+            const titEl = document.getElementById('titulacionValue');
+            if (titEl) titEl.textContent = profile.titulacion;
+          }
+          if (profile.curso) {
+            const curEl = document.getElementById('cursoValue');
+            if (curEl) curEl.textContent = profile.curso;
+          }
+        }
+      } catch (err) {
+        console.error('Error cargando perfil:', err);
+      }
+    }
+  })();
+
   // Tabs (solo estado visual)
   document.querySelectorAll('.tab').forEach(t => {
     t.addEventListener('click', () => {

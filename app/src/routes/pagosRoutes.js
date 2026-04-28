@@ -1,5 +1,7 @@
 const express = require('express');
 const {
+  getPagos,
+  pagarSancion,
   createCheckoutSession,
   verifyCheckoutSession,
   createPaymentIntent,
@@ -8,7 +10,13 @@ const {
 
 const router = express.Router();
 
-// Checkout
+// Listado / historial
+router.get('/', getPagos);
+
+// Pago de sanción
+router.post('/sancion', pagarSancion);
+
+// Stripe
 router.post('/create-checkout-session', createCheckoutSession);
 router.get('/verify-session', verifyCheckoutSession);
 router.post('/create-payment-intent', createPaymentIntent);

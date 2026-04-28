@@ -6,15 +6,18 @@
   <title>UNIGear — Alquila el equipo universitario que necesitas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="landing.css">
 </head>
 <body>
 
+  <!-- Interactive confetti background -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
   <!-- ===================== NAVBAR ===================== -->
   <nav class="navbar" id="navbar">
-    <div class="container">
-      <a href="#" class="nav-logo">
+    <div class="container nav-inner">
+      <a href="#inicio" class="nav-logo">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10H4V10z"/>
           <path d="M9 6V5a3 3 0 0 1 6 0v1"/>
@@ -25,14 +28,14 @@
       <ul class="nav-links">
         <li><a href="#como-funciona">Cómo funciona</a></li>
         <li><a href="#catalogo">Catálogo</a></li>
-        <li><a href="#cta">Precios</a></li>
-        <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+        <li><a href="#stats">Impacto</a></li>
+        <li><a href="#faq">FAQ</a></li>
       </ul>
       <div class="nav-actions">
         <a href="../autenticacion/login_registro/login.html" class="btn btn-ghost">Iniciar sesión</a>
         <a href="../autenticacion/login_registro/login.html" class="btn btn-primary">Registrarse</a>
       </div>
-      <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -41,8 +44,8 @@
   <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
     <a href="#como-funciona">Cómo funciona</a>
     <a href="#catalogo">Catálogo</a>
-    <a href="#cta">Precios</a>
-    <a href="#sobre-nosotros">Sobre nosotros</a>
+    <a href="#stats">Impacto</a>
+    <a href="#faq">FAQ</a>
     <div class="mobile-actions">
       <a href="../autenticacion/login_registro/login.html" class="btn btn-ghost">Iniciar sesión</a>
       <a href="../autenticacion/login_registro/login.html" class="btn btn-primary">Registrarse</a>
@@ -51,236 +54,192 @@
 
   <!-- ===================== HERO ===================== -->
   <section class="hero" id="inicio">
-    <div class="container">
-      <div id="heroText">
-        <div class="hero-badge fade-up">
-          <span aria-hidden="true">🎓</span> El material universitario que necesitas
-        </div>
-        <h1 class="fade-up d1">
-          Alquila el <em><span class="hero-word" id="heroWord">equipo</span></em><br>
-          que necesitas para tu<br>
-          carrera.
-        </h1>
-        <p class="hero-sub fade-up d2">
-          En UNIGear puedes reservar portátiles, tablets y material de laboratorio de forma rápida, sin depósito y con recogida en 24 horas. Pensado para estudiantes universitarios.
-        </p>
-        <div class="hero-ctas fade-up d3">
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary btn-lg">
-            Explorar catálogo
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
-          <a href="#como-funciona" class="btn btn-ghost btn-lg">Cómo funciona</a>
-        </div>
-        <div class="hero-trust fade-up d4">
-          <span class="trust-item">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Sin depósito
-          </span>
-          <span class="trust-item">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Recogida en 24h
-          </span>
-          <span class="trust-item">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            +500 estudiantes activos
-          </span>
-        </div>
+    <div class="container hero-inner">
+      <span class="eyebrow">
+        <span class="eyebrow-dot" aria-hidden="true"></span>
+        Plataforma universitaria de alquiler
+      </span>
+      <h1 class="hero-title">
+        Alquila el <em>equipo</em><br>
+        que tu carrera necesita.
+      </h1>
+      <p class="hero-sub">
+        Portátiles, tablets y material de laboratorio listos en 24&nbsp;horas.
+        Sin depósitos, sin papeleo, pensado para estudiantes.
+      </p>
+      <div class="hero-ctas">
+        <a href="../autenticacion/login_registro/login.html" class="btn btn-primary btn-lg">
+          Explorar catálogo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#como-funciona" class="btn btn-ghost btn-lg">Cómo funciona</a>
       </div>
+      <ul class="trust-row" aria-label="Ventajas">
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Sin depósito
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Recogida en 24&nbsp;h
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          +500 estudiantes activos
+        </li>
+      </ul>
 
-      <!-- Isometric-style SVG illustration -->
-      <div class="hero-visual">
-        <svg class="hero-illus" viewBox="0 0 480 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustración de portátil, tablet y material de laboratorio">
-          <!-- Ambient blobs -->
-          <circle cx="380" cy="70"  r="55" fill="#f0fdfa" opacity=".9"/>
-          <circle cx="75"  cy="330" r="40" fill="#FEFCE8" opacity=".85"/>
-          <circle cx="430" cy="310" r="28" fill="#f0fdfa" opacity=".7"/>
-
-          <!-- ── Laptop ── -->
-          <rect x="95"  y="195" width="230" height="148" rx="9" fill="#1F2937"/>
-          <rect x="104" y="204" width="212" height="130" rx="5" fill="#f0fdfa"/>
-          <!-- screen chrome -->
-          <rect x="114" y="214" width="88"  height="9"  rx="3" fill="#E2E8F0"/>
-          <rect x="114" y="232" width="130" height="7"  rx="3" fill="#99f6e4"/>
-          <rect x="114" y="246" width="108" height="7"  rx="3" fill="#99f6e4" opacity=".55"/>
-          <!-- dashboard card -->
-          <rect x="224" y="212" width="84"  height="46" rx="7" fill="#0f766e" opacity=".14"/>
-          <rect x="232" y="222" width="68"  height="6"  rx="3" fill="#0f766e"/>
-          <rect x="232" y="236" width="50"  height="6"  rx="3" fill="#0f766e" opacity=".45"/>
-          <!-- action row -->
-          <rect x="114" y="268" width="58"  height="22" rx="5" fill="#0f766e"/>
-          <rect x="180" y="268" width="58"  height="22" rx="5" fill="#F1F5F9"/>
-          <rect x="246" y="268" width="42"  height="22" rx="5" fill="#F1F5F9"/>
-          <!-- base + hinge -->
-          <rect x="78"  y="343" width="264" height="13" rx="5" fill="#374151"/>
-          <rect x="148" y="356" width="124" height="7"  rx="3" fill="#4B5563"/>
-
-          <!-- ── Tablet (rotated) ── -->
-          <g transform="rotate(-9 345 228)">
-            <rect x="300" y="148" width="122" height="164" rx="11" fill="#1F2937"/>
-            <rect x="309" y="158" width="104" height="142" rx="6" fill="#FFFBEB"/>
-            <circle cx="361" cy="307" r="5.5" fill="#374151"/>
-            <!-- tablet content -->
-            <circle cx="361" cy="186" r="24" fill="#FACC15" opacity=".18"/>
-            <circle cx="361" cy="186" r="15" fill="#FACC15" opacity=".35"/>
-            <rect x="321" y="218" width="80" height="6"  rx="3" fill="#E2E8F0"/>
-            <rect x="329" y="231" width="64" height="6"  rx="3" fill="#D1D5DB"/>
-            <rect x="325" y="252" width="72" height="24" rx="5" fill="#FACC15"/>
-            <rect x="335" y="260" width="52" height="6"  rx="3" fill="#854D0E"/>
-          </g>
-
-          <!-- ── Lab flask ── -->
-          <g transform="translate(48 98)">
-            <path d="M42 0 L42 42 L10 94 Q4 105 10 116 Q16 126 32 126 L72 126 Q88 126 94 116 Q100 105 94 94 L62 42 L62 0 Z" fill="#f0fdfa" stroke="#0f766e" stroke-width="2.5" stroke-linejoin="round"/>
-            <path d="M14 99 Q8 110 14 118 Q20 124 32 124 L72 124 Q84 124 90 118 Q94 112 92 104 L12 99 Z" fill="#0f766e" opacity=".22"/>
-            <rect x="37" y="-18" width="30" height="22" rx="4" fill="#f0fdfa" stroke="#0f766e" stroke-width="2.5"/>
-            <circle cx="38" cy="106" r="4.5" fill="#0f766e" opacity=".38"/>
-            <circle cx="58" cy="114" r="3.5" fill="#0f766e" opacity=".28"/>
-            <circle cx="48" cy="100" r="3"   fill="#0f766e" opacity=".32"/>
-          </g>
-
-          <!-- Decorative floaters -->
-          <circle cx="258" cy="82"  r="8.5" fill="#FACC15" opacity=".72"/>
-          <circle cx="448" cy="198" r="5.5" fill="#0f766e" opacity=".42"/>
-          <circle cx="28"  cy="162" r="6.5" fill="#FACC15" opacity=".5"/>
-          <circle cx="440" cy="140" r="3.5" fill="#0f766e" opacity=".3"/>
-
-          <!-- Sparkle star big -->
-          <path d="M428 118 L431.5 110 L435 118 L443 121.5 L435 125 L431.5 133 L428 125 L420 121.5 Z" fill="#FACC15" opacity=".85"/>
-          <!-- Sparkle star small -->
-          <path d="M58 48 L60.5 42 L63 48 L69 50.5 L63 53 L60.5 59 L58 53 L52 50.5 Z" fill="#0f766e" opacity=".42"/>
-        </svg>
+      <div class="hero-scroll-hint" aria-hidden="true">
+        <span>Desliza</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
     </div>
   </section>
 
   <!-- ===================== HOW IT WORKS ===================== -->
-  <section class="how-it-works" id="como-funciona">
+  <section class="section how-it-works" id="como-funciona">
     <div class="container">
-      <div class="section-header">
-        <span class="section-label fade-up">Proceso</span>
-        <h2 class="section-title fade-up d1">Reservar es muy fácil</h2>
-        <p class="section-sub fade-up d2">Tres pasos y tienes el equipo que necesitas. Sin papeleos, sin esperas innecesarias.</p>
-      </div>
-      <div class="steps-row">
-        <div class="step-card fade-up">
-          <div class="step-icon-wrap">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <header class="section-header">
+        <span class="section-label">Proceso</span>
+        <h2 class="section-title">Reservar es muy fácil</h2>
+        <p class="section-sub">Tres pasos y tienes el equipo en tus manos. Sin papeleos, sin esperas innecesarias.</p>
+      </header>
+
+      <ol class="steps">
+        <li class="step reveal">
+          <div class="step-num" aria-hidden="true">01</div>
+          <div class="step-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <span class="step-num">1</span>
           </div>
           <h3>Elige tu equipo</h3>
-          <p>Explora el catálogo y selecciona lo que necesitas. Filtra por categoría, disponibilidad y fechas.</p>
-        </div>
-        <div class="step-card fade-up d1">
-          <div class="step-icon-wrap">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <p>Explora el catálogo y filtra por categoría, fechas y disponibilidad en tu campus.</p>
+        </li>
+        <li class="step reveal">
+          <div class="step-num" aria-hidden="true">02</div>
+          <div class="step-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            <span class="step-num">2</span>
           </div>
           <h3>Reserva online</h3>
-          <p>Indica las fechas y confirma en menos de 2 minutos. Todo desde tu móvil o portátil, en cualquier momento.</p>
-        </div>
-        <div class="step-card fade-up d2">
-          <div class="step-icon-wrap">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <p>Confirma fechas en menos de 2 minutos desde el móvil o el portátil.</p>
+        </li>
+        <li class="step reveal">
+          <div class="step-num" aria-hidden="true">03</div>
+          <div class="step-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
             </svg>
-            <span class="step-num">3</span>
           </div>
           <h3>Recógelo y úsalo</h3>
-          <p>Pasa a recogerlo o recíbelo en tu facultad. Devuélvelo cuando termines, sin complicaciones.</p>
-        </div>
-      </div>
+          <p>Pasa por tu facultad, úsalo el tiempo que necesites y devuélvelo sin complicaciones.</p>
+        </li>
+      </ol>
     </div>
   </section>
 
   <!-- ===================== CATALOG ===================== -->
-  <section class="catalog" id="catalogo">
+  <section class="section catalog" id="catalogo">
     <div class="container">
-      <div class="section-header">
-        <span class="section-label fade-up">Catálogo</span>
-        <h2 class="section-title fade-up d1">Lo más alquilado</h2>
-        <p class="section-sub fade-up d2">Los equipos favoritos de los estudiantes, siempre disponibles y listos para usar.</p>
-      </div>
+      <header class="section-header">
+        <span class="section-label">Catálogo</span>
+        <h2 class="section-title">Lo más alquilado</h2>
+        <p class="section-sub">Equipos favoritos de los estudiantes, siempre disponibles y listos para usar.</p>
+      </header>
+
       <div class="catalog-grid">
-        <div class="product-card fade-up">
-          <div class="product-icon">
+        <article class="card reveal">
+          <div class="card-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
           </div>
-          <span class="product-tag">⭐ Más popular</span>
+          <span class="card-tag tag-yellow">Más popular</span>
           <h3>Portátil universitario</h3>
-          <p>Intel Core i5, 8&nbsp;GB RAM, SSD 256&nbsp;GB. Perfecto para programación, diseño y ofimática. Batería para todo el día.</p>
-          <div class="product-price">
-            <span class="price-amount">5€</span>
-            <span class="price-period">/ día</span>
+          <p>Intel Core i5, 8&nbsp;GB RAM, SSD 256&nbsp;GB. Ideal para programación, diseño y ofimática.</p>
+          <div class="card-price">
+            <span class="price">5€</span>
+            <span class="period">/ día</span>
           </div>
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary">Reservar</a>
-        </div>
-        <div class="product-card fade-up d1">
-          <div class="product-icon">
+          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
           </div>
-          <span class="product-tag">✏️ Con stylus</span>
+          <span class="card-tag tag-teal">Con stylus</span>
           <h3>Tablet + stylus</h3>
-          <p>Pantalla 10", lápiz digital incluido. Ideal para tomar apuntes, dibujo técnico y presentaciones interactivas.</p>
-          <div class="product-price">
-            <span class="price-amount">3€</span>
-            <span class="price-period">/ día</span>
+          <p>Pantalla de 10", lápiz digital incluido. Perfecto para apuntes, dibujo técnico y presentaciones.</p>
+          <div class="card-price">
+            <span class="price">3€</span>
+            <span class="period">/ día</span>
           </div>
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary">Reservar</a>
-        </div>
-        <div class="product-card fade-up d2">
-          <div class="product-icon">
+          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+              <path d="M9 3v6L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-10V3"/><line x1="7" y1="3" x2="17" y2="3"/>
             </svg>
           </div>
-          <span class="product-tag">🔬 Laboratorio</span>
+          <span class="card-tag tag-teal">Laboratorio</span>
           <h3>Kit de laboratorio</h3>
-          <p>Material básico para prácticas de química, biología y física. Incluye maletín de transporte y guía de uso.</p>
-          <div class="product-price">
-            <span class="price-amount">8€</span>
-            <span class="price-period">/ sesión</span>
+          <p>Material básico para prácticas de química, biología y física. Incluye maletín y guía de uso.</p>
+          <div class="card-price">
+            <span class="price">8€</span>
+            <span class="period">/ sesión</span>
           </div>
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary">Reservar</a>
-        </div>
+          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+            </svg>
+          </div>
+          <span class="card-tag tag-yellow">Multimedia</span>
+          <h3>Cámara + trípode</h3>
+          <p>Cámara mirrorless con trípode y micrófono para proyectos audiovisuales y TFG.</p>
+          <div class="card-price">
+            <span class="price">10€</span>
+            <span class="period">/ día</span>
+          </div>
+          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- ===================== ABOUT ===================== -->
-  <section class="about" id="sobre-nosotros">
+  <!-- ===================== STATS ===================== -->
+  <section class="section stats" id="stats">
     <div class="container">
-      <div class="about-text fade-up">
-        <span class="section-label">Sobre nosotros</span>
-        <h2 class="section-title" style="margin-top:.75rem">
-          Nacimos para que ningún estudiante se quede sin lo que necesita.
-        </h2>
-        <p class="section-sub">
-          UNIGear conecta a universitarios con el equipamiento tecnológico y de laboratorio que sus estudios exigen, sin el coste de comprarlo. Creemos que el acceso al material no debería ser una barrera para aprender.
-        </p>
-        <a href="../autenticacion/login_registro/login.html" class="btn btn-primary">Explorar el catálogo</a>
-      </div>
-      <div class="stats-grid fade-up d2">
-        <div class="stat-card">
+      <header class="section-header">
+        <span class="section-label">Impacto</span>
+        <h2 class="section-title">Una comunidad que crece</h2>
+        <p class="section-sub">Cada equipo compartido es un estudiante más con las herramientas para avanzar.</p>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card reveal">
           <div class="stat-value">+500</div>
           <div class="stat-label">Estudiantes activos</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card reveal">
           <div class="stat-value">+200</div>
           <div class="stat-label">Equipos disponibles</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card reveal">
           <div class="stat-value">15</div>
           <div class="stat-label">Universidades</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card reveal">
           <div class="stat-value">24h</div>
           <div class="stat-label">Entrega media</div>
         </div>
@@ -288,111 +247,104 @@
     </div>
   </section>
 
-  <!-- ===================== TESTIMONIALS ===================== -->
-  <section class="testimonials" id="testimonios">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label fade-up">Testimonios</span>
-        <h2 class="section-title fade-up d1">Lo que dicen nuestros usuarios</h2>
-      </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card fade-up">
-          <div class="t-stars" aria-label="5 estrellas">★★★★★</div>
-          <p class="t-quote">"Necesitaba un portátil para entregar un proyecto en 48 horas y UNIGear me lo solucionó de inmediato. El proceso fue rapidísimo y el equipo llegó en perfecto estado."</p>
-          <div class="t-author">
-            <div class="t-avatar" aria-hidden="true">AL</div>
-            <div>
-              <div class="t-name">Alejandra López</div>
-              <div class="t-role">Ingeniería Informática · UPM</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card fade-up d1">
-          <div class="t-stars" aria-label="5 estrellas">★★★★★</div>
-          <p class="t-quote">"Uso UNIGear cada vez que tengo prácticas de laboratorio. Mucho más barato que comprarlo y el material siempre está en buen estado. Totalmente recomendable."</p>
-          <div class="t-author">
-            <div class="t-avatar" aria-hidden="true">MG</div>
-            <div>
-              <div class="t-name">Marcos García</div>
-              <div class="t-role">Bioquímica · Universidad de Sevilla</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card fade-up d2">
-          <div class="t-stars" aria-label="4 estrellas">★★★★☆</div>
-          <p class="t-quote">"La tablet con stylus es perfecta para mis clases de arquitectura. No habría podido permitirme comprarla. UNIGear hace que estudiar sea más accesible para todos."</p>
-          <div class="t-author">
-            <div class="t-avatar" aria-hidden="true">SR</div>
-            <div>
-              <div class="t-name">Sara Rodríguez</div>
-              <div class="t-role">Arquitectura · UPC Barcelona</div>
-            </div>
-          </div>
-        </div>
+  <!-- ===================== FAQ ===================== -->
+  <section class="section faq" id="faq">
+    <div class="container faq-inner">
+      <header class="section-header">
+        <span class="section-label">Preguntas</span>
+        <h2 class="section-title">Lo que más nos preguntan</h2>
+      </header>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>
+            <span>¿Necesito dejar un depósito?</span>
+            <svg class="faq-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <p>No. Validamos tu identidad con el correo universitario y firmas digitalmente la cesión. Cero depósitos.</p>
+        </details>
+        <details class="faq-item">
+          <summary>
+            <span>¿Cuánto tarda en llegar el equipo?</span>
+            <svg class="faq-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <p>La mayoría de reservas están listas para recoger en menos de 24&nbsp;horas en tu facultad.</p>
+        </details>
+        <details class="faq-item">
+          <summary>
+            <span>¿Qué pasa si se rompe?</span>
+            <svg class="faq-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <p>Cubrimos el desgaste normal. Si hay un incidente, abrimos un parte y resolvemos sin sustos: tarifa pública y transparente.</p>
+        </details>
+        <details class="faq-item">
+          <summary>
+            <span>¿Puedo ampliar la reserva?</span>
+            <svg class="faq-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <p>Sí. Desde tu panel puedes ampliar fechas si el equipo sigue disponible, sin penalizaciones.</p>
+        </details>
       </div>
     </div>
   </section>
 
   <!-- ===================== CTA BANNER ===================== -->
-  <section class="cta-banner" id="cta">
-    <div class="container">
-      <h2 class="fade-up">¿Listo para empezar?</h2>
-      <p class="fade-up d1">Crea tu cuenta gratis y reserva tu primer equipo hoy.</p>
-      <a href="../autenticacion/login_registro/login.html" class="btn btn-white btn-lg fade-up d2">Crear cuenta gratis</a>
+  <section class="cta-banner">
+    <div class="container cta-inner">
+      <h2>¿Listo para empezar?</h2>
+      <p>Crea tu cuenta gratis y reserva tu primer equipo hoy.</p>
+      <a href="../autenticacion/login_registro/login.html" class="btn btn-white btn-lg">Crear cuenta gratis</a>
     </div>
   </section>
 
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="footer-logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10H4V10z"/>
-              <path d="M9 6V5a3 3 0 0 1 6 0v1"/>
-              <line x1="4" y1="15" x2="20" y2="15"/>
-            </svg>
-            UNIGear
-          </div>
-          <p class="footer-brand-desc">El alquiler de equipamiento universitario más sencillo de España.</p>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10H4V10z"/>
+            <path d="M9 6V5a3 3 0 0 1 6 0v1"/>
+            <line x1="4" y1="15" x2="20" y2="15"/>
+          </svg>
+          UNIGear
         </div>
-        <div class="footer-col">
-          <h4>Producto</h4>
-          <ul>
-            <li><a href="#como-funciona">Cómo funciona</a></li>
-            <li><a href="#catalogo">Catálogo</a></li>
-            <li><a href="#cta">Precios</a></li>
-            <li><a href="../autenticacion/login_registro/login.html">Acceder</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Empresa</h4>
-          <ul>
-            <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Universidades</a></li>
-            <li><a href="#">Contacto</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="#">Términos de uso</a></li>
-            <li><a href="#">Privacidad</a></li>
-            <li><a href="#">Cookies</a></li>
-            <li><a href="#">RGPD</a></li>
-          </ul>
-        </div>
+        <p>El alquiler de equipamiento universitario más sencillo de España.</p>
       </div>
-      <div class="footer-bottom">
-        <span>© 2025 UNIGear · Todos los derechos reservados</span>
-        <span>Hecho por estudiantes para estudiantes</span>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#catalogo">Catálogo</a></li>
+          <li><a href="#stats">Impacto</a></li>
+          <li><a href="../autenticacion/login_registro/login.html">Acceder</a></li>
+        </ul>
       </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Universidades</a></li>
+          <li><a href="#">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Términos</a></li>
+          <li><a href="#">Privacidad</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">RGPD</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 UNIGear · Todos los derechos reservados</span>
+      <span>Hecho por estudiantes, para estudiantes</span>
     </div>
   </footer>
 
   <script src="landing.js"></script>
-
 </body>
 </html>

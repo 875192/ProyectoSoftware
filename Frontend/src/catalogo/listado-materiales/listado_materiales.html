@@ -565,7 +565,7 @@
   </div>
 
   <!-- ===== HERO: objeto más prestado ===== -->
-  <section class="card hero">
+  <section class="card hero" id="heroSection" hidden>
     <div class="hero-visual">
       <div class="hero-badge-float tl">
         <span class="flame">
@@ -578,13 +578,7 @@
         Top 1 del mes
       </div>
 
-      <div class="hero-object">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="4" width="20" height="13" rx="2"/>
-          <path d="M8 21h8M10 17v4M14 17v4"/>
-          <line x1="6" y1="8" x2="18" y2="8"/>
-        </svg>
-      </div>
+      <div class="hero-object" id="heroIcon"></div>
     </div>
 
     <div class="hero-content">
@@ -592,38 +586,34 @@
         <span class="dot"></span>
         Objeto más prestado
       </div>
-      <h1 class="hero-title">Portátil <span class="highlight">MacBook Pro 14"</span></h1>
-      <p class="hero-desc">
-        El equipo favorito del semestre. Ideal para edición de vídeo, desarrollo y trabajos académicos exigentes.
-        Incluye chip M3 Pro, 18 GB de RAM y 512 GB de almacenamiento, con hasta 18 horas de autonomía para las
-        jornadas más largas de biblioteca.
-      </p>
+      <h1 class="hero-title" id="heroTitle">—</h1>
+      <p class="hero-desc" id="heroDesc">—</p>
 
       <div class="hero-meta">
         <div class="meta-item">
           <div class="meta-label">Préstamos</div>
-          <div class="meta-value">142<span class="unit">/mes</span></div>
+          <div class="meta-value"><span id="heroPop">0</span><span class="unit">/mes</span></div>
         </div>
         <div class="meta-item">
-          <div class="meta-label">Valoración</div>
-          <div class="meta-value">4.9<span class="unit">/5</span></div>
+          <div class="meta-label">Categoría</div>
+          <div class="meta-value" id="heroCat">—</div>
         </div>
         <div class="meta-item">
           <div class="meta-label">Disponibles</div>
-          <div class="meta-value">6<span class="unit">unidades</span></div>
+          <div class="meta-value"><span id="heroStock">0</span><span class="unit">unidades</span></div>
         </div>
         <div class="meta-item">
           <div class="meta-label">Duración</div>
-          <div class="meta-value">7<span class="unit">días</span></div>
+          <div class="meta-value"><span id="heroPlazo">7</span><span class="unit">días</span></div>
         </div>
       </div>
 
       <div class="hero-actions">
-        <a class="btn-primary" href="../../catalogo/detalle-material/detalle_material.html?id=1">
+        <a class="btn-primary" id="heroSolicitar" href="#">
           Solicitar préstamo
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <a class="btn-ghost" href="../../catalogo/detalle-material/detalle_material.html?id=1">Ver detalles</a>
+        <a class="btn-ghost" id="heroDetalles" href="#">Ver detalles</a>
       </div>
     </div>
   </section>
@@ -642,11 +632,6 @@
   <!-- ===== FILTROS POR CATEGORÍA ===== -->
   <div class="chips" id="chips">
     <button class="chip active" data-cat="todas">Todas <span class="count" id="count-todas">0</span></button>
-    <button class="chip" data-cat="informatica">Informática <span class="count">7</span></button>
-    <button class="chip" data-cat="audio">Audio <span class="count">4</span></button>
-    <button class="chip" data-cat="video">Vídeo <span class="count">5</span></button>
-    <button class="chip" data-cat="herramientas">Herramientas <span class="count">3</span></button>
-    <button class="chip" data-cat="deporte">Deporte <span class="count">3</span></button>
   </div>
 
   <!-- ===== LISTA ===== -->
@@ -668,51 +653,30 @@
 
 <script type="module">
   import { auth } from '../../compartido/nucleo/auth.js';
+  import { api } from '../../compartido/nucleo/api.js';
   import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
   auth.requireAuth(['estudiante', 'profesor']);
   mountSidebar({ activePage: 'catalogo', basePath: '../..' });
+  window.__api = api;
 </script>
 
 <script>
-  // ===== DATOS (mock) =====
-  const items = [
-    { id: 1,  nombre: 'MacBook Pro 14"',          categoria: 'informatica',   stock: 6,  popularidad: 142, estado: 'ok',   icon: 'laptop' },
-    { id: 2,  nombre: 'iPad Pro 11"',              categoria: 'informatica',   stock: 4,  popularidad: 98,  estado: 'ok',   icon: 'tablet' },
-    { id: 3,  nombre: 'Monitor Dell 27" 4K',       categoria: 'informatica',   stock: 2,  popularidad: 54,  estado: 'warn', icon: 'monitor' },
-    { id: 4,  nombre: 'Teclado mecánico Keychron', categoria: 'informatica',   stock: 8,  popularidad: 42,  estado: 'ok',   icon: 'keyboard' },
-    { id: 5,  nombre: 'Ratón Logitech MX Master',  categoria: 'informatica',   stock: 5,  popularidad: 37,  estado: 'ok',   icon: 'mouse' },
-    { id: 6,  nombre: 'Disco SSD externo 1TB',     categoria: 'informatica',   stock: 3,  popularidad: 61,  estado: 'ok',   icon: 'drive' },
-    { id: 7,  nombre: 'Adaptador USB-C multi',     categoria: 'informatica',   stock: 0,  popularidad: 26,  estado: 'no',   icon: 'cable' },
-
-    { id: 8,  nombre: 'Micrófono Rode NT-USB',     categoria: 'audio',         stock: 3,  popularidad: 75,  estado: 'ok',   icon: 'mic' },
-    { id: 9,  nombre: 'Auriculares Sony WH-1000',  categoria: 'audio',         stock: 2,  popularidad: 88,  estado: 'warn', icon: 'headphones' },
-    { id: 10, nombre: 'Interfaz de audio Focusrite',categoria:'audio',         stock: 2,  popularidad: 41,  estado: 'warn', icon: 'mixer' },
-    { id: 11, nombre: 'Altavoz Bluetooth JBL',     categoria: 'audio',         stock: 4,  popularidad: 52,  estado: 'ok',   icon: 'speaker' },
-
-    { id: 12, nombre: 'Cámara Sony A7 III',        categoria: 'video',         stock: 3,  popularidad: 119, estado: 'ok',   icon: 'camera' },
-    { id: 13, nombre: 'Proyector Epson HD',        categoria: 'video',         stock: 2,  popularidad: 67,  estado: 'warn', icon: 'projector' },
-    { id: 14, nombre: 'Trípode Manfrotto',         categoria: 'video',         stock: 6,  popularidad: 31,  estado: 'ok',   icon: 'tripod' },
-    { id: 15, nombre: 'Gimbal DJI Ronin',          categoria: 'video',         stock: 1,  popularidad: 58,  estado: 'warn', icon: 'gimbal' },
-    { id: 16, nombre: 'GoPro Hero 12',             categoria: 'video',         stock: 4,  popularidad: 82,  estado: 'ok',   icon: 'gopro' },
-
-    { id: 17, nombre: 'Taladro Bosch',             categoria: 'herramientas',  stock: 3,  popularidad: 24,  estado: 'ok',   icon: 'drill' },
-    { id: 18, nombre: 'Kit destornilladores',      categoria: 'herramientas',  stock: 6,  popularidad: 33,  estado: 'ok',   icon: 'tools' },
-    { id: 19, nombre: 'Multímetro digital',        categoria: 'herramientas',  stock: 0,  popularidad: 18,  estado: 'no',   icon: 'multimeter' },
-
-    { id: 20, nombre: 'Balón de baloncesto',       categoria: 'deporte',       stock: 7,  popularidad: 44,  estado: 'ok',   icon: 'ball' },
-    { id: 21, nombre: 'Raqueta de pádel',          categoria: 'deporte',       stock: 4,  popularidad: 39,  estado: 'ok',   icon: 'racket' },
-    { id: 22, nombre: 'Set de pesas rusas',        categoria: 'deporte',       stock: 2,  popularidad: 21,  estado: 'warn', icon: 'weights' },
-  ];
+  const api = window.__api;
+  const grid = document.getElementById('grid');
+  const searchInput = document.getElementById('searchInput');
+  const chipsBar = document.getElementById('chips');
+  const sortSelect = document.getElementById('sortSelect');
+  const resultCount = document.getElementById('resultCount');
+  const countTodas = document.getElementById('count-todas');
 
   const categoryLabels = {
-    informatica: 'Informática',
-    audio: 'Audio',
-    video: 'Vídeo',
-    herramientas: 'Herramientas',
-    deporte: 'Deporte'
+    'Informática': 'informatica',
+    'Audio': 'audio',
+    'Vídeo': 'video',
+    'Herramientas': 'herramientas',
+    'Deporte': 'deporte'
   };
 
-  // Iconos SVG por tipo (cuerpo interno — se envuelve luego con <svg>)
   const icons = {
     laptop:    '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M10 17v4M14 17v4"/><line x1="6" y1="8" x2="18" y2="8"/>',
     tablet:    '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/>',
@@ -738,13 +702,8 @@
     weights:   '<rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="10" width="14" height="4" rx="1"/>'
   };
 
-  const grid = document.getElementById('grid');
-  const searchInput = document.getElementById('searchInput');
-  const chipsBar = document.getElementById('chips');
-  const sortSelect = document.getElementById('sortSelect');
-  const resultCount = document.getElementById('resultCount');
-  document.getElementById('count-todas').textContent = items.length;
-
+  let materials = [];
+  let categorias = [];
   let state = { q: '', cat: 'todas', sort: 'popular' };
 
   function iconSvg(name) {
@@ -753,25 +712,92 @@
   }
 
   function statusText(s) {
-    if (s === 'ok') return 'Disponible';
-    if (s === 'warn') return 'Quedan pocos';
+    if (s > 2) return 'Disponible';
+    if (s > 0) return 'Quedan pocos';
     return 'Agotado';
   }
 
-  function render() {
-    let list = items.slice();
+  function statusClass(s) {
+    if (s > 2) return 'ok';
+    if (s > 0) return 'warn';
+    return 'no';
+  }
 
-    if (state.cat !== 'todas') list = list.filter(x => x.categoria === state.cat);
+  function getCatClass(cat) {
+    const slug = normalize(cat);
+    const known = ['informatica','audio','video','herramientas','deporte'];
+    return known.includes(slug) ? slug : 'informatica';
+  }
+
+  function normalize(str) {
+    return (str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  async function loadData() {
+    try {
+      const [mats, cats, top] = await Promise.all([
+        api.getMateriales(),
+        api.getCategorias(),
+        api.getTopMaterial().catch(() => null),
+      ]);
+      materials = mats;
+      categorias = cats;
+      renderHero(top);
+      renderChips();
+      render();
+    } catch (err) {
+      console.error('Error cargando datos:', err);
+      grid.innerHTML = `<div class="empty"><div class="empty-title">Error al cargar el catálogo</div><div>${err.message}</div></div>`;
+    }
+  }
+
+  function renderHero(top) {
+    const heroSection = document.getElementById('heroSection');
+    if (!top) { heroSection.hidden = true; return; }
+    heroSection.hidden = false;
+    document.getElementById('heroIcon').innerHTML = iconSvg(top.icon);
+    document.getElementById('heroTitle').textContent = top.name;
+    document.getElementById('heroDesc').textContent = top.desc || `Material destacado del catálogo. ${top.stock} unidades disponibles.`;
+    document.getElementById('heroPop').textContent = top.popularidad;
+    document.getElementById('heroCat').textContent = top.category;
+    document.getElementById('heroStock').textContent = top.stock;
+    document.getElementById('heroPlazo').textContent = top.plazo;
+    const detailUrl = `../../catalogo/detalle-material/detalle_material.html?id=${top.id}`;
+    document.getElementById('heroSolicitar').href = detailUrl;
+    document.getElementById('heroDetalles').href = detailUrl;
+  }
+
+  function renderChips() {
+    countTodas.textContent = materials.length;
+    // Reconstruimos chips de categorías
+    const existing = chipsBar.querySelectorAll('.chip:not([data-cat="todas"])');
+    existing.forEach(c => c.remove());
+    categorias.forEach(c => {
+      const slug = normalize(c.nombre);
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.dataset.cat = slug;
+      btn.innerHTML = `${c.nombre} <span class="count">${c.count}</span>`;
+      chipsBar.appendChild(btn);
+    });
+  }
+
+  function render() {
+    let list = materials.slice();
+
+    if (state.cat !== 'todas') {
+      list = list.filter(x => normalize(x.category) === normalize(state.cat));
+    }
     if (state.q) {
       const q = state.q.toLowerCase().trim();
       list = list.filter(x =>
-        x.nombre.toLowerCase().includes(q) ||
-        categoryLabels[x.categoria].toLowerCase().includes(q)
+        x.name.toLowerCase().includes(q) ||
+        x.category.toLowerCase().includes(q)
       );
     }
 
     if (state.sort === 'popular') list.sort((a, b) => b.popularidad - a.popularidad);
-    if (state.sort === 'az')      list.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    if (state.sort === 'az')      list.sort((a, b) => a.name.localeCompare(b.name));
     if (state.sort === 'stock')   list.sort((a, b) => b.stock - a.stock);
 
     resultCount.textContent = list.length;
@@ -789,14 +815,14 @@
     }
 
     grid.innerHTML = list.map((x, i) => `
-      <article class="item cat-${x.categoria}" data-id="${x.id}" style="animation-delay:${i * 40}ms" tabindex="0" role="link" aria-label="Ver detalle de ${x.nombre}">
+      <article class="item cat-${getCatClass(x.category)}" data-id="${x.id}" style="animation-delay:${i * 40}ms" tabindex="0" role="link" aria-label="Ver detalle de ${x.name}">
         <div class="item-cover">
           ${iconSvg(x.icon)}
-          <span class="item-status ${x.estado}">${statusText(x.estado)}</span>
+          <span class="item-status ${statusClass(x.stock)}">${statusText(x.stock)}</span>
         </div>
         <div class="item-body">
-          <div class="item-cat">${categoryLabels[x.categoria]}</div>
-          <div class="item-name">${x.nombre}</div>
+          <div class="item-cat">${x.category}</div>
+          <div class="item-name">${x.name}</div>
           <div class="item-meta">
             <div class="item-stock"><b>${x.stock}</b> disponibles</div>
             <button class="item-btn" data-action="solicitar" data-id="${x.id}" ${x.stock === 0 ? 'disabled' : ''}>
@@ -809,7 +835,6 @@
     `).join('');
   }
 
-  // Navegación al detalle (desde la card o el botón Solicitar).
   function goToDetail(id) {
     window.location.href = `../../catalogo/detalle-material/detalle_material.html?id=${id}`;
   }
@@ -831,7 +856,6 @@
     }
   });
 
-  // ===== EVENTOS =====
   searchInput.addEventListener('input', (e) => {
     state.q = e.target.value;
     render();
@@ -842,7 +866,7 @@
     if (!chip) return;
     [...chipsBar.querySelectorAll('.chip')].forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
-    state.cat = chip.dataset.cat;
+    state.cat = chip.dataset.cat || 'todas';
     render();
   });
 
@@ -851,7 +875,6 @@
     render();
   });
 
-  // Atajo ⌘ K / Ctrl+K → enfocar buscador
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
@@ -859,8 +882,9 @@
     }
   });
 
-  render();
+  loadData();
 </script>
+
 
 </body>
 </html>

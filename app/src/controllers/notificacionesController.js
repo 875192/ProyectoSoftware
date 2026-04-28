@@ -54,4 +54,24 @@ const markAllAsRead = async (req, res) => {
   }
 };
 
-module.exports = { getNotificaciones, markAsRead, markAllAsRead };
+const deleteNotificacion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { usuario_id } = req.query;
+
+    if (!usuario_id) {
+      return res.status(400).json({ message: 'usuario_id es obligatorio' });
+    }
+
+    const result = await notificacionesDao.delete(id, usuario_id);
+    if (!result) {
+      return res.status(404).json({ message: 'Notificación no encontrada' });
+    }
+    res.json({ message: 'Notificación eliminada' });
+  } catch (error) {
+    console.error('Error al eliminar notificación:', error);
+    res.status(500).json({ message: 'Error al eliminar notificación' });
+  }
+};
+
+module.exports = { getNotificaciones, markAsRead, markAllAsRead, deleteNotificacion };

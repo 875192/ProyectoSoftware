@@ -22,6 +22,9 @@ const solicitudesRoutes = require('./routes/solicitudesRoutes');
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const notificacionesRoutes = require('./routes/notificacionesRoutes');
 const pagosRoutes = require('./routes/pagosRoutes');
+const prestamosRoutes = require('./routes/prestamosRoutes');
+const sancionesRoutes = require('./routes/sancionesRoutes');
+const incidenciasRoutes = require('./routes/incidenciasRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -52,6 +55,9 @@ app.use('/solicitudes', solicitudesRoutes);
 app.use('/usuarios', usuariosRoutes);
 app.use('/notificaciones', notificacionesRoutes);
 app.use('/pagos', pagosRoutes);
+app.use('/prestamos', prestamosRoutes);
+app.use('/sanciones', sancionesRoutes);
+app.use('/incidencias', incidenciasRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

@@ -15,62 +15,147 @@ async function request(endpoint, options = {}) {
 function mapMaterial(m) {
   return {
     id: String(m.id),
+    codigo: m.codigo_modelo,
     name: m.nombre,
     desc: m.descripcion,
+    icon: m.icono,
+    plazo: m.plazo_max_dias,
     category: m.categoria_nombre,
-    stock: parseInt(m.stock),
-    total: parseInt(m.total),
+    categoriaId: m.categoria_id ? String(m.categoria_id) : null,
+    stock: parseInt(m.stock) || 0,
+    total: parseInt(m.total) || 0,
+    popularidad: parseInt(m.popularidad) || 0,
+    requierePago: !!m.requiere_pago,
+    precioCaucionCentimos: m.precio_caucion_centimos != null ? parseInt(m.precio_caucion_centimos) : null,
+    incidencias: parseInt(m.incidencias_recientes) || 0,
+    estado: m.estado,
+    condiciones: m.condiciones || [],
+  };
+}
+
+function mapCategoria(c) {
+  return {
+    id: String(c.id),
+    nombre: c.nombre,
+    descripcion: c.descripcion,
+    icono: c.icono,
+    count: parseInt(c.total) || 0,
   };
 }
 
 function mapSolicitud(s) {
   return {
     id: String(s.id),
-    odId: String(s.id),
     userId: String(s.usuario_id),
-    itemId: String(s.material_id),
+    materialId: String(s.material_id),
+    materialName: s.material_nombre,
+    materialIcon: s.material_icono,
+    materialCodigo: s.material_codigo,
+    categoria: s.categoria_nombre,
     startDate: s.fecha_inicio,
     endDate: s.fecha_fin,
+    fechaSolicitud: s.fecha_solicitud,
     status: s.estado,
     purpose: s.motivo || '',
+    motivoRechazo: s.motivo_rechazo || null,
+    posicionEspera: s.posicion_espera || null,
+    prioridad: s.prioridad || 'normal',
+  };
+}
+
+function mapPrestamo(p) {
+  return {
+    id: String(p.id),
+    solicitudId: String(p.solicitud_id),
+    userId: String(p.usuario_id),
+    materialId: String(p.material_id),
+    materialName: p.material_nombre,
+    materialIcon: p.material_icono,
+    materialCodigo: p.material_codigo,
+    categoria: p.categoria_nombre,
+    codigoInventario: p.codigo_inventario,
+    fechaEntrega: p.fecha_entrega,
+    fechaDevolucionPrevista: p.fecha_devolucion_prevista,
+    fechaDevolucionReal: p.fecha_devolucion_real,
+    estado: p.estado,
+  };
+}
+
+function mapSancion(s) {
+  return {
+    id: String(s.id),
+    tipo: s.tipo,
+    motivo: s.motivo,
+    importeCentimos: parseInt(s.importe_centimos) || 0,
+    fechaInicio: s.fecha_inicio,
+    fechaFin: s.fecha_fin,
+    activa: !!s.activa,
+    pagada: !!s.pagada,
+    prestamoId: s.prestamo_id ? String(s.prestamo_id) : null,
     materialName: s.material_nombre,
   };
 }
 
-function formatRelativeDate(dateStr) {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diff = now - date;
-  const mins = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
+function mapPago(p) {
+  const metodoMap = {
+    tarjeta: 'Tarjeta',
+    transferencia: 'Transferencia',
+    efectivo: 'Efectivo',
+  };
+  return {
+    id: String(p.id),
+    fecha: p.fecha_pago || p.created_at,
+    concepto: p.concepto,
+    conceptoSub: p.concepto_sub || '',
+    metodo: p.metodo_detalle
+      ? `${metodoMap[p.metodo] || p.metodo} ${p.metodo_detalle}`
+      : (metodoMap[p.metodo] || p.metodo),
+    importeCentimos: parseInt(p.importe_centimos) || 0,
+    importe: (parseInt(p.importe_centimos) || 0) / 100,
+    estado: p.estado,
+    moneda: p.moneda,
+    sancionId: p.sancion_id ? String(p.sancion_id) : null,
+    solicitudId: p.solicitud_id ? String(p.solicitud_id) : null,
+    reciboUrl: p.recibo_url || null,
+    stripePaymentIntentId: p.stripe_payment_intent_id || null,
+  };
+}
 
-  if (mins < 1) return 'Ahora mismo';
-  if (mins < 60) return `Hace ${mins} min`;
-  if (hours < 24) return `Hoy, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
-  if (days === 1) return `Ayer, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
-  if (days < 7) return `Hace ${days} días`;
-  return date.toLocaleDateString('es-ES');
+function mapIncidencia(i) {
+  return {
+    id: String(i.id),
+    tipo: i.tipo,
+    descripcion: i.descripcion,
+    fechaIncidencia: i.fecha_incidencia,
+    resuelta: !!i.resuelta,
+    fechaResolucion: i.fecha_resolucion,
+    prestamoId: i.prestamo_id ? String(i.prestamo_id) : null,
+    materialName: i.material_nombre,
+  };
 }
 
 function mapNotificacion(n) {
   const typeMap = {
-    solicitud_aprobada: 'success',
-    solicitud_rechazada: 'alert',
-    solicitud_creada: 'info',
-    recordatorio_devolucion: 'warning',
-    retraso: 'alert',
-    incidencia: 'warning',
-    sancion: 'alert',
-    general: 'info',
+    solicitud_aprobada: 'solicitud',
+    solicitud_rechazada: 'solicitud',
+    solicitud_creada: 'solicitud',
+    recordatorio_devolucion: 'devolucion',
+    retraso: 'devolucion',
+    incidencia: 'sancion',
+    sancion: 'sancion',
+    pago_realizado: 'sistema',
+    pago_fallido: 'sistema',
+    password_reset: 'sistema',
+    general: 'sistema',
   };
   return {
     id: String(n.id),
-    title: n.asunto,
-    message: n.mensaje,
-    date: formatRelativeDate(n.created_at),
-    type: typeMap[n.tipo] || 'info',
-    read: n.leida,
+    title: n.titulo,
+    message: n.texto,
+    tipo: n.tipo,
+    category: typeMap[n.tipo] || 'sistema',
+    createdAt: n.created_at,
+    read: !!n.leida,
     entityType: n.entidad_tipo,
     entityId: n.entidad_id ? String(n.entidad_id) : null,
   };
@@ -104,11 +189,26 @@ export const api = {
     };
   },
 
-
-  // Materiales (catalog - grouped with stock)
+  // Materiales
   getMateriales: async () => {
     const data = await request('/materiales/catalogo');
     return data.map(mapMaterial);
+  },
+
+  getMaterial: async (id) => {
+    const data = await request(`/materiales/${id}`);
+    return mapMaterial(data);
+  },
+
+  getTopMaterial: async () => {
+    const data = await request('/materiales/top');
+    return mapMaterial(data);
+  },
+
+  // Categorías
+  getCategorias: async () => {
+    const data = await request('/categorias');
+    return data.map(mapCategoria);
   },
 
   // Solicitudes
@@ -117,15 +217,17 @@ export const api = {
     return data.map(mapSolicitud);
   },
 
-  createSolicitud: async ({ userId, materialName, startDate, endDate, purpose, stripePaymentIntentId }) => {
+  createSolicitud: async ({ userId, materialId, materialName, startDate, endDate, purpose, prioridad, stripePaymentIntentId }) => {
     const data = await request('/solicitudes', {
       method: 'POST',
       body: JSON.stringify({
         usuario_id: parseInt(userId),
+        material_id: materialId ? parseInt(materialId) : undefined,
         material_nombre: materialName,
         fecha_inicio: startDate,
         fecha_fin: endDate,
         motivo: purpose,
+        prioridad: prioridad || null,
         stripe_payment_intent_id: stripePaymentIntentId || null,
       }),
     });
@@ -138,6 +240,65 @@ export const api = {
       body: JSON.stringify({ usuario_id: parseInt(usuarioId) }),
     });
     return mapSolicitud(data);
+  },
+
+  // Préstamos
+  getPrestamos: async (usuarioId) => {
+    const data = await request(`/prestamos?usuario_id=${usuarioId}`);
+    return data.map(mapPrestamo);
+  },
+
+  getProximosVencimientos: async (usuarioId, limit = 5) => {
+    const data = await request(`/prestamos/proximos?usuario_id=${usuarioId}&limit=${limit}`);
+    return data.map(mapPrestamo);
+  },
+
+  // Sanciones
+  getSanciones: async (usuarioId) => {
+    const data = await request(`/sanciones?usuario_id=${usuarioId}`);
+    return data.map(mapSancion);
+  },
+
+  getSancion: async (id) => {
+    const data = await request(`/sanciones/${id}`);
+    return mapSancion(data);
+  },
+
+  // Pagos
+  getPagos: async (usuarioId) => {
+    const data = await request(`/pagos?usuario_id=${usuarioId}`);
+    return data.map(mapPago);
+  },
+
+  pagarSancion: async ({ sancionId, metodoDetalle, stripePaymentIntentId }) => {
+    const data = await request('/pagos/sancion', {
+      method: 'POST',
+      body: JSON.stringify({
+        sancion_id: parseInt(sancionId),
+        metodo_detalle: metodoDetalle || null,
+        stripe_payment_intent_id: stripePaymentIntentId || null,
+      }),
+    });
+    return { pago: mapPago(data.pago), sancionId: String(data.sancion_id) };
+  },
+
+  // Incidencias
+  getIncidencias: async (usuarioId) => {
+    const data = await request(`/incidencias?usuario_id=${usuarioId}`);
+    return data.map(mapIncidencia);
+  },
+
+  createIncidencia: async ({ usuarioId, prestamoId, tipo, descripcion }) => {
+    const data = await request('/incidencias', {
+      method: 'POST',
+      body: JSON.stringify({
+        usuario_id: parseInt(usuarioId),
+        prestamo_id: parseInt(prestamoId),
+        tipo,
+        descripcion,
+      }),
+    });
+    return mapIncidencia(data);
   },
 
   // Notificaciones
@@ -160,11 +321,25 @@ export const api = {
     });
   },
 
-  // Profile
-  updateProfile: async (id, { phone, address }) => {
+  deleteNotificacion: async (id, usuarioId) => {
+    return request(`/notificaciones/${id}?usuario_id=${usuarioId}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Perfil + Dashboard
+  getProfile: async (id) => {
+    return request(`/usuarios/${id}`);
+  },
+
+  getDashboard: async (id) => {
+    return request(`/usuarios/${id}/dashboard`);
+  },
+
+  updateProfile: async (id, updates) => {
     return request(`/usuarios/${id}`, {
       method: 'PUT',
-      body: JSON.stringify({ telefono: phone, direccion: address }),
+      body: JSON.stringify(updates),
     });
   },
 
@@ -172,13 +347,6 @@ export const api = {
     return request(`/usuarios/${id}/password`, {
       method: 'PUT',
       body: JSON.stringify({ password_actual: currentPassword, password_nueva: newPassword }),
-    });
-  },
-
-  updateProfile: async (id, updates) => {
-    return request(`/usuarios/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(updates),
     });
   },
 

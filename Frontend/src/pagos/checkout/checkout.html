@@ -345,110 +345,127 @@
 
 <script type="module">
   import { auth } from '../../compartido/nucleo/auth.js';
+  import { api } from '../../compartido/nucleo/api.js';
   import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
-  auth.requireAuth(['estudiante', 'profesor']);
+
+  const user = auth.requireAuth(['estudiante', 'profesor']);
   mountSidebar({ activePage: 'pagos', basePath: '../..' });
-</script>
+  if (user) init(user);
 
-<script>
-(() => {
-  // Mock — reemplazar por fetch a /sanciones/{id}
-  const sancionesPorId = {
-    'SAN-1042': {
-      id: 'SAN-1042',
-      motivo: 'Devolución con retraso',
-      material: 'Cámara Canon EOS R50',
-      prestamoId: '1024',
-      fecha: '2026-04-18',
-      importe: 12.50
-    },
-    'SAN-1027': {
-      id: 'SAN-1027',
-      motivo: 'Material devuelto con desperfectos',
-      material: 'Trípode Manfrotto 290',
-      prestamoId: '0993',
-      fecha: '2026-03-02',
-      importe: 25.00
+  async function init(user) {
+    const fmtMoney = (n) =>
+      n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+    const fmtDate = (iso) =>
+      new Date(iso).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    const params = new URLSearchParams(window.location.search);
+    const sancionId = params.get('id');
+
+    if (!sancionId) {
+      document.getElementById('summaryTitle').textContent = 'Sin sanción seleccionada';
+      document.getElementById('btnPay').disabled = true;
+      return;
     }
-  };
 
-  const params = new URLSearchParams(window.location.search);
-  const sancionId = params.get('id') || 'SAN-1042';
-  const sancion = sancionesPorId[sancionId] || sancionesPorId['SAN-1042'];
+    let sancion;
+    try {
+      sancion = await api.getSancion(sancionId);
+    } catch (err) {
+      console.error('Error al cargar sanción:', err);
+      document.getElementById('summaryTitle').textContent = 'Sanción no encontrada';
+      document.getElementById('btnPay').disabled = true;
+      return;
+    }
 
-  const fmtMoney = (n) =>
-    n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-  const fmtDate = (iso) =>
-    new Date(iso).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+    if (sancion.pagada) {
+      document.getElementById('summaryTitle').textContent = 'Esta sanción ya está pagada';
+      document.getElementById('btnPay').disabled = true;
+      return;
+    }
 
-  document.getElementById('summaryTitle').textContent = sancion.motivo;
-  document.getElementById('summaryId').textContent = sancion.id;
-  document.getElementById('summaryMaterial').textContent = sancion.material;
-  document.getElementById('summaryPrestamo').textContent = '#' + sancion.prestamoId;
-  document.getElementById('summaryDate').textContent = fmtDate(sancion.fecha);
-  document.getElementById('summaryAmount').textContent = fmtMoney(sancion.importe);
-  document.getElementById('btnAmount').textContent = fmtMoney(sancion.importe);
+    const importe = sancion.importeCentimos / 100;
+    document.getElementById('summaryTitle').textContent = sancion.motivo;
+    document.getElementById('summaryId').textContent = sancion.id;
+    document.getElementById('summaryMaterial').textContent = sancion.materialName || '—';
+    document.getElementById('summaryPrestamo').textContent = sancion.prestamoId ? '#' + sancion.prestamoId : '—';
+    document.getElementById('summaryDate').textContent = sancion.fechaInicio ? fmtDate(sancion.fechaInicio) : '—';
+    document.getElementById('summaryAmount').textContent = fmtMoney(importe);
+    document.getElementById('btnAmount').textContent = fmtMoney(importe);
 
-  // ===== Formato del input de tarjeta =====
-  const cardNumber = document.getElementById('cardNumber');
-  const cardExp = document.getElementById('cardExp');
-  const cardCvc = document.getElementById('cardCvc');
-  const cardField = document.getElementById('cardField');
-  const acceptTerms = document.getElementById('acceptTerms');
-  const btnPay = document.getElementById('btnPay');
+    const cardNumber = document.getElementById('cardNumber');
+    const cardExp = document.getElementById('cardExp');
+    const cardCvc = document.getElementById('cardCvc');
+    const cardField = document.getElementById('cardField');
+    const acceptTerms = document.getElementById('acceptTerms');
+    const btnPay = document.getElementById('btnPay');
 
-  cardNumber.addEventListener('input', (e) => {
-    let v = e.target.value.replace(/\D/g, '').slice(0, 19);
-    e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
-    // Detección simple de marca
-    cardField.classList.remove('is-visa', 'is-mc');
-    if (v.startsWith('4')) cardField.classList.add('is-visa');
-    else if (/^5[1-5]/.test(v) || /^2[2-7]/.test(v)) cardField.classList.add('is-mc');
-    revalidate();
-  });
+    let brand = null; // 'visa' | 'mc' | null
 
-  cardExp.addEventListener('input', (e) => {
-    let v = e.target.value.replace(/\D/g, '').slice(0, 4);
-    if (v.length >= 3) v = v.slice(0, 2) + ' / ' + v.slice(2);
-    e.target.value = v;
-    revalidate();
-  });
+    cardNumber.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 19);
+      e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+      cardField.classList.remove('is-visa', 'is-mc');
+      brand = null;
+      if (v.startsWith('4')) { cardField.classList.add('is-visa'); brand = 'visa'; }
+      else if (/^5[1-5]/.test(v) || /^2[2-7]/.test(v)) { cardField.classList.add('is-mc'); brand = 'mc'; }
+      revalidate();
+    });
 
-  cardCvc.addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
-    revalidate();
-  });
+    cardExp.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+      if (v.length >= 3) v = v.slice(0, 2) + ' / ' + v.slice(2);
+      e.target.value = v;
+      revalidate();
+    });
 
-  document.getElementById('cardName').addEventListener('input', revalidate);
-  acceptTerms.addEventListener('change', revalidate);
+    cardCvc.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+      revalidate();
+    });
 
-  function revalidate() {
-    const name = document.getElementById('cardName').value.trim();
-    const num  = cardNumber.value.replace(/\s/g, '');
-    const exp  = cardExp.value.replace(/\D/g, '');
-    const cvc  = cardCvc.value;
-    const ok = name.length >= 3
-            && num.length >= 13
-            && exp.length === 4
-            && cvc.length >= 3
-            && acceptTerms.checked;
-    btnPay.disabled = !ok;
+    document.getElementById('cardName').addEventListener('input', revalidate);
+    acceptTerms.addEventListener('change', revalidate);
+
+    function revalidate() {
+      const name = document.getElementById('cardName').value.trim();
+      const num  = cardNumber.value.replace(/\s/g, '');
+      const exp  = cardExp.value.replace(/\D/g, '');
+      const cvc  = cardCvc.value;
+      const ok = name.length >= 3
+              && num.length >= 13
+              && exp.length === 4
+              && cvc.length >= 3
+              && acceptTerms.checked;
+      btnPay.disabled = !ok;
+    }
+
+    document.getElementById('payForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (btnPay.disabled) return;
+      btnPay.classList.add('loading');
+      btnPay.disabled = true;
+      btnPay.querySelector('.text').textContent = 'Procesando…';
+
+      const num = cardNumber.value.replace(/\s/g, '');
+      const last4 = num.slice(-4);
+      const brandName = brand === 'visa' ? 'Visa' : brand === 'mc' ? 'Mastercard' : 'Tarjeta';
+      const metodoDetalle = `${brandName} ····${last4}`;
+
+      try {
+        await api.pagarSancion({
+          sancionId: sancion.id,
+          metodoDetalle,
+        });
+        window.location.href = '../historial-pagos/historial_pagos.html?status=success';
+      } catch (err) {
+        console.error('Error al pagar:', err);
+        btnPay.classList.remove('loading');
+        btnPay.querySelector('.text').textContent = 'Reintentar pago';
+        btnPay.disabled = false;
+        alert('No se pudo procesar el pago: ' + err.message);
+      }
+    });
   }
-
-  // ===== Submit (mock — Stripe en test) =====
-  document.getElementById('payForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (btnPay.disabled) return;
-    btnPay.classList.add('loading');
-    btnPay.disabled = true;
-    btnPay.querySelector('.text').textContent = 'Procesando…';
-
-    // Simula latencia de Stripe — en producción esto llama a /pagos/checkout
-    setTimeout(() => {
-      window.location.href = '../historial-pagos/historial_pagos.html?status=success';
-    }, 1500);
-  });
-})();
 </script>
 
 </body>

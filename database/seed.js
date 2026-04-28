@@ -43,6 +43,16 @@ async function seed() {
     await client.query('BEGIN');
 
     // ================================================================
+    // LIMPIEZA DE DATOS TRANSACCIONALES (para re-ejecución segura)
+    // ================================================================
+    await client.query('DELETE FROM notificaciones');
+    await client.query('DELETE FROM pagos');
+    await client.query('DELETE FROM sanciones');
+    await client.query('DELETE FROM prestamos');
+    await client.query('DELETE FROM solicitudes');
+    console.log('✓ Datos transaccionales anteriores limpiados');
+
+    // ================================================================
     // USUARIOS
     // ================================================================
     const users = [
@@ -50,6 +60,7 @@ async function seed() {
       { name: 'Carlos Pérez',  email: 'carlos.perez@univ.edu',  role: 'profesor',         password: '123', telefono: '+34 611 222 333', bio: 'Profesor del Departamento de Sistemas Informáticos.' },
       { name: 'Laura Gómez',   email: 'laura.gomez@univ.edu',   role: 'personal_gestion', password: '123', telefono: '+34 622 444 555', bio: 'Personal de gestión de inventario.' },
       { name: 'Roberto Díaz',  email: 'roberto.diaz@univ.edu',  role: 'mantenimiento',    password: '123', telefono: '+34 633 666 777', bio: 'Técnico de mantenimiento.' },
+      { name: 'Admin UniGear', email: 'admin@univ.edu',         role: 'admin',            password: '123', telefono: '+34 600 000 000', bio: 'Administrador con permisos globales.' },
     ];
 
     const userIds = {};
@@ -215,6 +226,13 @@ async function seed() {
       const res = await client.query(`
         INSERT INTO materiales (categoria_id, nombre, descripcion, codigo_modelo, icono, plazo_max_dias, popularidad)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ON CONFLICT (codigo_modelo) DO UPDATE
+          SET categoria_id   = EXCLUDED.categoria_id,
+              nombre         = EXCLUDED.nombre,
+              descripcion    = EXCLUDED.descripcion,
+              icono          = EXCLUDED.icono,
+              plazo_max_dias = EXCLUDED.plazo_max_dias,
+              popularidad    = EXCLUDED.popularidad
         RETURNING id
       `, [catIds[m.categoria], m.nombre, m.descripcion, m.codigo_modelo, m.icono, m.plazo, m.popularidad]);
       const materialId = res.rows[0].id;
@@ -225,6 +243,8 @@ async function seed() {
         await client.query(`
           INSERT INTO material_condiciones_uso (material_id, orden, texto)
           VALUES ($1, $2, $3)
+          ON CONFLICT (material_id, orden) DO UPDATE
+            SET texto = EXCLUDED.texto
         `, [materialId, i, m.condiciones[i]]);
       }
 
@@ -234,6 +254,9 @@ async function seed() {
         const ures = await client.query(`
           INSERT INTO unidades_material (material_id, codigo_inventario, estado)
           VALUES ($1, $2, $3::estado_material)
+          ON CONFLICT (codigo_inventario) DO UPDATE
+            SET material_id = EXCLUDED.material_id,
+                estado      = EXCLUDED.estado
           RETURNING id
         `, [materialId, u.codigo_inventario, u.estado]);
         unidadIdsPorModelo[m.codigo_modelo].push(ures.rows[0].id);

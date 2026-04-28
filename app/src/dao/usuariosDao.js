@@ -10,7 +10,7 @@ const usuariosDao = {
       FROM usuarios u
       JOIN usuario_roles ur ON u.id = ur.usuario_id
       JOIN roles r ON ur.rol_id = r.id
-            WHERE LOWER(u.email_institucional) = LOWER($1)
+      WHERE LOWER(u.email_institucional) = LOWER($1)
     `, [email]);
     return result.rows[0] || null;
   },
@@ -18,6 +18,8 @@ const usuariosDao = {
   findById: async (id) => {
     const result = await pool.query(`
       SELECT u.id, u.nombre_completo, u.email_institucional,
+             u.telefono, u.bio, u.avatar_url,
+             u.email_verificado, u.ultimo_login_at, u.created_at,
              r.nombre AS rol_nombre
       FROM usuarios u
       JOIN usuario_roles ur ON u.id = ur.usuario_id
@@ -27,13 +29,23 @@ const usuariosDao = {
     return result.rows[0] || null;
   },
 
-  updateProfile: async (id, { nombre_completo }) => {
+  updateProfile: async (id, fields) => {
+    const sets = [];
+    const values = [];
+    let i = 1;
+    for (const key of ['nombre_completo', 'telefono', 'bio', 'avatar_url']) {
+      if (fields[key] !== undefined) {
+        sets.push(`${key} = $${i++}`);
+        values.push(fields[key]);
+      }
+    }
+    if (sets.length === 0) return null;
+    values.push(id);
     const result = await pool.query(`
-      UPDATE usuarios
-      SET nombre_completo = $1
-      WHERE id = $2
-      RETURNING id, nombre_completo, email_institucional
-    `, [nombre_completo, id]);
+      UPDATE usuarios SET ${sets.join(', ')}
+      WHERE id = $${i}
+      RETURNING id, nombre_completo, email_institucional, telefono, bio
+    `, values);
     return result.rows[0] || null;
   },
 

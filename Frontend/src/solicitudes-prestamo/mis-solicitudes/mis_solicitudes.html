@@ -766,104 +766,39 @@
 </script>
 
 <script>
-  // ===== DATOS (mock) =====
-  const today = new Date('2026-04-21');
+  // ===== DATOS (vía API) =====
+  const today = new Date();
   const fmt = (d) => {
     const f = new Date(d);
+    if (isNaN(f.getTime())) return '—';
     return f.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   };
   const fmtShort = (d) => {
     const f = new Date(d);
+    if (isNaN(f.getTime())) return '—';
     return f.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
   };
   const daysBetween = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
 
-  const requests = [
-    {
-      id: 'SOL-2026-047',
-      material: 'MacBook Pro 14"',
-      categoria: 'informatica',
-      icon: 'laptop',
-      estado: 'pendiente',
-      solicitada: '2026-04-20',
-      desde: '2026-04-25',
-      hasta: '2026-05-02',
-      notas: 'Solicitud enviada. El personal la revisará en las próximas 24h.',
-      noteType: 'info'
-    },
-    {
-      id: 'SOL-2026-045',
-      material: 'Cámara Sony A7 III',
-      categoria: 'video',
-      icon: 'camera',
-      estado: 'aprobada',
-      solicitada: '2026-04-18',
-      desde: '2026-04-22',
-      hasta: '2026-04-29',
-      notas: 'Aprobada. Recógela en el mostrador de material (Aula 1.14) el 22 de abril.',
-      noteType: 'ok'
-    },
-    {
-      id: 'SOL-2026-044',
-      material: 'Micrófono Rode NT-USB',
-      categoria: 'audio',
-      icon: 'mic',
-      estado: 'pendiente',
-      solicitada: '2026-04-19',
-      desde: '2026-04-23',
-      hasta: '2026-04-27',
-      notas: 'Solicitud recibida. Se te avisará por correo cuando sea revisada.',
-      noteType: 'info'
-    },
-    {
-      id: 'SOL-2026-038',
-      material: 'Proyector Epson HD',
-      categoria: 'video',
-      icon: 'projector',
-      estado: 'en_espera',
-      solicitada: '2026-04-14',
-      desde: '2026-04-26',
-      hasta: '2026-04-28',
-      notas: 'No hay unidades disponibles para esas fechas. Estás en posición <b>#2</b> de la lista de espera.',
-      noteType: 'warn'
-    },
-    {
-      id: 'SOL-2026-031',
-      material: 'Gimbal DJI Ronin',
-      categoria: 'video',
-      icon: 'gimbal',
-      estado: 'rechazada',
-      solicitada: '2026-04-05',
-      desde: '2026-04-10',
-      hasta: '2026-04-17',
-      notas: 'Rechazada: el material estaba reservado para una actividad docente. Puedes volver a solicitarlo más adelante.',
-      noteType: 'error'
-    },
-    {
-      id: 'SOL-2026-024',
-      material: 'Auriculares Sony WH-1000',
-      categoria: 'audio',
-      icon: 'headphones',
-      estado: 'cancelada',
-      solicitada: '2026-03-28',
-      desde: '2026-04-01',
-      hasta: '2026-04-08',
-      notas: 'Cancelada por ti el 29 de marzo de 2026.',
-      noteType: 'muted'
-    },
-    {
-      id: 'SOL-2026-012',
-      material: 'Taladro Bosch',
-      categoria: 'herramientas',
-      icon: 'drill',
-      estado: 'expirada',
-      solicitada: '2026-03-10',
-      desde: '2026-03-14',
-      hasta: '2026-03-18',
-      notas: 'La solicitud caducó porque no se recogió el material en el plazo indicado.',
-      noteType: 'muted'
+  function categoryToSlug(name) {
+    return (name || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
+  }
+
+  function noteFromStatus(s) {
+    switch (s.status) {
+      case 'pendiente': return { text: 'Solicitud recibida. Se te avisará por correo cuando sea revisada.', type: 'info' };
+      case 'aprobada':  return { text: 'Aprobada. Recógela en el mostrador de material en la fecha indicada.', type: 'ok' };
+      case 'en_espera': return { text: s.posicionEspera ? `Estás en posición <b>#${s.posicionEspera}</b> de la lista de espera.` : 'En lista de espera.', type: 'warn' };
+      case 'rechazada': return { text: s.motivoRechazo || 'Solicitud rechazada por el personal de gestión.', type: 'error' };
+      case 'cancelada': return { text: 'Solicitud cancelada.', type: 'muted' };
+      case 'expirada':  return { text: 'La solicitud caducó porque no se recogió el material en el plazo indicado.', type: 'muted' };
+      case 'en_prestamo': return { text: 'Esta solicitud derivó en un préstamo activo.', type: 'ok' };
+      case 'finalizada':  return { text: 'Préstamo finalizado correctamente.', type: 'muted' };
+      default: return null;
     }
-  ];
+  }
+
+  let requests = [];
 
   const categoryLabels = {
     informatica: 'Informática',
@@ -1118,24 +1053,68 @@
     render();
   });
 
-  // Click en acciones (demo)
-  document.getElementById('list').addEventListener('click', (e) => {
+  // Click en acciones
+  document.getElementById('list').addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
     const { action, id } = btn.dataset;
-    const labels = {
-      detalle:   `Ver detalles de ${id}`,
-      cancelar:  `¿Seguro que quieres cancelar la solicitud ${id}?`,
-      repetir:   `Se abrirá una nueva solicitud basada en ${id}.`,
-      confirmar: `Confirmar recogida de ${id}.`
-    };
-    alert(labels[action] || id);
+
+    if (action === 'cancelar') {
+      if (!confirm(`¿Seguro que quieres cancelar la solicitud ${id}?`)) return;
+      try {
+        const api = window.__api;
+        const user = window.__currentUser;
+        await api.cancelSolicitud(id, user.id);
+        showToast('Solicitud cancelada.');
+        await loadSolicitudes();
+      } catch (err) {
+        showToast(err.message || 'No se pudo cancelar', false);
+      }
+    } else if (action === 'repetir') {
+      window.location.href = '../../catalogo/listado-materiales/listado_materiales.html';
+    } else {
+      // detalle / confirmar — placeholder hasta tener vistas de gestión
+      showToast(`Acción "${action}" próximamente disponible.`);
+    }
   });
 
-  // Init
-  renderCounts();
-  renderSummary();
-  render();
+  function mapApiSolicitud(s) {
+    const note = noteFromStatus(s);
+    return {
+      id: s.id,
+      material: s.materialName,
+      categoria: categoryToSlug(s.categoria) || 'informatica',
+      icon: s.materialIcon || 'box',
+      estado: s.status,
+      solicitada: s.fechaSolicitud,
+      desde: s.startDate,
+      hasta: s.endDate,
+      notas: note ? note.text : null,
+      noteType: note ? note.type : null,
+    };
+  }
+
+  async function loadSolicitudes() {
+    try {
+      const api = window.__api;
+      const user = window.__currentUser;
+      const data = await api.getSolicitudes(user.id);
+      requests = data.map(mapApiSolicitud);
+      // Filtramos los estados que conocemos en la UI; el resto se renderiza igual.
+      renderCounts();
+      renderSummary();
+      render();
+    } catch (err) {
+      console.error('Error cargando solicitudes:', err);
+      document.getElementById('list').innerHTML = `
+        <div class="empty">
+          <div class="empty-title">No se pudieron cargar las solicitudes</div>
+          <div class="empty-desc">${err.message}</div>
+        </div>`;
+    }
+  }
+
+  loadSolicitudes();
 
   // ===== TOAST =====
   const toast = document.getElementById('toast');

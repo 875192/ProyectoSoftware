@@ -600,23 +600,18 @@
 
 <script type="module">
   import { auth } from '../../compartido/nucleo/auth.js';
+  import { api } from '../../compartido/nucleo/api.js';
   import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
-  auth.requireAuth(['estudiante', 'profesor']);
+  const currentUser = auth.requireAuth(['estudiante', 'profesor']);
   mountSidebar({ activePage: 'catalogo', basePath: '../..' });
+  window.__api = api;
+  window.__currentUser = currentUser;
 </script>
 
 <script>
-  // ===== DATOS (mock) =====
-  // Hoy fijo para que la simulación de stock/reservas tenga sentido.
-  const today = new Date('2026-04-25');
-
-  const categoryLabels = {
-    informatica:  'Informática',
-    audio:        'Audio',
-    video:        'Vídeo',
-    herramientas: 'Herramientas',
-    deporte:      'Deporte',
-  };
+  const _api = window.__api;
+  const _user = window.__currentUser;
+  const today = new Date();
 
   const icons = {
     laptop:    '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M10 17v4M14 17v4"/><line x1="6" y1="8" x2="18" y2="8"/>',
@@ -643,124 +638,13 @@
     weights:   '<rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="10" width="14" height="4" rx="1"/>'
   };
 
-  // Catálogo extendido (mismo subset que listado_materiales.html, ampliado).
-  const items = [
-    { id: 1, nombre: 'MacBook Pro 14"', categoria: 'informatica', icon: 'laptop', estado: 'disponible', stock: 6, total: 10, popularidad: 142,
-      codigo: 'PORT-014', plazo: 7, incidencias: 0,
-      descripcion: 'Equipo Apple M3 Pro con 18 GB de RAM y 512 GB de almacenamiento. Ideal para edición de vídeo, desarrollo y trabajos académicos exigentes. Hasta 18 horas de autonomía para sesiones largas en biblioteca.',
-      condiciones: ['Cargador MagSafe USB-C incluido', 'Adaptador USB-C → HDMI bajo petición', 'Recogida en conserjería de tu facultad', 'No se permite cambio de SO']
-    },
-    { id: 2, nombre: 'iPad Pro 11"', categoria: 'informatica', icon: 'tablet', estado: 'disponible', stock: 4, total: 6, popularidad: 98,
-      codigo: 'TAB-006', plazo: 5, incidencias: 0,
-      descripcion: 'Tablet con chip M2, pantalla Liquid Retina y compatibilidad con Apple Pencil de 2ª generación. Pensada para apuntes, dibujo técnico y presentaciones interactivas.',
-      condiciones: ['Apple Pencil incluido', 'Funda con teclado bajo disponibilidad', 'Recogida en conserjería']
-    },
-    { id: 3, nombre: 'Monitor Dell 27" 4K', categoria: 'informatica', icon: 'monitor', estado: 'reservado', stock: 1, total: 4, popularidad: 54,
-      codigo: 'MON-004', plazo: 14, incidencias: 1,
-      descripcion: 'Monitor IPS 4K UHD con cobertura sRGB del 99 %, ideal para diseño y edición. Conexiones HDMI, DisplayPort y USB-C con carga.',
-      condiciones: ['Cable HDMI y DP incluidos', 'No se incluye soporte adicional', 'Retirar y entregar en sala A-103']
-    },
-    { id: 4, nombre: 'Teclado mecánico Keychron', categoria: 'informatica', icon: 'keyboard', estado: 'disponible', stock: 8, total: 8, popularidad: 42,
-      codigo: 'INF-031', plazo: 7, incidencias: 0,
-      descripcion: 'Teclado inalámbrico bluetooth con switches Brown. Compatible con macOS, Windows y Linux. Perfecto si trabajas largas horas escribiendo código o redacciones.',
-      condiciones: ['Cable USB-C incluido', 'Pilas no necesarias (batería interna)']
-    },
-    { id: 5, nombre: 'Ratón Logitech MX Master', categoria: 'informatica', icon: 'mouse', estado: 'disponible', stock: 5, total: 6, popularidad: 37,
-      codigo: 'INF-027', plazo: 7, incidencias: 0,
-      descripcion: 'Ratón ergonómico con scroll magnético y botones laterales programables. Sincroniza con dos dispositivos a la vez.',
-      condiciones: ['Cable de carga USB-C incluido']
-    },
-    { id: 6, nombre: 'Disco SSD externo 1TB', categoria: 'informatica', icon: 'drive', estado: 'disponible', stock: 3, total: 4, popularidad: 61,
-      codigo: 'INF-052', plazo: 14, incidencias: 0,
-      descripcion: 'Unidad externa NVMe USB-C de alta velocidad. Lectura hasta 1 050 MB/s. Útil para backups y proyectos pesados de vídeo o datos.',
-      condiciones: ['Cable USB-C → USB-C incluido', 'Devolver vacío si contenía datos personales']
-    },
-    { id: 7, nombre: 'Adaptador USB-C multi', categoria: 'informatica', icon: 'cable', estado: 'fuera_servicio', stock: 0, total: 2, popularidad: 26,
-      codigo: 'INF-061', plazo: 5, incidencias: 3,
-      descripcion: 'Hub USB-C con HDMI, lector SD, USB-A x 2 y carga PD. Pendiente de revisión técnica tras varias incidencias.',
-      condiciones: ['Recogida temporalmente suspendida']
-    },
-    { id: 8, nombre: 'Micrófono Rode NT-USB', categoria: 'audio', icon: 'mic', estado: 'disponible', stock: 3, total: 3, popularidad: 75,
-      codigo: 'AUD-008', plazo: 7, incidencias: 0,
-      descripcion: 'Micrófono de condensador USB para grabación vocal y podcasts. Incluye trípode de mesa, antipop y cable de 6 m.',
-      condiciones: ['Cable USB y soporte incluidos', 'No mojar la cápsula']
-    },
-    { id: 9, nombre: 'Auriculares Sony WH-1000', categoria: 'audio', icon: 'headphones', estado: 'reservado', stock: 1, total: 4, popularidad: 88,
-      codigo: 'AUD-014', plazo: 7, incidencias: 0,
-      descripcion: 'Auriculares inalámbricos con cancelación activa de ruido. Hasta 30 horas de autonomía. Cómodos para sesiones largas.',
-      condiciones: ['Estuche rígido y cable jack incluidos', 'No usar bajo la lluvia']
-    },
-    { id: 10, nombre: 'Interfaz de audio Focusrite', categoria: 'audio', icon: 'mixer', estado: 'reservado', stock: 1, total: 2, popularidad: 41,
-      codigo: 'AUD-022', plazo: 14, incidencias: 0,
-      descripcion: 'Interfaz USB con dos previos micro de baja distorsión. Ideal para grabar voz, guitarra o sintetizador con calidad de estudio.',
-      condiciones: ['Cable USB-B incluido', 'Software de descarga vinculado a tu cuenta']
-    },
-    { id: 11, nombre: 'Altavoz Bluetooth JBL', categoria: 'audio', icon: 'speaker', estado: 'disponible', stock: 4, total: 4, popularidad: 52,
-      codigo: 'AUD-031', plazo: 5, incidencias: 0,
-      descripcion: 'Altavoz portátil con resistencia al agua IP67 y hasta 12 horas de autonomía. Perfecto para presentaciones al aire libre.',
-      condiciones: ['Cargador USB-C incluido']
-    },
-    { id: 12, nombre: 'Cámara Sony A7 III', categoria: 'video', icon: 'camera', estado: 'disponible', stock: 3, total: 4, popularidad: 119,
-      codigo: 'VID-005', plazo: 5, incidencias: 1,
-      descripcion: 'Cámara mirrorless full-frame de 24 MP con vídeo 4K. Incluye objetivo zoom 28-70mm y dos baterías.',
-      condiciones: ['Tarjeta SD 64 GB incluida', 'Devolver con las baterías cargadas', 'Coste de sustitución alto: usar con cuidado']
-    },
-    { id: 13, nombre: 'Proyector Epson HD', categoria: 'video', icon: 'projector', estado: 'reservado', stock: 1, total: 3, popularidad: 67,
-      codigo: 'VID-011', plazo: 3, incidencias: 0,
-      descripcion: 'Proyector 1080p con 3 600 lúmenes. Conexión HDMI y wireless. Adecuado para aulas medianas y grandes.',
-      condiciones: ['Cable HDMI 5 m incluido', 'Mando a distancia incluido']
-    },
-    { id: 14, nombre: 'Trípode Manfrotto', categoria: 'video', icon: 'tripod', estado: 'disponible', stock: 6, total: 6, popularidad: 31,
-      codigo: 'VID-019', plazo: 7, incidencias: 0,
-      descripcion: 'Trípode profesional con cabezal de bola y rótula fluida. Ideal para foto y vídeo. Soporta hasta 8 kg.',
-      condiciones: ['Funda de transporte incluida']
-    },
-    { id: 15, nombre: 'Gimbal DJI Ronin', categoria: 'video', icon: 'gimbal', estado: 'reservado', stock: 1, total: 2, popularidad: 58,
-      codigo: 'VID-023', plazo: 5, incidencias: 0,
-      descripcion: 'Estabilizador para cámaras mirrorless de hasta 4,5 kg. Permite seguir movimientos suaves en grabaciones cinematográficas.',
-      condiciones: ['Estuche rígido y baterías incluidas', 'Calibrar antes de cada uso']
-    },
-    { id: 16, nombre: 'GoPro Hero 12', categoria: 'video', icon: 'gopro', estado: 'disponible', stock: 4, total: 4, popularidad: 82,
-      codigo: 'VID-029', plazo: 5, incidencias: 0,
-      descripcion: 'Cámara de acción con grabación 5.3K, estabilización HyperSmooth y resistencia al agua. Trae soporte y baterías extra.',
-      condiciones: ['Microsd 64 GB incluida', 'Devolver limpia y seca']
-    },
-    { id: 17, nombre: 'Taladro Bosch', categoria: 'herramientas', icon: 'drill', estado: 'disponible', stock: 3, total: 3, popularidad: 24,
-      codigo: 'HER-007', plazo: 3, incidencias: 0,
-      descripcion: 'Taladro percutor 18 V con dos baterías y maletín. Incluye juego de brocas para metal, madera y pared.',
-      condiciones: ['Maletín y cargador incluidos', 'Solo uso académico autorizado']
-    },
-    { id: 18, nombre: 'Kit destornilladores', categoria: 'herramientas', icon: 'tools', estado: 'disponible', stock: 6, total: 6, popularidad: 33,
-      codigo: 'HER-012', plazo: 7, incidencias: 0,
-      descripcion: 'Kit de 32 piezas con destornilladores Phillips, planos, Torx y precisión. Ideal para prácticas de electrónica y mantenimiento.',
-      condiciones: ['Estuche enrollable incluido']
-    },
-    { id: 19, nombre: 'Multímetro digital', categoria: 'herramientas', icon: 'multimeter', estado: 'mantenimiento', stock: 0, total: 2, popularidad: 18,
-      codigo: 'HER-018', plazo: 5, incidencias: 2,
-      descripcion: 'Multímetro auto-rango con medición de tensión, corriente, resistencia y continuidad. Pantalla retroiluminada.',
-      condiciones: ['Sondas y pilas incluidas', 'Comprobar antes de uso en alta tensión']
-    },
-    { id: 20, nombre: 'Balón de baloncesto', categoria: 'deporte', icon: 'ball', estado: 'disponible', stock: 7, total: 8, popularidad: 44,
-      codigo: 'DEP-002', plazo: 3, incidencias: 0,
-      descripcion: 'Balón oficial talla 7 para entrenamiento y partidos amistosos.',
-      condiciones: ['Recogida en pabellón']
-    },
-    { id: 21, nombre: 'Raqueta de pádel', categoria: 'deporte', icon: 'racket', estado: 'disponible', stock: 4, total: 6, popularidad: 39,
-      codigo: 'DEP-009', plazo: 3, incidencias: 0,
-      descripcion: 'Raqueta de pádel intermedia, balance medio. Pala de carbono para mayor durabilidad.',
-      condiciones: ['Funda incluida', 'Pelotas no incluidas']
-    },
-    { id: 22, nombre: 'Set de pesas rusas', categoria: 'deporte', icon: 'weights', estado: 'reservado', stock: 1, total: 2, popularidad: 21,
-      codigo: 'DEP-014', plazo: 7, incidencias: 0,
-      descripcion: 'Juego de kettlebells 8 kg + 12 kg + 16 kg. Mango ergonómico, ideal para entrenamiento funcional.',
-      condiciones: ['Devolver limpias']
-    }
-  ];
-
   // ===== HELPERS =====
   const params = new URLSearchParams(window.location.search);
   const id = parseInt(params.get('id'), 10);
-  const item = items.find(x => x.id === id);
+  let item = null;
+  let similar = [];
+
+  function categoryLabel(name) { return name || 'Material'; }
 
   function svg(body, opts = {}) {
     const w = opts.w || 18;
@@ -797,7 +681,7 @@
   // ===== RENDER =====
   const content = document.getElementById('content');
 
-  if (!item) {
+  function renderNotFound(msg) {
     document.getElementById('bcName').textContent = 'No encontrado';
     document.getElementById('pageTitle').textContent = 'Material no encontrado';
     content.innerHTML = `
@@ -805,21 +689,19 @@
         <div class="nf-icon">
           ${svg('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>', { w: 30, h: 30, stroke: 1.6 })}
         </div>
-        <div class="nf-title">No encontramos ese material</div>
+        <div class="nf-title">${msg || 'No encontramos ese material'}</div>
         <div class="nf-desc">Puede que el enlace esté caducado o que el material ya no esté en el catálogo.</div>
         <a class="btn btn-primary" href="../listado-materiales/listado_materiales.html">Volver al catálogo</a>
       </section>`;
-  } else {
-    document.getElementById('bcName').textContent = item.nombre;
-    document.getElementById('pageTitle').textContent = item.nombre;
+  }
+
+  function renderItem() {
+    document.getElementById('bcName').textContent = item.name;
+    document.getElementById('pageTitle').textContent = item.name;
 
     const reservable = isReservable(item.estado, item.stock);
     const minDate = fmtDateInput(today);
     const maxDate = fmtDateInput(new Date(today.getTime() + (item.plazo + 30) * 86400000));
-
-    const similar = items
-      .filter(x => x.categoria === item.categoria && x.id !== item.id)
-      .slice(0, 3);
 
     content.innerHTML = `
       <section class="card hero">
@@ -827,9 +709,9 @@
           <div class="hero-object">${svg(icons[item.icon] || icons.tools, { w: 120, h: 120, stroke: 1.4 })}</div>
         </div>
         <div class="hero-content">
-          <span class="hero-eyebrow">${categoryLabels[item.categoria] || 'Material'}</span>
-          <h1 class="hero-title">${item.nombre}</h1>
-          <p class="hero-desc">${item.descripcion}</p>
+          <span class="hero-eyebrow">${categoryLabel(item.category)}</span>
+          <h1 class="hero-title">${item.name}</h1>
+          <p class="hero-desc">${item.desc || ''}</p>
 
           <div class="hero-meta">
             <div class="meta-item">
@@ -879,7 +761,7 @@
         <div class="col-main">
           <section class="card">
             <h2 class="section-title">Descripción</h2>
-            <p class="body-text">${item.descripcion}</p>
+            <p class="body-text">${item.desc || ''}</p>
             <ul class="bullet-list">
               ${(item.condiciones || []).map(c => `<li>${c}</li>`).join('')}
             </ul>
@@ -915,7 +797,7 @@
               </div>
               <div class="info-cell">
                 <div class="l">Categoría</div>
-                <div class="v">${categoryLabels[item.categoria] || '—'}</div>
+                <div class="v">${categoryLabel(item.category)}</div>
               </div>
               <div class="info-cell">
                 <div class="l">Código de inventario</div>
@@ -971,11 +853,9 @@
               </form>
             ` : `
               <div class="form-disabled-msg">
-                ${item.estado === 'reservado' && item.stock === 0
-                  ? 'Todas las unidades están reservadas. Te avisaremos cuando se libere alguna.'
-                  : (item.stock === 0
-                      ? 'No hay unidades disponibles en este momento.'
-                      : 'Este material no está disponible para préstamo (estado: ' + statusLabel(item.estado) + ').')}
+                ${item.stock === 0
+                  ? 'No hay unidades disponibles en este momento.'
+                  : 'Este material no está disponible para préstamo (estado: ' + statusLabel(item.estado) + ').'}
               </div>
             `}
           </section>
@@ -988,8 +868,8 @@
                 <a class="similar-item" href="?id=${s.id}">
                   <span class="similar-icon">${svg(icons[s.icon] || icons.tools, { w: 18, h: 18, stroke: 1.6 })}</span>
                   <div class="similar-info">
-                    <div class="similar-name">${s.nombre}</div>
-                    <div class="similar-meta">${categoryLabels[s.categoria]} · ${s.stock} disponibles</div>
+                    <div class="similar-name">${s.name}</div>
+                    <div class="similar-meta">${s.category} · ${s.stock} disponibles</div>
                   </div>
                 </a>
               `).join('')}
@@ -999,57 +879,104 @@
       </div>
     `;
 
-    // ===== FORM HANDLING =====
+    bindForm(reservable, minDate);
+  }
+
+  function bindForm(reservable, minDate) {
+    if (!reservable) return;
     const form = document.getElementById('reservaForm');
-    if (form) {
-      const desde = document.getElementById('fDesde');
-      const hasta = document.getElementById('fHasta');
-      const errBox = document.getElementById('formError');
+    if (!form) return;
+    const desde = document.getElementById('fDesde');
+    const hasta = document.getElementById('fHasta');
+    const errBox = document.getElementById('formError');
 
-      // Default Hasta = Desde + min(plazo, 1) días
-      const defaultHasta = new Date(today.getTime() + Math.min(item.plazo, 3) * 86400000);
-      hasta.value = fmtDateInput(defaultHasta);
+    const defaultHasta = new Date(today.getTime() + Math.min(item.plazo, 3) * 86400000);
+    hasta.value = fmtDateInput(defaultHasta);
 
-      function validate() {
-        errBox.textContent = '';
-        const d = new Date(desde.value);
-        const h = new Date(hasta.value);
-        const minD = new Date(minDate);
-        if (Number.isNaN(d.getTime()) || Number.isNaN(h.getTime())) {
-          errBox.textContent = 'Indica las dos fechas.';
-          return false;
-        }
-        if (d < minD) { errBox.textContent = 'La fecha de inicio no puede ser anterior a hoy.'; return false; }
-        if (h <= d)   { errBox.textContent = 'La fecha de devolución debe ser posterior a la de inicio.'; return false; }
-        const dias = Math.round((h - d) / 86400000);
-        if (dias > item.plazo) {
-          errBox.textContent = `El plazo máximo para este material es de ${item.plazo} días (estás pidiendo ${dias}).`;
-          return false;
-        }
-        return true;
+    function validate() {
+      errBox.textContent = '';
+      const d = new Date(desde.value);
+      const h = new Date(hasta.value);
+      const minD = new Date(minDate);
+      if (Number.isNaN(d.getTime()) || Number.isNaN(h.getTime())) {
+        errBox.textContent = 'Indica las dos fechas.';
+        return false;
       }
+      if (d < minD) { errBox.textContent = 'La fecha de inicio no puede ser anterior a hoy.'; return false; }
+      if (h <= d)   { errBox.textContent = 'La fecha de devolución debe ser posterior a la de inicio.'; return false; }
+      const dias = Math.round((h - d) / 86400000);
+      if (dias > item.plazo) {
+        errBox.textContent = `El plazo máximo para este material es de ${item.plazo} días (estás pidiendo ${dias}).`;
+        return false;
+      }
+      return true;
+    }
 
-      desde.addEventListener('change', validate);
-      hasta.addEventListener('change', validate);
+    desde.addEventListener('change', validate);
+    hasta.addEventListener('change', validate);
 
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (!validate()) return;
-        showToast('Solicitud creada (mock). Revisa "Mis solicitudes" para seguirla.', 'success');
-        form.reset();
-        desde.value = minDate;
-        hasta.value = fmtDateInput(defaultHasta);
-      });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validate()) return;
 
-      const cta = document.getElementById('ctaSolicitar');
-      if (cta) {
-        cta.addEventListener('click', () => {
-          desde.focus({ preventScroll: false });
-          desde.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.7';
+
+      try {
+        await _api.createSolicitud({
+          userId: _user.id,
+          materialId: item.id,
+          materialName: item.name,
+          startDate: desde.value,
+          endDate: hasta.value,
+          purpose: document.getElementById('fMotivo').value.trim(),
+          prioridad: document.getElementById('fPrioridad').value,
         });
+        showToast('Solicitud creada. Revisa "Mis solicitudes" para seguirla.', 'success');
+        setTimeout(() => {
+          window.location.href = '../../solicitudes-prestamo/mis-solicitudes/mis_solicitudes.html';
+        }, 1200);
+      } catch (err) {
+        errBox.textContent = err.message || 'No se pudo crear la solicitud';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
       }
+    });
+
+    const cta = document.getElementById('ctaSolicitar');
+    if (cta) {
+      cta.addEventListener('click', () => {
+        desde.focus({ preventScroll: false });
+        desde.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
     }
   }
+
+  async function loadDetail() {
+    if (!Number.isFinite(id)) {
+      renderNotFound('Identificador de material inválido');
+      return;
+    }
+    try {
+      item = await _api.getMaterial(id);
+      // Cargamos similares por categoría
+      try {
+        const all = await _api.getMateriales();
+        similar = all
+          .filter(x => x.category === item.category && String(x.id) !== String(item.id))
+          .slice(0, 3);
+      } catch (_) {
+        similar = [];
+      }
+      renderItem();
+    } catch (err) {
+      console.error('Error al cargar material:', err);
+      renderNotFound();
+    }
+  }
+
+  loadDetail();
 </script>
 
 </body>
