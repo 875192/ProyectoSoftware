@@ -3,6 +3,7 @@ const {
   getCatalogo,
   getMaterialById,
   getTopMaterial,
+  getTopAlquilados,
   createMaterial,
   deleteMaterial,
 } = require('../controllers/materialesController');
@@ -11,6 +12,7 @@ const router = express.Router();
 
 router.get('/catalogo', getCatalogo);
 router.get('/top', getTopMaterial);
+router.get('/top-alquilados', getTopAlquilados);
 router.get('/:id', getMaterialById);
 router.post('/', createMaterial);
 router.delete('/:id', deleteMaterial);

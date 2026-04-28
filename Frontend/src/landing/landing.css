@@ -299,17 +299,6 @@ summary:focus-visible {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  position: relative;
-}
-.hero-title em::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: .05em;
-  height: .12em;
-  background: var(--yellow);
-  opacity: .35;
-  border-radius: 999px;
-  z-index: -1;
 }
 
 .hero-sub {
@@ -447,6 +436,25 @@ summary:focus-visible {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
+}
+.card-skeleton {
+  min-height: 360px;
+  background: linear-gradient(90deg, var(--gray-50) 0%, #ffffff 50%, var(--gray-50) 100%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--r-lg);
+}
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.catalog-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--gray-500);
+  font-size: 0.95rem;
+  padding: 2rem 0;
 }
 .card {
   background: var(--white);

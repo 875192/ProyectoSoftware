@@ -118,6 +118,44 @@ const getTopMaterial = async (req, res) => {
   }
 };
 
+const getTopAlquilados = async (req, res) => {
+  try {
+    const parsedLimit = parseInt(req.query.limit, 10);
+    const limit = Math.min(Math.max(Number.isFinite(parsedLimit) ? parsedLimit : 4, 1), 20);
+
+    const result = await pool.query(`
+      SELECT
+        m.id,
+        m.codigo_modelo,
+        m.nombre,
+        m.descripcion,
+        m.icono,
+        m.plazo_max_dias,
+        m.popularidad,
+        m.requiere_pago,
+        m.precio_caucion_centimos,
+        c.id   AS categoria_id,
+        c.nombre AS categoria_nombre,
+        COUNT(p.id)::int AS total_prestamos,
+        COUNT(u.id) FILTER (WHERE u.estado = 'disponible')::int AS stock,
+        COUNT(u.id)::int AS total
+      FROM materiales m
+      JOIN categorias c ON m.categoria_id = c.id
+      LEFT JOIN unidades_material u ON u.material_id = m.id
+      LEFT JOIN prestamos p ON p.unidad_material_id = u.id
+      WHERE m.activo = TRUE
+      GROUP BY m.id, c.id, c.nombre
+      ORDER BY COUNT(p.id) DESC, m.popularidad DESC, m.nombre ASC
+      LIMIT $1
+    `, [limit]);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener top alquilados:', error);
+    res.status(500).json({ message: 'Error al obtener materiales más alquilados' });
+  }
+};
+
 const createMaterial = async (req, res) => {
   try {
     const { codigo_modelo, nombre, descripcion, categoria_id, icono, plazo_max_dias } = req.body;
@@ -169,6 +207,7 @@ module.exports = {
   getCatalogo,
   getMaterialById,
   getTopMaterial,
+  getTopAlquilados,
   createMaterial,
   deleteMaterial,
 };

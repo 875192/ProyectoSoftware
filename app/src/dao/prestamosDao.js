@@ -62,6 +62,43 @@ const prestamosDao = {
       LIMIT $2
     `, [usuarioId, limit]);
     return result.rows;
+  },
+
+  estadisticasMensuales: async (usuarioId) => {
+    const result = await pool.query(`
+      WITH
+      meses AS (
+        SELECT generate_series(
+          date_trunc('month', NOW()) - INTERVAL '11 months',
+          date_trunc('month', NOW()),
+          INTERVAL '1 month'
+        ) AS mes
+      ),
+      prestamos_mes AS (
+        SELECT date_trunc('month', fecha_entrega) AS mes, COUNT(*)::int AS total
+        FROM prestamos
+        WHERE usuario_id = $1
+          AND fecha_entrega >= date_trunc('month', NOW()) - INTERVAL '11 months'
+        GROUP BY 1
+      ),
+      devoluciones_mes AS (
+        SELECT date_trunc('month', fecha_devolucion_real) AS mes, COUNT(*)::int AS total
+        FROM prestamos
+        WHERE usuario_id = $1
+          AND fecha_devolucion_real IS NOT NULL
+          AND fecha_devolucion_real >= date_trunc('month', NOW()) - INTERVAL '11 months'
+        GROUP BY 1
+      )
+      SELECT
+        m.mes,
+        COALESCE(p.total, 0) AS prestamos,
+        COALESCE(d.total, 0) AS devoluciones
+      FROM meses m
+      LEFT JOIN prestamos_mes    p ON p.mes = m.mes
+      LEFT JOIN devoluciones_mes d ON d.mes = m.mes
+      ORDER BY m.mes ASC
+    `, [usuarioId]);
+    return result.rows;
   }
 };
 
