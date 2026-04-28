@@ -277,6 +277,94 @@
   };
 
   /* =========================================================
+   * 6. TOP ALQUILADOS — fetch de los materiales más prestados
+   * =======================================================*/
+  const API_BASE = 'http://localhost:3000';
+
+  const ICONS = {
+    laptop:    '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M10 17v4M14 17v4"/><line x1="6" y1="8" x2="18" y2="8"/>',
+    tablet:    '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/>',
+    monitor:   '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    keyboard:  '<rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="10"/><line x1="10" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="14" y2="10"/><line x1="18" y1="10" x2="18" y2="10"/><line x1="7" y1="14" x2="17" y2="14"/>',
+    mouse:     '<rect x="7" y="2" width="10" height="20" rx="5"/><line x1="12" y1="6" x2="12" y2="10"/>',
+    drive:     '<rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="6" cy="12" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/>',
+    cable:     '<path d="M4 12a4 4 0 014-4h8a4 4 0 014 4v4H4z"/><line x1="8" y1="16" x2="8" y2="20"/><line x1="16" y1="16" x2="16" y2="20"/>',
+    mic:       '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 17v4M8 21h8"/>',
+    headphones:'<path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 18a2 2 0 01-2 2h-1v-6h3zM3 18a2 2 0 002 2h1v-6H3z"/>',
+    speaker:   '<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="14" r="3"/><circle cx="12" cy="7" r="1" fill="currentColor"/>',
+    camera:    '<path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="4"/>',
+    projector: '<rect x="2" y="7" width="16" height="10" rx="2"/><circle cx="9" cy="12" r="2"/><line x1="18" y1="11" x2="22" y2="11"/><line x1="18" y1="13" x2="22" y2="13"/>',
+    tripod:    '<line x1="12" y1="3" x2="12" y2="12"/><line x1="12" y1="12" x2="6" y2="21"/><line x1="12" y1="12" x2="18" y2="21"/><line x1="12" y1="12" x2="12" y2="21"/><circle cx="12" cy="4" r="2"/>',
+    drill:     '<path d="M4 10h8l4-3v10l-4-3H4z"/><line x1="16" y1="12" x2="22" y2="12"/>',
+    tools:     '<path d="M14 6l4-4 3 3-4 4M14 6l-8 8a2.8 2.8 0 104 4l8-8"/>',
+    multimeter:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="10" r="2"/><line x1="7" y1="16" x2="17" y2="16"/>',
+    ball:      '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+    racket:    '<circle cx="9" cy="9" r="6"/><line x1="13" y1="13" x2="20" y2="20"/>',
+    weights:   '<rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="10" width="14" height="4" rx="1"/>',
+    box:       '<path d="M21 16V8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v10"/>',
+  };
+
+  const iconSvg = (name) => {
+    const body = ICONS[name] || ICONS.box;
+    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  };
+
+  const escapeHtml = (str) => String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  const formatPrecio = (m) => {
+    if (!m.requiere_pago || m.precio_caucion_centimos == null) {
+      return { price: 'Gratis', period: '/ préstamo' };
+    }
+    const euros = (m.precio_caucion_centimos / 100);
+    const formatted = Number.isInteger(euros) ? `${euros}€` : `${euros.toFixed(2)}€`;
+    return { price: formatted, period: '/ día' };
+  };
+
+  const renderCard = (m, idx) => {
+    const tagClass = idx === 0 ? 'tag-yellow' : (idx % 2 === 0 ? 'tag-yellow' : 'tag-teal');
+    const tagText  = idx === 0 ? 'Más popular' : (m.categoria_nombre || 'Disponible');
+    const { price, period } = formatPrecio(m);
+
+    return `
+      <article class="card reveal in-view">
+        <div class="card-icon">${iconSvg(m.icono)}</div>
+        <span class="card-tag ${tagClass}">${escapeHtml(tagText)}</span>
+        <h3>${escapeHtml(m.nombre)}</h3>
+        <p>${escapeHtml(m.descripcion)}</p>
+        <div class="card-price">
+          <span class="price">${escapeHtml(price)}</span>
+          <span class="period">${escapeHtml(period)}</span>
+        </div>
+        <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
+      </article>
+    `;
+  };
+
+  const initTopAlquilados = async () => {
+    const grid = document.getElementById('catalogGrid');
+    if (!grid) return;
+    try {
+      const res = await fetch(`${API_BASE}/materiales/top-alquilados?limit=4`);
+      if (!res.ok) throw new Error('Respuesta no OK');
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) throw new Error('Sin datos');
+      grid.innerHTML = data.map(renderCard).join('');
+      grid.removeAttribute('data-loading');
+    } catch (err) {
+      console.warn('No se pudo cargar el top de alquilados, mostrando vacío.', err);
+      grid.innerHTML = `
+        <p class="catalog-empty">No hay materiales disponibles ahora mismo.</p>
+      `;
+      grid.removeAttribute('data-loading');
+    }
+  };
+
+  /* =========================================================
    * BOOT
    * =======================================================*/
   const boot = () => {
@@ -285,6 +373,7 @@
     initMobileMenu();
     initReveal();
     initCounters();
+    initTopAlquilados();
   };
 
   if (document.readyState === 'loading') {

@@ -253,6 +253,10 @@ export const api = {
     return data.map(mapPrestamo);
   },
 
+  getEstadisticasMensuales: async (usuarioId) => {
+    return request(`/prestamos/estadisticas/mensual?usuario_id=${usuarioId}`);
+  },
+
   // Sanciones
   getSanciones: async (usuarioId) => {
     const data = await request(`/sanciones?usuario_id=${usuarioId}`);

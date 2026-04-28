@@ -200,6 +200,7 @@ body {
 .remember-label {
     color: var(--text-light);
     font-size: 13px;
+    margin-top: 0;
 }
 .forgot-link {
     color: var(--teal);
@@ -266,28 +267,42 @@ body {
     width: 100%;
     margin: 18px 0 4px;
 }
+.social-icons {
+    display: flex;
+    justify-content: center;
+}
 .social-icons .icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 11px 16px;
+    gap: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--gray-700);
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
+    line-height: 1;
     cursor: pointer;
-    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 .social-icons .icon i { font-size: 16px; color: var(--gray-600); }
+.social-icons .icon .google-logo {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: block;
+}
+.social-icons .icon span { display: inline-block; line-height: 1; }
 .social-icons .icon:hover {
     border-color: var(--teal);
     color: var(--teal-dark);
     background: var(--teal-50);
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.08);
 }
 .social-icons .icon:hover i { color: var(--teal); }
 

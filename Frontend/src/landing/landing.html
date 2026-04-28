@@ -65,7 +65,7 @@
       </h1>
       <p class="hero-sub">
         Portátiles, tablets y material de laboratorio listos en 24&nbsp;horas.
-        Sin depósitos, sin papeleo, pensado para estudiantes.
+        Depósito mínimo, sin papeleo, pensado para estudiantes.
       </p>
       <div class="hero-ctas">
         <a href="../autenticacion/login_registro/login.html" class="btn btn-primary btn-lg">
@@ -77,7 +77,7 @@
       <ul class="trust-row" aria-label="Ventajas">
         <li>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Sin depósito
+          Depósito mínimo
         </li>
         <li>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -149,70 +149,11 @@
         <p class="section-sub">Equipos favoritos de los estudiantes, siempre disponibles y listos para usar.</p>
       </header>
 
-      <div class="catalog-grid">
-        <article class="card reveal">
-          <div class="card-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          </div>
-          <span class="card-tag tag-yellow">Más popular</span>
-          <h3>Portátil universitario</h3>
-          <p>Intel Core i5, 8&nbsp;GB RAM, SSD 256&nbsp;GB. Ideal para programación, diseño y ofimática.</p>
-          <div class="card-price">
-            <span class="price">5€</span>
-            <span class="period">/ día</span>
-          </div>
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
-        </article>
-
-        <article class="card reveal">
-          <div class="card-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
-            </svg>
-          </div>
-          <span class="card-tag tag-teal">Con stylus</span>
-          <h3>Tablet + stylus</h3>
-          <p>Pantalla de 10", lápiz digital incluido. Perfecto para apuntes, dibujo técnico y presentaciones.</p>
-          <div class="card-price">
-            <span class="price">3€</span>
-            <span class="period">/ día</span>
-          </div>
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
-        </article>
-
-        <article class="card reveal">
-          <div class="card-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M9 3v6L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-10V3"/><line x1="7" y1="3" x2="17" y2="3"/>
-            </svg>
-          </div>
-          <span class="card-tag tag-teal">Laboratorio</span>
-          <h3>Kit de laboratorio</h3>
-          <p>Material básico para prácticas de química, biología y física. Incluye maletín y guía de uso.</p>
-          <div class="card-price">
-            <span class="price">8€</span>
-            <span class="period">/ sesión</span>
-          </div>
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
-        </article>
-
-        <article class="card reveal">
-          <div class="card-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>
-            </svg>
-          </div>
-          <span class="card-tag tag-yellow">Multimedia</span>
-          <h3>Cámara + trípode</h3>
-          <p>Cámara mirrorless con trípode y micrófono para proyectos audiovisuales y TFG.</p>
-          <div class="card-price">
-            <span class="price">10€</span>
-            <span class="period">/ día</span>
-          </div>
-          <a href="../autenticacion/login_registro/login.html" class="btn btn-primary card-cta">Reservar</a>
-        </article>
+      <div class="catalog-grid" id="catalogGrid" data-loading="true">
+        <article class="card card-skeleton reveal" aria-hidden="true"></article>
+        <article class="card card-skeleton reveal" aria-hidden="true"></article>
+        <article class="card card-skeleton reveal" aria-hidden="true"></article>
+        <article class="card card-skeleton reveal" aria-hidden="true"></article>
       </div>
     </div>
   </section>
@@ -261,7 +202,7 @@
             <span>¿Necesito dejar un depósito?</span>
             <svg class="faq-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
-          <p>No. Validamos tu identidad con el correo universitario y firmas digitalmente la cesión. Cero depósitos.</p>
+          <p>Sí, pedimos un pequeño depósito como garantía que devolveremos íntegramente cuando devuelvas el equipo en buen estado.</p>
         </details>
         <details class="faq-item">
           <summary>

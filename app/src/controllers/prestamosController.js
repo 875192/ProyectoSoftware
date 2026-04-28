@@ -32,4 +32,23 @@ const getProximos = async (req, res) => {
   }
 };
 
-module.exports = { getPrestamos, getProximos };
+const MESES_ES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+const getEstadisticasMensuales = async (req, res) => {
+  try {
+    const { usuario_id } = req.query;
+    if (!usuario_id) return res.status(400).json({ message: 'usuario_id es obligatorio' });
+
+    const rows = await prestamosDao.estadisticasMensuales(usuario_id);
+    res.json({
+      labels:       rows.map(r => MESES_ES[new Date(r.mes).getUTCMonth()]),
+      prestamos:    rows.map(r => r.prestamos),
+      devoluciones: rows.map(r => r.devoluciones),
+    });
+  } catch (error) {
+    console.error('Error al obtener estadísticas mensuales:', error);
+    res.status(500).json({ message: 'Error al obtener estadísticas mensuales' });
+  }
+};
+
+module.exports = { getPrestamos, getProximos, getEstadisticasMensuales };
