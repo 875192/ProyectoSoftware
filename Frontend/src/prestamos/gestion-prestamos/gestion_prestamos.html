@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UniGear - Gestion de Prestamos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: var(--font-body);
+    background: var(--off-white);
+    color: var(--text);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, .page-title, .hero-title, .section-title, .req-name, .filter-btn {
+    font-family: var(--font-display);
+  }
+
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; }
+
+  .main {
+    margin-left: var(--sidebar-w);
+    padding: 22px 30px 54px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .breadcrumb { font-size: 12px; color: var(--text-muted); }
+  .breadcrumb .sep { margin: 0 6px; }
+  .page-title { font-size: 18px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+
+  .topbar-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text-light);
+    font-size: 12.5px;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+  }
+  .topbar-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text-light);
+    font-size: 12.5px;
+    font-weight: 700;
+    box-shadow: var(--shadow-lg);
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+  .topbar-back:hover {
+    background: var(--teal-50);
+    color: var(--teal-dark);
+    border-color: var(--teal-100);
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 22px;
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--teal-deep) 0%, var(--teal) 60%, var(--teal-dark) 100%);
+    margin-bottom: 16px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255,255,255,0.12), transparent 44%),
+      radial-gradient(circle at 16% 88%, rgba(255,255,255,0.08), transparent 40%);
+    pointer-events: none;
+  }
+  .hero > * { position: relative; }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.18);
+    padding: 6px 12px;
+    border-radius: 18px;
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--white);
+  }
+  .hero-title {
+    margin-top: 12px;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .hero-desc {
+    margin-top: 8px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    opacity: 0.9;
+    max-width: 620px;
+  }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .filter-btn {
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text-light);
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+  .filter-btn:hover {
+    background: var(--teal-50);
+    color: var(--teal-dark);
+    border-color: var(--teal-100);
+  }
+  .filter-btn.active {
+    background: var(--teal);
+    color: var(--white);
+    border-color: var(--teal);
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .section-title { font-size: 17px; font-weight: 700; color: var(--navy); }
+  .section-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
+
+  .request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .request-item {
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: var(--card);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+  }
+  .request-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px -10px rgba(15,118,110,0.20);
+  }
+
+  .request-main {
+    display: grid;
+    grid-template-columns: 1.5fr 1.2fr 1.2fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 16px 18px;
+    cursor: pointer;
+  }
+
+  .req-name { font-size: 15px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+  .req-sub { margin-top: 4px; font-size: 12.5px; color: var(--text-light); }
+  .req-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); font-weight: 700; }
+  .req-v { margin-top: 4px; font-size: 13px; color: var(--gray-700); font-weight: 600; line-height: 1.35; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .status-pendiente {
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    color: var(--warning-text);
+  }
+  .status-aprobada {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+  }
+  .status-rechazada {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
+  }
+  .status-finalizada {
+    background: var(--teal-50);
+    border: 1px solid var(--teal-100);
+    color: var(--teal-dark);
+  }
+
+  .req-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-approve {
+    background: var(--teal);
+    color: var(--white);
+    box-shadow: 0 6px 16px -5px rgba(15,118,110,0.42);
+  }
+  .btn-approve:hover { background: var(--teal-dark); }
+  .btn-reject {
+    background: var(--error-text);
+    color: var(--white);
+  }
+  .btn-reject:hover { background: #991b1b; }
+  .btn-expand {
+    background: var(--gray-50);
+    border-color: var(--border);
+    color: var(--gray-600);
+    min-width: 36px;
+    padding: 8px;
+  }
+  .btn-expand:hover {
+    background: var(--teal-50);
+    color: var(--teal-dark);
+    border-color: var(--teal-100);
+  }
+
+  .request-detail {
+    display: none;
+    border-top: 1px solid var(--border-soft);
+    background: linear-gradient(180deg, var(--card), var(--teal-50));
+    padding: 14px 18px 16px;
+  }
+  .request-item.expanded .request-detail { display: grid; }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .detail-box {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--card);
+  }
+  .detail-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .detail-copy {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.45;
+  }
+  .detail-copy b { color: var(--navy); }
+
+  .empty {
+    text-align: center;
+    padding: 44px 20px;
+    background: var(--card);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    color: var(--text-light);
+  }
+
+  dialog.modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    border: none;
+    border-radius: 16px;
+    padding: 0;
+    width: min(460px, 92vw);
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+    background: var(--card);
+    box-shadow: var(--shadow-xl);
+  }
+  dialog.modal::backdrop { background: rgba(17,24,39,0.45); }
+  .modal-inner { padding: 22px; }
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .modal-sub { margin-top: 6px; font-size: 13px; color: var(--text-light); line-height: 1.45; }
+  .field { margin-top: 12px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .field textarea {
+    width: 100%;
+    min-height: 96px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+  }
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(15,118,110,0.14);
+  }
+  .modal-actions {
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .btn-ghost {
+    border-color: var(--border);
+    background: var(--card);
+    color: var(--text-light);
+  }
+  .btn-ghost:hover {
+    background: var(--teal-50);
+    color: var(--teal-dark);
+    border-color: var(--teal-100);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--gray-900);
+    color: var(--white);
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    z-index: 90;
+  }
+  .toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.success { background: var(--success-text); }
+
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px 8px 14px;
+    width: 260px;
+    color: var(--text-muted);
+    transition: border-color 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                box-shadow 180ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .search:focus-within {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+  }
+  .search input {
+    border: none; outline: none;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    background: transparent;
+    width: 100%;
+    color: var(--text);
+  }
+  .search input::placeholder { color: var(--text-muted); }
+  .search kbd {
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--gray-100);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-left: auto;
+  }
+
+  .tb-action {
+    --pull-x: 0px;
+    --pull-y: 0px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-light);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    transform: translate(var(--pull-x), var(--pull-y));
+    transition: background 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                color 180ms cubic-bezier(0.25, 1, 0.5, 1),
+                transform 220ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .tb-action:hover { background: var(--teal-50); color: var(--teal-dark); border-color: var(--teal-100); }
+
+  .tb-icon {
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    transition: color 180ms cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+  }
+  .tb-icon:hover { color: var(--teal); }
+  .tb-icon .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 7px; height: 7px;
+    background: var(--teal);
+    border-radius: 50%;
+    border: 1.5px solid var(--card);
+  }
+  .tb-icon[data-has-notif="true"] .notif-dot::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--teal);
+    opacity: 0;
+    animation: notif-pulse 2.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  }
+  @keyframes notif-pulse {
+    0%   { transform: scale(0.6); opacity: 0.55; }
+    80%  { transform: scale(1.7); opacity: 0; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+
+  @media (max-width: 1180px) {
+    .request-main {
+      grid-template-columns: 1.3fr 1fr;
+      align-items: start;
+    }
+    .req-actions { grid-column: 1 / -1; }
+  }
+  @media (max-width: 900px) {
+    .detail-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .main { margin-left: 0; padding: 16px 16px 42px; }
+    .request-main { grid-template-columns: 1fr; }
+    .req-actions { flex-wrap: wrap; }
+    .req-actions .btn { flex: 1; min-width: 118px; }
+    .search { width: 170px; }
+    .search kbd { display: none; }
+    .topbar-right .tb-action span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="breadcrumb">Paginas <span class="sep">/</span> Gestion de Prestamos</div>
+      <div class="page-title">Gestion de prestamos</div>
+    </div>
+    <div class="topbar-right">
+      <a class="tb-action" href="../../paneles/panel-admin/panel_admin.html" aria-label="Ir al panel" title="Ir al panel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </a>
+      <a class="tb-action" href="../../usuarios/administracion/administracion_usuarios.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span>Gestion de usuarios</span>
+      </a>
+      <button class="tb-icon" data-has-notif="true" aria-label="Notificaciones">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="notif-dot"></span>
+      </button>
+    </div>
+  </div>
+
+  <section class="card hero">
+    <div class="hero-eyebrow"><span class="dot"></span> Flujo de revision</div>
+    <h1 class="hero-title">Panel de solicitudes de prestamo</h1>
+    <p class="hero-desc">Revisa, aprueba o rechaza solicitudes, manteniendo trazabilidad de estado y una vista rapida del historial del usuario y la ubicacion del material.</p>
+  </section>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="pendiente">Pendientes de Revision</button>
+    <button class="filter-btn" data-filter="aprobada">Aprobadas</button>
+    <button class="filter-btn" data-filter="rechazada">Rechazadas</button>
+    <button class="filter-btn" data-filter="finalizada">Finalizadas</button>
+  </div>
+
+  <div class="toolbar">
+    <div>
+      <div class="section-title">Lista de solicitudes</div>
+      <div class="section-sub"><span id="resultCount">0</span> solicitudes visibles</div>
+    </div>
+  </div>
+
+  <section class="request-list" id="requestList"></section>
+</main>
+
+<dialog class="modal" id="approveModal" aria-labelledby="approveTitle">
+  <div class="modal-inner">
+    <div class="modal-title" id="approveTitle">Confirmar aprobacion</div>
+    <div class="modal-sub" id="approveText">-</div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="approveCancel">Cancelar</button>
+      <button type="button" class="btn btn-approve" id="approveConfirm">Aprobar solicitud</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal" id="rejectModal" aria-labelledby="rejectTitle">
+  <form method="dialog" class="modal-inner" id="rejectForm" novalidate>
+    <div class="modal-title" id="rejectTitle">Rechazar solicitud</div>
+    <div class="modal-sub" id="rejectText">Debes introducir una justificacion para continuar.</div>
+    <div class="field">
+      <label for="rejectReason">Motivo del rechazo</label>
+      <textarea id="rejectReason" required maxlength="420" placeholder="Explica por que se rechaza la solicitud."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="rejectCancel">Cancelar</button>
+      <button type="submit" class="btn btn-reject">Confirmar rechazo</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+  import { auth } from '../../compartido/nucleo/auth.js';
+  import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
+  auth.requireAuth(['personal_gestion']);
+  mountSidebar({ activePage: 'prestamos', basePath: '../..' });
+</script>
+
+<script>
+  const solicitudes = [
+    {
+      id: 'SOL-2401',
+      estado: 'pendiente',
+      solicitante: { nombre: 'Lucia', apellidos: 'Torres Rubio', rol: 'Estudiante' },
+      material: { nombre: 'Camara Sony ZV-E10', uid: 'VID-022', ubicacion: 'Almacen A - Estante V3' },
+      fechas: { solicitud: '28/04/2026', inicio: '30/04/2026', devolucion: '04/05/2026' },
+      historial: 'Tiene 1 prestamo activo y 0 retrasos en los ultimos 6 meses.'
+    },
+    {
+      id: 'SOL-2400',
+      estado: 'pendiente',
+      solicitante: { nombre: 'Mario', apellidos: 'Vidal Martin', rol: 'Profesor' },
+      material: { nombre: 'Portatil Lenovo ThinkPad T14', uid: 'INF-061', ubicacion: 'Aula C2 - Armario 2' },
+      fechas: { solicitud: '28/04/2026', inicio: '29/04/2026', devolucion: '06/05/2026' },
+      historial: 'Sin prestamos activos. Ultima devolucion realizada a tiempo.'
+    },
+    {
+      id: 'SOL-2396',
+      estado: 'aprobada',
+      solicitante: { nombre: 'Nora', apellidos: 'Campos Diaz', rol: 'Estudiante' },
+      material: { nombre: 'Microfono Rode NT-USB', uid: 'AUD-014', ubicacion: 'Almacen B - Cajon A1' },
+      fechas: { solicitud: '26/04/2026', inicio: '27/04/2026', devolucion: '03/05/2026' },
+      historial: 'Tiene 2 prestamos activos. Sin incidencias abiertas.'
+    },
+    {
+      id: 'SOL-2388',
+      estado: 'rechazada',
+      solicitante: { nombre: 'Javier', apellidos: 'Mendez Soler', rol: 'Estudiante' },
+      material: { nombre: 'Proyector Epson EB-X49', uid: 'VID-031', ubicacion: 'Laboratorio Medios - Rack 1' },
+      fechas: { solicitud: '24/04/2026', inicio: '25/04/2026', devolucion: '27/04/2026' },
+      historial: 'Tiene 1 prestamo retrasado. Solicitud rechazada por bloqueo temporal.'
+    },
+    {
+      id: 'SOL-2379',
+      estado: 'finalizada',
+      solicitante: { nombre: 'Paula', apellidos: 'Rios Gomez', rol: 'Profesor' },
+      material: { nombre: 'Kit Arduino Uno + sensores', uid: 'LAB-017', ubicacion: 'Laboratorio Electronica - Modulo 4' },
+      fechas: { solicitud: '21/04/2026', inicio: '22/04/2026', devolucion: '25/04/2026' },
+      historial: 'Prestamo completado. Historial con 4 devoluciones puntuales consecutivas.'
+    }
+  ];
+
+  const state = {
+    filtro: 'pendiente',
+    selectedId: null,
+    approvingId: null,
+    rejectingId: null
+  };
+
+  const labels = {
+    pendiente: 'Pendiente',
+    aprobada: 'Aprobada',
+    rechazada: 'Rechazada',
+    finalizada: 'Finalizada'
+  };
+
+  function toast(text, kind) {
+    const el = document.getElementById('toast');
+    el.textContent = text;
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    requestAnimationFrame(() => el.classList.add('is-visible'));
+    setTimeout(() => el.classList.remove('is-visible'), 2400);
+  }
+
+  function filtered() {
+    return solicitudes.filter(s => s.estado === state.filtro);
+  }
+
+  function badgeClass(estado) {
+    return 'status-badge status-' + estado;
+  }
+
+  function render() {
+    const list = filtered();
+    document.getElementById('resultCount').textContent = list.length;
+    const host = document.getElementById('requestList');
+
+    if (!list.length) {
+      host.innerHTML = '<div class="empty">No hay solicitudes en este estado.</div>';
+      return;
+    }
+
+    host.innerHTML = list.map((s) => {
+      const expanded = state.selectedId === s.id ? ' expanded' : '';
+      const pendingActions = s.estado === 'pendiente'
+        ? '<button type="button" class="btn btn-approve" data-action="aprobar" data-id="' + s.id + '">Aprobar</button>' +
+          '<button type="button" class="btn btn-reject" data-action="rechazar" data-id="' + s.id + '">Rechazar</button>'
+        : '';
+
+      return '<article class="request-item' + expanded + '" data-id="' + s.id + '">' +
+        '<div class="request-main" data-toggle="' + s.id + '">' +
+          '<div>' +
+            '<div class="req-name">' + s.solicitante.nombre + ' ' + s.solicitante.apellidos + '</div>' +
+            '<div class="req-sub">' + s.solicitante.rol + ' - ' + s.id + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="req-k">Material solicitado</div>' +
+            '<div class="req-v">' + s.material.nombre + '<br>ID: ' + s.material.uid + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="req-k">Fechas</div>' +
+            '<div class="req-v">Solicitud: ' + s.fechas.solicitud + '<br>Inicio: ' + s.fechas.inicio + '<br>Devolucion: ' + s.fechas.devolucion + '</div>' +
+          '</div>' +
+          '<div class="req-actions">' +
+            '<span class="' + badgeClass(s.estado) + '">' + labels[s.estado] + '</span>' +
+            pendingActions +
+            '<button type="button" class="btn btn-expand" data-toggle-btn="' + s.id + '" aria-label="Ver detalle">+</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="request-detail">' +
+          '<div class="detail-grid">' +
+            '<div class="detail-box">' +
+              '<div class="detail-title">Historial del usuario</div>' +
+              '<div class="detail-copy"><b>' + s.solicitante.nombre + ' ' + s.solicitante.apellidos + '</b><br>' + s.historial + '</div>' +
+            '</div>' +
+            '<div class="detail-box">' +
+              '<div class="detail-title">Ubicacion del material</div>' +
+              '<div class="detail-copy"><b>' + s.material.nombre + '</b><br>' + s.material.ubicacion + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  document.getElementById('filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach((x) => x.classList.remove('active'));
+    btn.classList.add('active');
+    state.filtro = btn.dataset.filter;
+    state.selectedId = null;
+    render();
+  });
+
+  document.getElementById('requestList').addEventListener('click', (e) => {
+    const actionBtn = e.target.closest('button[data-action]');
+    if (actionBtn) {
+      const id = actionBtn.dataset.id;
+      const solicitud = solicitudes.find((s) => s.id === id);
+      if (!solicitud) return;
+      e.stopPropagation();
+
+      if (actionBtn.dataset.action === 'aprobar') {
+        state.approvingId = id;
+        document.getElementById('approveText').textContent = 'La solicitud ' + id + ' se marcara como aprobada y el material quedara reservado.';
+        document.getElementById('approveModal').showModal();
+      }
+
+      if (actionBtn.dataset.action === 'rechazar') {
+        state.rejectingId = id;
+        document.getElementById('rejectText').textContent = 'Solicitud ' + id + '. Introduce un motivo obligatorio para registrar el rechazo.';
+        document.getElementById('rejectReason').value = '';
+        document.getElementById('rejectModal').showModal();
+        setTimeout(() => document.getElementById('rejectReason').focus(), 30);
+      }
+      return;
+    }
+
+    const toggleNode = e.target.closest('[data-toggle], [data-toggle-btn]');
+    if (!toggleNode) return;
+    const id = toggleNode.dataset.toggle || toggleNode.dataset.toggleBtn;
+    state.selectedId = state.selectedId === id ? null : id;
+    render();
+  });
+
+  document.getElementById('approveCancel').addEventListener('click', () => {
+    document.getElementById('approveModal').close();
+  });
+
+  document.getElementById('approveConfirm').addEventListener('click', () => {
+    const id = state.approvingId;
+    const solicitud = solicitudes.find((s) => s.id === id);
+    if (solicitud) {
+      solicitud.estado = 'aprobada';
+      toast('Solicitud ' + id + ' aprobada. Material reservado.', 'success');
+    }
+    document.getElementById('approveModal').close();
+    state.approvingId = null;
+    render();
+  });
+
+  document.getElementById('rejectCancel').addEventListener('click', () => {
+    document.getElementById('rejectModal').close();
+  });
+
+  document.getElementById('rejectForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const reason = document.getElementById('rejectReason').value.trim();
+    if (!reason) {
+      document.getElementById('rejectReason').focus();
+      return;
+    }
+
+    const id = state.rejectingId;
+    const solicitud = solicitudes.find((s) => s.id === id);
+    if (solicitud) {
+      solicitud.estado = 'rechazada';
+      toast('Solicitud ' + id + ' rechazada con justificacion.', 'success');
+    }
+
+    document.getElementById('rejectModal').close();
+    state.rejectingId = null;
+    render();
+  });
+
+  render();
+</script>
+
+</body>
+</html>
