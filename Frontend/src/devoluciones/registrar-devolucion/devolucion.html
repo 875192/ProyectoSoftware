@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>UniGear - Operaciones de Devolucion</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						'staff-teal': '#0f766e',
+						'staff-teal-dark': '#115e59',
+						'staff-teal-100': '#ccfbf1',
+						'staff-teal-50': '#f0fdfa',
+						'staff-yellow-50': '#FEFCE8',
+						'staff-yellow-dark': '#EAB308',
+						'staff-gray-50': '#F9FAFB',
+						'staff-gray-100': '#F3F4F6',
+						'staff-gray-200': '#E5E7EB',
+						'staff-gray-500': '#6B7280',
+						'staff-gray-700': '#374151',
+						'staff-gray-900': '#111827'
+					},
+					fontFamily: {
+						display: ['Bricolage Grotesque', 'sans-serif'],
+						body: ['DM Sans', 'sans-serif']
+					},
+					boxShadow: {
+						soft: '0 10px 25px rgba(0, 0, 0, 0.06)',
+						teal: '0 12px 28px rgba(15, 118, 110, 0.28)'
+					}
+				}
+			}
+		};
+	</script>
+	<style>
+		html, body {
+			font-family: 'DM Sans', sans-serif;
+			background: #F8FAFC;
+			color: #1F2937;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		h1, h2, h3, h4 {
+			font-family: 'Bricolage Grotesque', sans-serif;
+		}
+
+		.topbar-scroll {
+			transition: border-color 220ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 220ms cubic-bezier(0.25, 1, 0.5, 1), transform 220ms cubic-bezier(0.25, 1, 0.5, 1);
+		}
+
+		.topbar-scroll.scrolled {
+			border-color: #E5E7EB;
+			box-shadow: 0 8px 20px rgba(15, 118, 110, 0.18);
+			transform: translateY(-1px);
+		}
+
+		.tab-button {
+			border: 1px solid rgba(255, 255, 255, 0.35);
+			background: rgba(255, 255, 255, 0.1);
+			color: #ffffff;
+			transition: background 180ms cubic-bezier(0.25, 1, 0.5, 1), color 180ms cubic-bezier(0.25, 1, 0.5, 1), border-color 180ms cubic-bezier(0.25, 1, 0.5, 1);
+		}
+
+		.tab-button:hover {
+			background: rgba(255, 255, 255, 0.2);
+		}
+
+		.tab-button[aria-selected="true"] {
+			background: #ffffff;
+			color: #0f766e;
+			border-color: #ffffff;
+			box-shadow: 0 12px 28px rgba(15, 118, 110, 0.28);
+		}
+
+		.operaciones-hero {
+			position: relative;
+			overflow: hidden;
+			background: linear-gradient(135deg, #115e59 0%, #0f766e 55%, #0a4642 100%);
+			border-color: rgba(15, 118, 110, 0.22);
+		}
+
+		.operaciones-hero::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background:
+				radial-gradient(circle at 85% 20%, rgba(255,255,255,0.13), transparent 45%),
+				radial-gradient(circle at 15% 85%, rgba(255,255,255,0.08), transparent 40%);
+			pointer-events: none;
+		}
+
+		.operaciones-hero > * {
+			position: relative;
+		}
+
+		.hero-eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 6px 12px;
+			border-radius: 999px;
+			font-size: 11px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.14em;
+			background: rgba(255, 255, 255, 0.18);
+			color: #ffffff;
+		}
+
+		.hero-eyebrow-dot {
+			width: 7px;
+			height: 7px;
+			border-radius: 50%;
+			background: #ffffff;
+		}
+
+		.dialog-backdrop {
+			background: rgba(17, 24, 39, 0.45);
+		}
+
+		#panel-entregas,
+		#panel-devoluciones {
+			overflow: hidden;
+		}
+
+		#panel-entregas tbody tr,
+		#panel-devoluciones tbody tr {
+			transition: background 180ms cubic-bezier(0.25, 1, 0.5, 1);
+		}
+
+		#modal-devolucion {
+			border: none;
+			padding: 0;
+			margin: auto;
+			background: transparent;
+			width: min(620px, 94vw);
+			max-height: calc(100vh - 28px);
+			overflow: visible;
+		}
+
+		#modal-devolucion[open] {
+			display: grid;
+			place-items: center;
+		}
+
+		#modal-devolucion::backdrop {
+			background: rgba(17, 24, 39, 0.45);
+			backdrop-filter: blur(2px);
+		}
+
+		#modal-devolucion > form {
+			background: #ffffff;
+			border: 1px solid #E5E7EB;
+			border-radius: 14px;
+			box-shadow: 0 20px 40px rgba(17, 24, 39, 0.18);
+			width: min(620px, 94vw);
+			max-height: calc(100vh - 28px);
+			overflow: auto;
+		}
+
+		.panel-procesando {
+			border-color: #0f766e;
+			box-shadow: 0 14px 30px rgba(15, 118, 110, 0.22);
+		}
+
+		.fila-procesando {
+			background: #f0fdfa;
+		}
+
+		.operaciones-hero h2 {
+			font-size: 28px;
+		}
+
+		.operaciones-hero > div > div > p:nth-of-type(2) {
+			font-size: 13.5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="flex min-h-screen">
+		<aside class="hidden lg:block w-64 shrink-0"></aside>
+
+		<main class="flex-1 p-4 sm:p-6 lg:p-8">
+			<div id="topbar-sentinel" class="h-px"></div>
+
+			<header class="topbar-scroll sticky top-0 z-20 mb-6 rounded-2xl border border-transparent bg-staff-teal px-5 py-4 shadow-teal">
+				<div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+					<div>
+						<p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">Paneles / Personal de Gestion</p>
+						<h1 class="mt-1 text-xl font-bold tracking-tight text-white">Operaciones de Entrega y Devolucion</h1>
+						<p class="mt-1 text-sm text-white/80">Controla la salida y retorno del material con trazabilidad operativa</p>
+					</div>
+
+					<nav class="flex flex-wrap items-center gap-2">
+						<a href="../../paneles/panel-staff/panel_staff.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Inicio</a>
+						<a href="../../prestamos/gestion-prestamos/gestion_prestamos.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Solicitudes</a>
+						<a href="../../inventario/listado-inventario/listado_inventario.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Inventario</a>
+						<a href="./devolucion.html" aria-current="page" class="rounded-lg border border-white bg-white px-3 py-2 text-sm font-semibold text-staff-teal transition-colors hover:bg-staff-gray-100">Operaciones</a>
+					</nav>
+				</div>
+			</header>
+
+			<section class="operaciones-hero rounded-xl border p-6 shadow-soft">
+				<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+					<div>
+						<p class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Flujo de revision</p>
+						<h2 class="mt-3 text-4xl font-bold leading-tight text-white">Entregas y Devoluciones</h2>
+						<p class="mt-2 max-w-3xl text-lg text-white/85">Gestiona la entrega fisica y el retorno del material con seguimiento operativo y registro inmediato de incidencias.</p>
+					</div>
+
+					<div class="flex flex-wrap gap-2" role="tablist" aria-label="Paneles de trabajo">
+						<button id="tab-entregas" class="tab-button rounded-lg px-4 py-2 text-sm font-semibold" role="tab" aria-selected="true" aria-controls="panel-entregas" type="button">Entregas Pendientes</button>
+						<button id="tab-devoluciones" class="tab-button rounded-lg px-4 py-2 text-sm font-semibold" role="tab" aria-selected="false" aria-controls="panel-devoluciones" type="button">Devoluciones a Realizar</button>
+					</div>
+				</div>
+			</section>
+
+			<section id="panel-entregas" class="mt-6 rounded-xl border border-staff-gray-200 bg-white shadow-soft" role="tabpanel" aria-labelledby="tab-entregas">
+				<div class="border-b border-staff-gray-200 bg-staff-gray-50 px-6 py-4">
+					<h3 class="text-base font-bold text-staff-gray-900">Material Aprobado para Entrega Fisica</h3>
+				</div>
+
+				<div class="overflow-x-auto">
+					<table class="min-w-full text-sm">
+						<thead>
+							<tr class="border-b border-staff-gray-200 text-left text-xs uppercase tracking-wider text-staff-gray-500">
+								<th class="px-6 py-3 font-bold">Usuario</th>
+								<th class="px-6 py-3 font-bold">Material</th>
+								<th class="px-6 py-3 font-bold">Fecha Limite</th>
+								<th class="px-6 py-3 font-bold">Accion</th>
+							</tr>
+						</thead>
+							<tbody id="entregas-body" class="divide-y divide-staff-gray-200">
+							<tr class="hover:bg-staff-gray-50/70">
+								<td class="px-6 py-4 font-semibold text-staff-gray-900">Lucia Torres Rubio</td>
+								<td class="px-6 py-4 text-staff-gray-700">Camara Sony ZV-E10</td>
+								<td class="px-6 py-4"><span class="rounded-full bg-staff-teal-50 px-3 py-1 text-xs font-bold text-staff-teal-dark">30/04/2026 10:30</span></td>
+								<td class="px-6 py-4">
+										<button class="confirm-entrega rounded-lg bg-staff-teal px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-staff-teal-dark" type="button">Confirmar Entrega</button>
+								</td>
+							</tr>
+							<tr class="hover:bg-staff-gray-50/70">
+								<td class="px-6 py-4 font-semibold text-staff-gray-900">Mario Vidal Martin</td>
+								<td class="px-6 py-4 text-staff-gray-700">Portatil Lenovo ThinkPad T14</td>
+								<td class="px-6 py-4"><span class="rounded-full bg-staff-yellow-50 px-3 py-1 text-xs font-bold text-staff-gray-900" style="border:1px solid #EAB308;">30/04/2026 12:00</span></td>
+								<td class="px-6 py-4">
+										<button class="confirm-entrega rounded-lg bg-staff-teal px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-staff-teal-dark" type="button">Confirmar Entrega</button>
+								</td>
+							</tr>
+							<tr class="hover:bg-staff-gray-50/70">
+								<td class="px-6 py-4 font-semibold text-staff-gray-900">Irene Cobo Diaz</td>
+								<td class="px-6 py-4 text-staff-gray-700">Kit Microfonos Aula</td>
+								<td class="px-6 py-4"><span class="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-700" style="border:1px solid #f87171;">29/04/2026 09:00</span></td>
+								<td class="px-6 py-4">
+										<button class="confirm-entrega rounded-lg bg-staff-teal px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-staff-teal-dark" type="button">Confirmar Entrega</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section id="panel-devoluciones" class="mt-6 hidden rounded-xl border border-staff-gray-200 bg-white shadow-soft" role="tabpanel" aria-labelledby="tab-devoluciones">
+				<div class="border-b border-staff-gray-200 bg-staff-gray-50 px-6 py-4">
+					<h3 class="text-base font-bold text-staff-gray-900">Material en Prestamo Pendiente de Retorno</h3>
+						<p id="proceso-activo" class="mt-1 hidden text-xs font-semibold text-staff-teal">Procesando devolucion seleccionada...</p>
+				</div>
+
+				<div class="overflow-x-auto">
+					<table class="min-w-full text-sm">
+						<thead>
+							<tr class="border-b border-staff-gray-200 text-left text-xs uppercase tracking-wider text-staff-gray-500">
+								<th class="px-6 py-3 font-bold">Usuario</th>
+								<th class="px-6 py-3 font-bold">Material</th>
+								<th class="px-6 py-3 font-bold">Dias de retraso</th>
+								<th class="px-6 py-3 font-bold">Accion</th>
+							</tr>
+						</thead>
+							<tbody id="devoluciones-body" class="divide-y divide-staff-gray-200">
+							<tr class="hover:bg-staff-gray-50/70">
+								<td class="px-6 py-4 font-semibold text-staff-gray-900">Paula Rios Gomez</td>
+								<td class="px-6 py-4 text-staff-gray-700">Kit Arduino Uno + sensores</td>
+								<td class="px-6 py-4"><span class="rounded-full bg-staff-teal-50 px-3 py-1 text-xs font-bold text-staff-teal-dark">0 dias</span></td>
+								<td class="px-6 py-4">
+									<button class="open-modal rounded-lg bg-staff-teal px-3 py-2 text-xs font-semibold text-white shadow-teal transition-colors hover:bg-staff-teal-dark" type="button" data-usuario="Paula Rios Gomez" data-material="Kit Arduino Uno + sensores">Registrar Devolucion</button>
+								</td>
+							</tr>
+							<tr class="hover:bg-staff-gray-50/70">
+								<td class="px-6 py-4 font-semibold text-staff-gray-900">Sofia Martinez</td>
+								<td class="px-6 py-4 text-staff-gray-700">Tablet Samsung S6</td>
+								<td class="px-6 py-4"><span class="rounded-full bg-staff-yellow-50 px-3 py-1 text-xs font-bold text-staff-gray-900" style="border:1px solid #EAB308;">2 dias</span></td>
+								<td class="px-6 py-4">
+									<button class="open-modal rounded-lg bg-staff-teal px-3 py-2 text-xs font-semibold text-white shadow-teal transition-colors hover:bg-staff-teal-dark" type="button" data-usuario="Sofia Martinez" data-material="Tablet Samsung S6">Registrar Devolucion</button>
+								</td>
+							</tr>
+							<tr class="hover:bg-staff-gray-50/70">
+								<td class="px-6 py-4 font-semibold text-staff-gray-900">Javier Mendez Soler</td>
+								<td class="px-6 py-4 text-staff-gray-700">Proyector Epson EB-X49</td>
+								<td class="px-6 py-4"><span class="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-700" style="border:1px solid #f87171;">5 dias</span></td>
+								<td class="px-6 py-4">
+									<button class="open-modal rounded-lg bg-staff-teal px-3 py-2 text-xs font-semibold text-white shadow-teal transition-colors hover:bg-staff-teal-dark" type="button" data-usuario="Javier Mendez Soler" data-material="Proyector Epson EB-X49">Registrar Devolucion</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<p class="mt-6 rounded-xl border border-staff-yellow-dark bg-staff-yellow-50 px-5 py-4 text-sm font-medium text-staff-gray-900">
+				Las incidencias registradas aqui apareceran automaticamente en el Panel de Sanciones del Administrador.
+			</p>
+		</main>
+	</div>
+
+	<dialog id="modal-devolucion" class="dialog-backdrop">
+		<form id="form-devolucion" method="dialog" class="p-6">
+			<h3 class="text-lg font-bold text-staff-gray-900">Registro de Devolucion</h3>
+			<p id="modal-contexto" class="mt-1 text-sm text-staff-gray-500">-</p>
+
+			<div class="mt-5 grid gap-4">
+				<label class="grid gap-2 text-sm font-semibold text-staff-gray-800" for="estado-equipo">
+					Selector de Estado
+					<select id="estado-equipo" class="rounded-lg border border-staff-gray-200 px-3 py-2 text-sm text-staff-gray-900 outline-none focus:border-staff-teal focus:ring-2 focus:ring-staff-teal-100">
+						<option value="perfecto">En perfecto estado</option>
+						<option value="danado">Danado</option>
+						<option value="incompleto">Incompleto</option>
+					</select>
+				</label>
+
+				<label class="flex items-center gap-2 rounded-lg border border-staff-gray-200 bg-staff-gray-50 px-3 py-3 text-sm font-medium text-staff-gray-800" for="reportar-incidencia">
+					<input id="reportar-incidencia" type="checkbox" class="h-4 w-4 rounded border-staff-gray-300 text-staff-teal focus:ring-staff-teal" />
+					Reportar Incidencia al Administrador
+				</label>
+
+				<label class="grid gap-2 text-sm font-semibold text-staff-gray-800" for="observaciones-staff">
+					Observaciones del Staff
+					<textarea id="observaciones-staff" rows="4" placeholder="Describe el estado del equipo y cualquier detalle relevante." class="rounded-lg border border-staff-gray-200 px-3 py-2 text-sm text-staff-gray-900 outline-none focus:border-staff-teal focus:ring-2 focus:ring-staff-teal-100"></textarea>
+				</label>
+			</div>
+
+			<div class="mt-6 flex justify-end gap-2">
+				<button type="button" id="cerrar-modal" class="rounded-lg border border-staff-gray-200 bg-white px-4 py-2 text-sm font-semibold text-staff-gray-700 transition-colors hover:bg-staff-gray-50">Cancelar</button>
+				<button type="submit" class="rounded-lg bg-staff-teal px-4 py-2 text-sm font-semibold text-white shadow-teal transition-colors hover:bg-staff-teal-dark">Finalizar Proceso</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script type="module">
+		import { auth } from '../../compartido/nucleo/auth.js';
+		import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
+
+		auth.requireAuth(['personal_gestion', 'admin']);
+		mountSidebar({ activePage: 'dashboard', basePath: '../..' });
+	</script>
+
+	<script>
+		const tabEntregas = document.getElementById('tab-entregas');
+		const tabDevoluciones = document.getElementById('tab-devoluciones');
+		const panelEntregas = document.getElementById('panel-entregas');
+		const panelDevoluciones = document.getElementById('panel-devoluciones');
+
+		function activarTab(tab) {
+			const entregasActiva = tab === 'entregas';
+			tabEntregas.setAttribute('aria-selected', String(entregasActiva));
+			tabDevoluciones.setAttribute('aria-selected', String(!entregasActiva));
+			panelEntregas.classList.toggle('hidden', !entregasActiva);
+			panelDevoluciones.classList.toggle('hidden', entregasActiva);
+		}
+
+		tabEntregas.addEventListener('click', () => activarTab('entregas'));
+		tabDevoluciones.addEventListener('click', () => activarTab('devoluciones'));
+
+		const modal = document.getElementById('modal-devolucion');
+		const contexto = document.getElementById('modal-contexto');
+		const estadoEquipo = document.getElementById('estado-equipo');
+		const reportarIncidencia = document.getElementById('reportar-incidencia');
+		const cerrarModal = document.getElementById('cerrar-modal');
+		const formDevolucion = document.getElementById('form-devolucion');
+		const abrirModalBtns = document.querySelectorAll('.open-modal');
+		const entregasBody = document.getElementById('entregas-body');
+		const devolucionesBody = document.getElementById('devoluciones-body');
+		const procesoActivo = document.getElementById('proceso-activo');
+		let filaDevolucionActiva = null;
+
+		function pintarFilaVacia(tbody, mensaje) {
+			if (!tbody || tbody.querySelector('tr')) return;
+			tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-sm font-semibold text-staff-gray-500">' + mensaje + '</td></tr>';
+		}
+
+		function syncIncidencia() {
+			reportarIncidencia.checked = estadoEquipo.value !== 'perfecto';
+		}
+
+		document.querySelectorAll('.confirm-entrega').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const fila = btn.closest('tr');
+				if (!fila) return;
+				fila.remove();
+				pintarFilaVacia(entregasBody, 'No hay entregas pendientes por confirmar.');
+			});
+		});
+
+		abrirModalBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const usuario = btn.dataset.usuario;
+				const material = btn.dataset.material;
+				filaDevolucionActiva = btn.closest('tr');
+				if (filaDevolucionActiva) {
+					devolucionesBody.querySelectorAll('tr').forEach((row) => row.classList.remove('fila-procesando'));
+					filaDevolucionActiva.classList.add('fila-procesando');
+				}
+				panelDevoluciones.classList.add('panel-procesando');
+				procesoActivo.classList.remove('hidden');
+				contexto.textContent = usuario + ' - ' + material;
+				estadoEquipo.value = 'perfecto';
+				reportarIncidencia.checked = false;
+				document.getElementById('observaciones-staff').value = '';
+				modal.showModal();
+			});
+		});
+
+		estadoEquipo.addEventListener('change', syncIncidencia);
+
+		cerrarModal.addEventListener('click', () => {
+			modal.close();
+			panelDevoluciones.classList.remove('panel-procesando');
+			procesoActivo.classList.add('hidden');
+			if (filaDevolucionActiva) filaDevolucionActiva.classList.remove('fila-procesando');
+			filaDevolucionActiva = null;
+		});
+
+		formDevolucion.addEventListener('submit', (event) => {
+			event.preventDefault();
+			if (filaDevolucionActiva) {
+				filaDevolucionActiva.remove();
+			}
+			pintarFilaVacia(devolucionesBody, 'No hay devoluciones pendientes por registrar.');
+			panelDevoluciones.classList.remove('panel-procesando');
+			procesoActivo.classList.add('hidden');
+			filaDevolucionActiva = null;
+			modal.close();
+		});
+
+		const topbar = document.querySelector('.topbar-scroll');
+		const sentinel = document.getElementById('topbar-sentinel');
+
+		if (topbar && sentinel && 'IntersectionObserver' in window) {
+			const topbarObserver = new IntersectionObserver(([entry]) => {
+				topbar.classList.toggle('scrolled', !entry.isIntersecting);
+			});
+
+			topbarObserver.observe(sentinel);
+		}
+	</script>
+</body>
+</html>
