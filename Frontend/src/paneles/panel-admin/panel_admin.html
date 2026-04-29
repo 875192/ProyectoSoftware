@@ -96,10 +96,10 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button class="rounded-lg border border-corp-border bg-white px-3 py-2 text-sm font-semibold text-corp-blue transition-colors hover:bg-corp-light">Usuarios</button>
-            <button class="rounded-lg border border-corp-border bg-white px-3 py-2 text-sm font-semibold text-corp-blue transition-colors hover:bg-corp-light">Sanciones</button>
-            <button class="rounded-lg border border-corp-border bg-white px-3 py-2 text-sm font-semibold text-corp-blue transition-colors hover:bg-corp-light">Auditoría</button>
-            <button class="rounded-lg border border-corp-border bg-white px-3 py-2 text-sm font-semibold text-corp-blue transition-colors hover:bg-corp-light">Configuración</button>
+            <a href="./panel_admin.html" class="rounded-lg border border-white bg-white px-3 py-2 text-sm font-semibold transition-colors hover:bg-gray-100" style="color: #0f766e;">Inicio</a>
+            <a href="../../usuarios/administracion/gestion_usuarios.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Usuarios</a>
+            <a href="../../sanciones/gestion-sanciones/gestion_sanciones.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Sanciones</a>
+            <a href="../../mantenimiento/mantenimiento.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Ajustes</a>
           </div>
         </div>
       </header>
@@ -219,22 +219,22 @@
             <h2 class="text-lg font-bold text-corp-navy">Reglas del Sistema</h2>
           </div>
 
-          <div class="mt-5 space-y-4">
+            <div class="mt-5 space-y-4">
             <div class="border-b border-corp-border/60 pb-4">
               <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Tiempo Máx. Préstamo</p>
-              <p class="mt-1 text-2xl font-bold text-corp-blue">72 horas</p>
+              <p class="mt-1 text-2xl font-bold text-corp-blue"><span id="regla-duracion-maxima">72 horas</span></p>
             </div>
             <div class="border-b border-corp-border/60 pb-4">
               <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Sanción por Retraso</p>
-              <p class="mt-1 text-2xl font-bold text-corp-blue">5 días</p>
+              <p class="mt-1 text-2xl font-bold text-corp-blue"><span id="regla-dias-sancion">5 días</span></p>
             </div>
             <div class="border-b border-corp-border/60 pb-4">
               <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Préstamos Simultáneos</p>
-              <p class="mt-1 text-2xl font-bold text-corp-blue">4 equipos</p>
+              <p class="mt-1 text-2xl font-bold text-corp-blue"><span id="regla-max-equipos">4 equipos</span></p>
             </div>
             <div>
               <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Notificación Previa</p>
-              <p class="mt-1 text-2xl font-bold text-corp-blue">24 horas</p>
+              <p class="mt-1 text-2xl font-bold text-corp-blue"><span id="regla-notificacion-previa">24 horas</span></p>
             </div>
           </div>
         </aside>
@@ -390,6 +390,42 @@
 
       topbarObserver.observe(sentinel);
     }
+  </script>
+
+  <script>
+    // Lectura de reglas desde localStorage y render en panel
+    (function () {
+      const key = 'unigear_rules';
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return;
+        const rules = JSON.parse(raw);
+
+        const duracionEl = document.getElementById('regla-duracion-maxima');
+        const diasSancionEl = document.getElementById('regla-dias-sancion');
+        const maxEquiposEl = document.getElementById('regla-max-equipos');
+        const notPrevEl = document.getElementById('regla-notificacion-previa');
+
+        if (rules.duracionMaxima != null && duracionEl) {
+          // mostrar en días
+          duracionEl.textContent = `${rules.duracionMaxima} días`;
+        }
+
+        if (rules.diasPorRetraso != null && diasSancionEl) {
+          diasSancionEl.textContent = `${rules.diasPorRetraso} días`;
+        }
+
+        if (rules.maxEquipos != null && maxEquiposEl) {
+          maxEquiposEl.textContent = `${rules.maxEquipos} equipos`;
+        }
+
+        if (rules.margenCortesia != null && notPrevEl) {
+          notPrevEl.textContent = rules.margenCortesia;
+        }
+      } catch (e) {
+        /* silent */
+      }
+    })();
   </script>
 </body>
 </html>
