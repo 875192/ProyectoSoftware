@@ -116,11 +116,11 @@ async function seed() {
     console.log('✓ Categorías sembradas:', Object.keys(catIds).length);
 
     // ================================================================
-    // MODELOS DE MATERIAL (los 22 del listado del frontend)
+    // MODELOS DE MATERIAL
     // ================================================================
     const modelos = [
-      // Informática
-      { codigo_modelo: 'PORT-014', nombre: 'MacBook Pro 14"',          categoria: 'Informática',  icono: 'laptop',     plazo: 7,  popularidad: 142,
+      // Los materiales se gestionan desde la interfaz de staff
+      /*{ codigo_modelo: 'PORT-014', nombre: 'MacBook Pro 14"',          categoria: 'Informática',  icono: 'laptop',     plazo: 7,  popularidad: 142,
         descripcion: 'Equipo Apple M3 Pro con 18 GB de RAM y 512 GB de almacenamiento. Ideal para edición de vídeo, desarrollo y trabajos académicos exigentes. Hasta 18 horas de autonomía para sesiones largas en biblioteca.',
         condiciones: ['Cargador MagSafe USB-C incluido', 'Adaptador USB-C → HDMI bajo petición', 'Recogida en conserjería de tu facultad', 'No se permite cambio de SO'],
         unidades: unidadesPara({ codigo_modelo: 'PORT-014' }, 8, 2) },
@@ -215,7 +215,7 @@ async function seed() {
       { codigo_modelo: 'DEP-014', nombre: 'Set de pesas rusas',        categoria: 'Deporte',      icono: 'weights',    plazo: 7,  popularidad: 21,
         descripcion: 'Juego de kettlebells 8 kg + 12 kg + 16 kg. Mango ergonómico, ideal para entrenamiento funcional.',
         condiciones: ['Devolver limpias'],
-        unidades: unidadesPara({ codigo_modelo: 'DEP-014' }, 2, 1) },
+        unidades: unidadesPara({ codigo_modelo: 'DEP-014' }, 2, 1) },*/
     ];
 
     const modeloIds = {};       // codigo_modelo → id
@@ -266,10 +266,9 @@ async function seed() {
     console.log(`✓ Modelos sembrados: ${modelos.length} (${totalUnidades} unidades físicas)`);
 
     // ================================================================
-    // SOLICITUDES Y PRÉSTAMOS DE EJEMPLO
+    // SOLICITUDES Y PRÉSTAMOS DE EJEMPLO (desactivados — sin materiales seed)
     // ================================================================
-    // Estudiante Ana → préstamo activo de MacBook (PORT-014-01) y Cámara Sony (VID-005-01)
-    const sol1 = await client.query(`
+    /*const sol1 = await client.query(`
       INSERT INTO solicitudes (usuario_id, material_id, fecha_inicio, fecha_fin, estado, motivo, fecha_resolucion, revisado_por)
       VALUES ($1, $2, '2026-04-22', '2026-04-29', 'aprobada', 'Trabajo de fin de grado: edición de vídeo del proyecto', NOW(), $3)
       RETURNING id
@@ -309,88 +308,8 @@ async function seed() {
       VALUES ($1, $2, $3, '2026-04-15 11:00+02', '2026-04-22 18:00+02', 'retrasado', $4)
     `, [sol3.rows[0].id, userIds['estudiante'], unidadIdsPorModelo['HER-007'][0], userIds['personal_gestion']]);
 
-    console.log('✓ Solicitudes y préstamos de ejemplo sembrados');
-
-    // ================================================================
-    // SANCIÓN Y PAGO DE EJEMPLO
-    // ================================================================
-    // Sanción por retraso en taladro
-    const sancion = await client.query(`
-      INSERT INTO sanciones (usuario_id, prestamo_id, tipo, motivo, importe_centimos, creada_por)
-      VALUES ($1,
-              (SELECT id FROM prestamos WHERE solicitud_id = $2),
-              'retraso', 'Devolución con retraso de 3 días — Taladro Bosch', 1250, $3)
-      RETURNING id
-    `, [userIds['estudiante'], sol3.rows[0].id, userIds['personal_gestion']]);
-
-    // Pago histórico ya liquidado (otro retraso anterior)
-    const conceptoSub = `Préstamo #${sol3.rows[0].id} · Taladro Bosch`;
-    await client.query(`
-      INSERT INTO pagos (usuario_id, sancion_id, concepto, concepto_sub, metodo, metodo_detalle, importe_centimos, estado, fecha_pago, stripe_payment_intent_id)
-      VALUES ($1, $2, 'Sanción por retraso', $3,
-              'tarjeta', 'Visa ····4242', 1250, 'pagado', NOW(), 'pi_demo_seed_001')
-    `, [userIds['estudiante'], sancion.rows[0].id, conceptoSub]);
-
-    console.log('✓ Sanción y pago de ejemplo sembrados');
-
-    // ================================================================
-    // NOTIFICACIONES
-    // ================================================================
-    const notificaciones = [
-      {
-        usuario_id: userIds['estudiante'],
-        tipo: 'solicitud_aprobada',
-        titulo: 'Solicitud aprobada',
-        texto: 'Tu solicitud para el equipo "MacBook Pro 14\\"" ha sido aprobada. Pasa a recogerlo por conserjería.',
-        leida: false,
-        entidad_tipo: 'solicitud',
-        entidad_id: sol1.rows[0].id,
-        accion_url: '/solicitudes-prestamo/mis-solicitudes/mis_solicitudes.html',
-      },
-      {
-        usuario_id: userIds['estudiante'],
-        tipo: 'recordatorio_devolucion',
-        titulo: 'Recordatorio de devolución',
-        texto: 'Recuerda que debes devolver "Cámara Sony A7 III" mañana antes de las 18:00. Si necesitas más tiempo, solicita una prórroga.',
-        leida: false,
-        entidad_tipo: 'prestamo',
-      },
-      {
-        usuario_id: userIds['estudiante'],
-        tipo: 'sancion',
-        titulo: 'Nueva sanción por retraso',
-        texto: 'Se ha aplicado una sanción de 12,50 € por la devolución con retraso de "Taladro Bosch". Puedes pagarla desde tus sanciones.',
-        leida: false,
-        entidad_tipo: 'sancion',
-        entidad_id: sancion.rows[0].id,
-        accion_url: '/sanciones/mis-sanciones/mis_sanciones.html',
-      },
-      {
-        usuario_id: userIds['estudiante'],
-        tipo: 'general',
-        titulo: 'Mantenimiento programado',
-        texto: 'El sistema estará fuera de servicio este viernes de 22:00 a 24:00 por tareas de mantenimiento.',
-        leida: true,
-        entidad_tipo: null,
-      },
-      {
-        usuario_id: userIds['profesor'],
-        tipo: 'solicitud_creada',
-        titulo: 'Solicitud registrada',
-        texto: 'Tu solicitud para "Proyector Epson HD" ha sido registrada y está pendiente de revisión.',
-        leida: false,
-        entidad_tipo: 'solicitud',
-      },
-    ];
-
-    for (const n of notificaciones) {
-      await client.query(`
-        INSERT INTO notificaciones (usuario_id, tipo, titulo, texto, canal, estado, leida, leida_at, entidad_tipo, entidad_id, accion_url, fecha_envio)
-        VALUES ($1, $2::tipo_notificacion, $3, $4, 'in_app'::canal_notificacion, 'enviada'::estado_notificacion,
-                $5, CASE WHEN $5 THEN NOW() ELSE NULL END, $6, $7, $8, NOW())
-      `, [n.usuario_id, n.tipo, n.titulo, n.texto, n.leida, n.entidad_tipo, n.entidad_id || null, n.accion_url || null]);
-    }
-    console.log('✓ Notificaciones sembradas:', notificaciones.length);
+    */
+    console.log('✓ Solicitudes, préstamos y sanciones de ejemplo omitidos (sin materiales seed)');
 
     await client.query('COMMIT');
     console.log('\n✅ Base de datos sembrada correctamente.\n');

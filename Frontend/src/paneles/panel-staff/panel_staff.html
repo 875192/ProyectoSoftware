@@ -1,473 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UniGear - Panel Staff</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'staff-teal': '#0f766e',
-            'staff-teal-dark': '#115e59',
-            'staff-teal-deep': '#0a4642',
-            'staff-teal-100': '#ccfbf1',
-            'staff-teal-50': '#f0fdfa',
-            'staff-yellow': '#FACC15',
-            'staff-yellow-dark': '#EAB308',
-            'staff-yellow-50': '#FEFCE8',
-            'staff-gray-50': '#F9FAFB',
-            'staff-gray-100': '#F3F4F6',
-            'staff-gray-200': '#E5E7EB',
-            'staff-gray-500': '#6B7280',
-            'staff-gray-700': '#374151',
-            'staff-gray-800': '#1F2937',
-            'staff-gray-900': '#111827'
-          },
-          fontFamily: {
-            display: ['Bricolage Grotesque', 'sans-serif'],
-            body: ['DM Sans', 'sans-serif']
-          },
-          boxShadow: {
-            soft: '0 10px 25px rgba(0, 0, 0, 0.06)',
-            teal: '0 12px 28px rgba(15, 118, 110, 0.28)'
-          }
-        }
-      }
-    };
-  </script>
-  <style>
-    html, body {
-      font-family: 'DM Sans', sans-serif;
-      background: #F8FAFC;
-      color: #1F2937;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    h1, h2, h3, h4 {
-      font-family: 'Bricolage Grotesque', sans-serif;
-    }
-
-    .topbar-scroll {
-      transition: border-color 220ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 220ms cubic-bezier(0.25, 1, 0.5, 1), transform 220ms cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .topbar-scroll.scrolled {
-      border-color: #E5E7EB;
-      box-shadow: 0 8px 20px rgba(15, 118, 110, 0.18);
-      transform: translateY(-1px);
-    }
-
-    .card-hover {
-      transition: transform 220ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 220ms cubic-bezier(0.25, 1, 0.5, 1), border-color 220ms cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .card-hover:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(15, 118, 110, 0.2);
-      border-color: #ccfbf1;
-    }
-
-    .stat-counter {
-      font-variant-numeric: tabular-nums;
-    }
-
-    .chip-entrada {
-      background: #f0fdfa;
-      color: #115e59;
-      border: 1px solid #ccfbf1;
-    }
-
-    .chip-salida {
-      background: #fefce8;
-      color: #1F2937;
-      border: 1px solid #EAB308;
-    }
-
-    .chip-alerta {
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #f87171;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UniGear — Panel de Gestión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
+<link rel="stylesheet" href="panel_staff.css">
 </head>
 <body>
-  <div class="flex min-h-screen">
-    <aside class="hidden lg:block w-64 shrink-0"></aside>
 
-    <main class="flex-1 p-4 sm:p-6 lg:p-8">
-      <div id="topbar-sentinel" class="h-px"></div>
+<div class="ripple-background" aria-hidden="true">
+  <div class="circle xxlarge shade1"></div>
+  <div class="circle xlarge shade2"></div>
+  <div class="circle large shade3"></div>
+  <div class="circle medium shade4"></div>
+  <div class="circle small shade5"></div>
+</div>
 
-      <header class="topbar-scroll sticky top-0 z-20 mb-6 rounded-2xl border border-transparent bg-staff-teal px-5 py-4 shadow-teal">
-        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">Paneles / Personal de Gestion</p>
-            <h1 class="mt-1 text-xl font-bold tracking-tight text-white">Inicio de Staff</h1>
-            <p class="mt-1 text-sm text-white/80">Control diario de solicitudes, entregas y devoluciones</p>
-          </div>
-
-          <nav class="flex flex-wrap items-center gap-2">
-            <a href="./panel_staff.html" class="rounded-lg border border-white bg-white px-3 py-2 text-sm font-semibold text-staff-teal transition-colors hover:bg-staff-gray-100">Inicio</a>
-            <a href="../../prestamos/gestion-prestamos/gestion_prestamos.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Solicitudes</a>
-            <a href="../../inventario/listado-inventario/listado_inventario.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Inventario</a>
-            <a href="../../devoluciones/registrar-devolucion/devolucion.html" class="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">Operaciones</a>
-          </nav>
-        </div>
-      </header>
-
-      <section class="mb-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <article class="card-hover rounded-xl border border-staff-gray-200 bg-white p-6 shadow-soft">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-wider text-staff-gray-500">Solicitudes Nuevas</p>
-              <p class="stat-counter mt-2 text-3xl font-bold text-staff-gray-900" data-count="5">0</p>
-            </div>
-            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-staff-teal-50 text-staff-teal">
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V18a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-          </div>
-          <p class="mt-2 text-xs text-staff-gray-500">Pendientes de revisar ahora</p>
-        </article>
-
-        <article class="card-hover rounded-xl border border-staff-gray-200 bg-white p-6 shadow-soft">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-wider text-staff-gray-500">Entregas para Hoy</p>
-              <p class="stat-counter mt-2 text-3xl font-bold text-staff-gray-900" data-count="3">0</p>
-            </div>
-            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-staff-teal-50 text-staff-teal-dark">
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10m-11 8h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <p class="mt-2 text-xs text-staff-gray-500">Equipos programados para recogida</p>
-        </article>
-
-        <article class="card-hover rounded-xl border border-staff-gray-200 bg-white p-6 shadow-soft">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-wider text-staff-gray-500">Devoluciones Pendientes</p>
-              <p class="stat-counter mt-2 text-3xl font-bold text-staff-gray-900" data-count="4">0</p>
-            </div>
-            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-staff-yellow-50 text-staff-yellow-dark">
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h5M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z" />
-              </svg>
-            </div>
-          </div>
-          <p class="mt-2 text-xs text-staff-gray-500">Equipos que deberian volver hoy</p>
-        </article>
-
-        <article class="card-hover rounded-xl border border-staff-gray-200 bg-white p-6 shadow-soft">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-wider text-staff-gray-500">Material en Alerta</p>
-              <p class="stat-counter mt-2 text-3xl font-bold text-staff-gray-900" data-count="2">0</p>
-            </div>
-            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-700">
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-          <p class="mt-2 text-xs text-staff-gray-500">Equipos fuera de plazo o bloqueados</p>
-        </article>
-      </section>
-
-      <section class="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <article class="overflow-hidden rounded-xl border border-staff-gray-200 bg-white shadow-soft">
-          <div class="border-b border-staff-gray-200 bg-staff-gray-50 px-6 py-5">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-staff-gray-500">Acciones Inmediatas</p>
-            <h2 class="mt-1 text-lg font-bold text-staff-gray-900">Bandeja de Solicitudes Recientes</h2>
-            <p class="mt-1 text-sm text-staff-gray-500">Ultimas 3 peticiones registradas</p>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-              <thead>
-                <tr class="border-b border-staff-gray-200 text-left text-xs uppercase tracking-wider text-staff-gray-500">
-                  <th class="px-6 py-3 font-bold">Usuario</th>
-                  <th class="px-6 py-3 font-bold">Material</th>
-                  <th class="px-6 py-3 font-bold">Fecha</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-staff-gray-200">
-                <tr class="hover:bg-staff-gray-50/80">
-                  <td class="px-6 py-4 font-semibold text-staff-gray-900">Elena Prieto</td>
-                  <td class="px-6 py-4 text-staff-gray-700">Portatil Dell Latitude 5420</td>
-                  <td class="px-6 py-4 text-staff-gray-700">29/04/2026 - 08:35</td>
-                </tr>
-                <tr class="hover:bg-staff-gray-50/80">
-                  <td class="px-6 py-4 font-semibold text-staff-gray-900">Pablo Rios</td>
-                  <td class="px-6 py-4 text-staff-gray-700">Camara Canon EOS M50</td>
-                  <td class="px-6 py-4 text-staff-gray-700">29/04/2026 - 08:12</td>
-                </tr>
-                <tr class="hover:bg-staff-gray-50/80">
-                  <td class="px-6 py-4 font-semibold text-staff-gray-900">Marta Nunez</td>
-                  <td class="px-6 py-4 text-staff-gray-700">Kit de microfonos de aula</td>
-                  <td class="px-6 py-4 text-staff-gray-700">28/04/2026 - 18:46</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <aside class="rounded-xl border border-staff-gray-200 bg-white p-6 shadow-soft">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-staff-gray-500">Flujo de Hoy</p>
-              <h2 class="mt-1 text-lg font-bold text-staff-gray-900">Proximas Salidas y Entradas</h2>
-            </div>
-            <span class="rounded-full border border-staff-gray-200 bg-staff-gray-50 px-3 py-1 text-xs font-semibold text-staff-gray-700">Turno manana</span>
-          </div>
-
-          <div class="mt-5 space-y-3">
-            <article class="rounded-lg border border-staff-gray-200 bg-staff-teal-50 p-4">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-semibold text-staff-gray-900">09:10 - Laura Campos</p>
-                  <p class="mt-1 text-xs text-staff-gray-700">Recoge: Proyector Epson EB-X49</p>
-                </div>
-                <span class="chip-salida rounded-full px-2.5 py-1 text-xs font-bold">Salida</span>
-              </div>
-            </article>
-
-            <article class="rounded-lg border border-staff-gray-200 bg-white p-4">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-semibold text-staff-gray-900">10:00 - Diego Moral</p>
-                  <p class="mt-1 text-xs text-staff-gray-700">Entrega: Camara Sony ZV-E10</p>
-                </div>
-                <span class="chip-entrada rounded-full px-2.5 py-1 text-xs font-bold">Entrada</span>
-              </div>
-            </article>
-
-            <article class="rounded-lg border border-red-200 bg-red-50 p-4">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-semibold text-staff-gray-900">11:20 - Sofia Martinez</p>
-                  <p class="mt-1 text-xs text-staff-gray-700">Pendiente: Tablet Samsung S6 (fuera de plazo)</p>
-                </div>
-                <span class="chip-alerta rounded-full px-2.5 py-1 text-xs font-bold">Alerta</span>
-              </div>
-            </article>
-          </div>
-        </aside>
-      </section>
-
-      <section class="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <article class="rounded-xl border border-staff-gray-200 bg-white p-6 shadow-soft">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-staff-gray-500">Buscador Rapido de Inventario</p>
-            <h2 class="mt-1 text-lg font-bold text-staff-gray-900">Consulta instantanea de disponibilidad</h2>
-            <p class="mt-1 text-sm text-staff-gray-500">Escribe un nombre o codigo para validar si el equipo esta disponible o prestado</p>
-          </div>
-
-          <div class="mt-5">
-            <label for="busqueda-material" class="mb-2 block text-sm font-semibold text-staff-gray-800">Buscar material</label>
-            <div class="flex flex-col gap-3 sm:flex-row">
-              <input id="busqueda-material" type="search" placeholder="Ej: ThinkPad T14, CAM-019, Epson..." class="w-full rounded-lg border border-staff-gray-200 px-4 py-3 text-sm text-staff-gray-800 outline-none transition-colors focus:border-staff-teal focus:ring-2 focus:ring-staff-teal-100" />
-              <button id="btn-limpiar-busqueda" class="rounded-lg border border-staff-teal px-4 py-3 text-sm font-semibold text-staff-teal transition-colors hover:bg-staff-teal-50">Limpiar</button>
-            </div>
-          </div>
-
-          <div id="resultado-busqueda" class="mt-5 space-y-2"></div>
-        </article>
-
-        <article class="rounded-xl border border-staff-gray-200 bg-white p-6 shadow-soft">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-staff-gray-500">Estado del Almacen</p>
-              <h2 class="mt-1 text-lg font-bold text-staff-gray-900">Disponibilidad por categoria</h2>
-            </div>
-            <span class="rounded-full bg-staff-teal-50 px-3 py-1 text-xs font-semibold text-staff-teal-dark">Actualizado 08:45</span>
-          </div>
-
-          <div class="mt-5 space-y-5">
-            <div>
-              <div class="mb-2 flex items-center justify-between text-sm">
-                <p class="font-semibold text-staff-gray-800">Portatiles</p>
-                <p class="font-semibold text-staff-gray-700">10/12 disponibles</p>
-              </div>
-              <div class="h-2 rounded-full bg-staff-gray-100">
-                <div class="h-2 rounded-full bg-staff-teal" style="width: 83%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="mb-2 flex items-center justify-between text-sm">
-                <p class="font-semibold text-staff-gray-800">Camaras</p>
-                <p class="font-semibold text-staff-gray-700">2/5 disponibles</p>
-              </div>
-              <div class="h-2 rounded-full bg-staff-gray-100">
-                <div class="h-2 rounded-full bg-staff-yellow-dark" style="width: 40%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="mb-2 flex items-center justify-between text-sm">
-                <p class="font-semibold text-staff-gray-800">Microfonos</p>
-                <p class="font-semibold text-staff-gray-700">6/8 disponibles</p>
-              </div>
-              <div class="h-2 rounded-full bg-staff-gray-100">
-                <div class="h-2 rounded-full bg-staff-teal-dark" style="width: 75%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="mb-2 flex items-center justify-between text-sm">
-                <p class="font-semibold text-staff-gray-800">Tablets</p>
-                <p class="font-semibold text-staff-gray-700">1/4 disponibles</p>
-              </div>
-              <div class="h-2 rounded-full bg-staff-gray-100">
-                <div class="h-2 rounded-full bg-red-500" style="width: 25%"></div>
-              </div>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <footer class="rounded-xl border border-staff-yellow-dark bg-staff-yellow-50 px-5 py-4 text-sm text-staff-gray-800">
-        Cualquier incidencia detectada en la devolucion debe ser reportada para revision del Administrador.
-      </footer>
-    </main>
+<main class="main">
+  <div id="topbar-sentinel"></div>
+  <div class="topbar" id="topbar">
+    <div>
+      <div class="breadcrumb">Páginas <span class="sep">/</span> Dashboard</div>
+      <div class="page-title">Panel de Gestión</div>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-action" id="btnNuevaSancion">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <span>Nueva sanción</span>
+      </button>
+      <a class="tb-action" href="../../usuarios/perfil/perfil_staff.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>
+        <span>Mi cuenta</span>
+      </a>
+    </div>
   </div>
 
-  <script type="module">
-    import { auth } from '../../compartido/nucleo/auth.js';
-    import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
+  <!-- Stat cards -->
+  <section class="stats stagger">
+    <a class="card stat-card" href="../../solicitudes-prestamo/gestion-solicitudes/gestion_solicitudes.html?estado=pendiente">
+      <div>
+        <div class="stat-label">Solicitudes pendientes</div>
+        <div class="stat-value"><span id="statPendientes">—</span></div>
+      </div>
+      <div class="stat-icon yellow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </div>
+    </a>
+    <a class="card stat-card" href="../../prestamos/gestion-prestamos/gestion_prestamos.html">
+      <div>
+        <div class="stat-label">Préstamos activos</div>
+        <div class="stat-value"><span id="statActivos">—</span></div>
+      </div>
+      <div class="stat-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10a4 4 0 014-4h8a4 4 0 014 4v10H4V10z"/><path d="M9 6V5a3 3 0 016 0v1"/><line x1="4" y1="15" x2="20" y2="15"/></svg>
+      </div>
+    </a>
+    <a class="card stat-card" href="../../prestamos/gestion-prestamos/gestion_prestamos.html">
+      <div>
+        <div class="stat-label">Devoluciones hoy</div>
+        <div class="stat-value"><span id="statDevoluciones">—</span></div>
+      </div>
+      <div class="stat-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+      </div>
+    </a>
+    <a class="card stat-card" href="../../solicitudes-prestamo/gestion-solicitudes/gestion_solicitudes.html?estado=en_espera">
+      <div>
+        <div class="stat-label">En lista de espera</div>
+        <div class="stat-value"><span id="statEspera">—</span></div>
+      </div>
+      <div class="stat-icon slate">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+    </a>
+  </section>
 
-    auth.requireAuth(['personal_gestion', 'admin']);
-    mountSidebar({ activePage: 'dashboard', basePath: '../..' });
-  </script>
+  <!-- Main grid -->
+  <div class="main-grid">
+    <!-- Tabla solicitudes recientes -->
+    <div class="card table-card">
+      <div class="table-head">
+        <div class="table-title">Solicitudes recientes</div>
+        <a class="table-link" href="../../solicitudes-prestamo/gestion-solicitudes/gestion_solicitudes.html">Ver todas <span class="arrow">→</span></a>
+      </div>
+      <div id="tablaSolicitudes">
+        <div class="empty-state">Cargando...</div>
+      </div>
+    </div>
 
-  <script>
-    function animateCount(el) {
-      const target = Number(el.dataset.count || 0);
-      const duration = 700;
-      const start = performance.now();
+    <!-- Entregas pendientes -->
+    <div class="card entregas-card">
+      <div class="entregas-head">
+        <div class="entregas-title">Entregas pendientes</div>
+        <a class="table-link" href="../../prestamos/gestion-prestamos/gestion_prestamos.html">Gestionar <span class="arrow">→</span></a>
+      </div>
+      <div id="listaEntregas">
+        <div class="empty-state">Cargando...</div>
+      </div>
+    </div>
+  </div>
+</main>
 
-      const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+<!-- Modal nueva sanción -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitleEl">
+  <div class="modal">
+    <div class="modal-title" id="modalTitleEl">Nueva sanción</div>
+    <form id="formSancion" novalidate>
+      <div class="field">
+        <label for="sUsuario">Usuario *</label>
+        <select id="sUsuario" required>
+          <option value="">Cargando usuarios…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="sTipo">Tipo *</label>
+        <select id="sTipo" required>
+          <option value="retraso">Retraso</option>
+          <option value="danio">Daño en material</option>
+          <option value="reposicion">Reposición</option>
+          <option value="administrativa">Administrativa</option>
+          <option value="otra">Otra</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="sMotivo">Motivo *</label>
+        <textarea id="sMotivo" placeholder="Describe el motivo de la sanción…" required></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="sImporte">Importe (€) *</label>
+          <input type="number" id="sImporte" min="0.01" step="0.01" placeholder="0.00" required />
+        </div>
+        <div class="field">
+          <label for="sPrestamo">ID Préstamo (opcional)</label>
+          <input type="number" id="sPrestamo" min="1" placeholder="—" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="sFechaInicio">Fecha inicio *</label>
+          <input type="date" id="sFechaInicio" required />
+        </div>
+        <div class="field">
+          <label for="sFechaFin">Fecha fin (opcional)</label>
+          <input type="date" id="sFechaFin" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="btnCancelar">Cancelar</button>
+        <button type="submit" class="btn-primary" id="btnGuardar">Crear sanción</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-      const step = (now) => {
-        const progress = Math.min(1, (now - start) / duration);
-        el.textContent = Math.round(target * easeOutQuart(progress)).toLocaleString('es-ES');
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        }
-      };
-
-      requestAnimationFrame(step);
-    }
-
-    const counters = document.querySelectorAll('[data-count]');
-
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            animateCount(entry.target);
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.35 });
-
-      counters.forEach((counter) => observer.observe(counter));
-    } else {
-      counters.forEach(animateCount);
-    }
-
-    const topbar = document.querySelector('.topbar-scroll');
-    const sentinel = document.getElementById('topbar-sentinel');
-
-    if (topbar && sentinel && 'IntersectionObserver' in window) {
-      const topbarObserver = new IntersectionObserver(([entry]) => {
-        topbar.classList.toggle('scrolled', !entry.isIntersecting);
-      });
-
-      topbarObserver.observe(sentinel);
-    }
-  </script>
-
-  <script>
-    (function () {
-      const materiales = [
-        { nombre: 'Portatil Lenovo ThinkPad T14', codigo: 'LPT-302', estado: 'Prestado' },
-        { nombre: 'Camara Sony ZV-E10', codigo: 'CAM-019', estado: 'Disponible' },
-        { nombre: 'Proyector Epson EB-X49', codigo: 'PRO-041', estado: 'Prestado' },
-        { nombre: 'Microfono Rode NT-USB', codigo: 'MIC-114', estado: 'Disponible' },
-        { nombre: 'Tablet Samsung S6', codigo: 'TAB-078', estado: 'Prestado' }
-      ];
-
-      const input = document.getElementById('busqueda-material');
-      const result = document.getElementById('resultado-busqueda');
-      const clearBtn = document.getElementById('btn-limpiar-busqueda');
-
-      function pintarLista(items) {
-        if (!result) return;
-
-        if (!items.length) {
-          result.innerHTML = '<p class="rounded-lg border border-staff-gray-200 bg-staff-gray-50 px-4 py-3 text-sm text-staff-gray-700">No hay coincidencias para esta busqueda.</p>';
-          return;
-        }
-
-        result.innerHTML = items.map((item) => {
-          const disponible = item.estado === 'Disponible';
-          const badgeClass = disponible
-            ? 'bg-staff-teal-50 text-staff-teal-dark border border-staff-teal-100'
-            : 'bg-staff-yellow-50 text-staff-gray-800 border border-staff-yellow-dark';
-
-          return `
-            <article class="flex items-center justify-between gap-3 rounded-lg border border-staff-gray-200 bg-white px-4 py-3">
-              <div>
-                <p class="text-sm font-semibold text-staff-gray-900">${item.nombre}</p>
-                <p class="text-xs text-staff-gray-500">${item.codigo}</p>
-              </div>
-              <span class="rounded-full px-3 py-1 text-xs font-bold ${badgeClass}">${item.estado}</span>
-            </article>
-          `;
-        }).join('');
-      }
-
-      function filtrar() {
-        const q = (input.value || '').trim().toLowerCase();
-
-        if (!q) {
-          pintarLista(materiales);
-          return;
-        }
-
-        const filtrados = materiales.filter((m) => {
-          return m.nombre.toLowerCase().includes(q) || m.codigo.toLowerCase().includes(q);
-        });
-
-        pintarLista(filtrados);
-      }
-
-      if (input) {
-        input.addEventListener('input', filtrar);
-      }
-
-      if (clearBtn && input) {
-        clearBtn.addEventListener('click', () => {
-          input.value = '';
-          pintarLista(materiales);
-          input.focus();
-        });
-      }
-
-      pintarLista(materiales);
-    })();
-  </script>
+<script type="module" src="panel_staff.js"></script>
 </body>
 </html>

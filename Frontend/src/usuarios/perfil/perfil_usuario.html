@@ -8,614 +8,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
-<style>
-  /* Paleta y tokens en compartido/estilos-base/tokens.css. */
-  :root {
-    --teal-light:  var(--teal-100);
-    --teal-mid:    var(--teal);
-    --teal-bright: var(--teal-100);
-    --green:       var(--success-border);
-    --red:         var(--error-text);
-    --amber:       var(--yellow-dark);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html, body {
-    font-family: var(--font-body);
-    background: var(--off-white);
-    color: var(--text);
-    font-size: 15px;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1, h2, h3, h4, .brand-name, .page-title, .stat-value,
-  .profile-name, .section-title, .project-title {
-    font-family: 'Bricolage Grotesque', sans-serif;
-  }
-
-  a { text-decoration: none; color: inherit; }
-
-  /* Sidebar y help-card viven en compartido/componentes-ui/sidebar/. */
-
-  /* ===== MAIN ===== */
-  .main {
-    margin-left: var(--sidebar-w);
-    padding: 0 0 40px;
-  }
-
-  /* ===== HERO BANNER ===== */
-  .hero-banner {
-    position: relative;
-    height: 300px;
-    background: linear-gradient(135deg, var(--teal-mid) 0%, var(--teal-bright) 50%, var(--teal-mid) 100%);
-    overflow: hidden;
-    border-radius: 0 0 24px 24px;
-  }
-  .hero-banner::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400' preserveAspectRatio='none'><path d='M0,80 C200,180 400,20 600,100 C800,180 1000,40 1200,120 L1200,0 L0,0 Z' fill='none' stroke='rgba(255,255,255,0.14)' stroke-width='1'/><path d='M0,140 C200,240 400,80 600,160 C800,240 1000,100 1200,180 L1200,60 L0,60 Z' fill='none' stroke='rgba(255,255,255,0.12)' stroke-width='1'/><path d='M0,200 C200,300 400,140 600,220 C800,300 1000,160 1200,240 L1200,120 L0,120 Z' fill='none' stroke='rgba(255,255,255,0.10)' stroke-width='1'/><path d='M0,260 C200,360 400,200 600,280 C800,360 1000,220 1200,300 L1200,180 L0,180 Z' fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1'/></svg>");
-    background-size: 100% 100%;
-    animation: waveShift 18s linear infinite;
-  }
-  .hero-banner::after {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(circle at 15% 85%, rgba(255,255,255,0.12), transparent 40%),
-      radial-gradient(circle at 85% 20%, rgba(255,255,255,0.10), transparent 40%);
-    pointer-events: none;
-  }
-
-  /* Topbar sobre el hero */
-  .topbar {
-    position: relative;
-    z-index: 2;
-    padding: 22px 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #fff;
-    animation: fadeDown 0.6s cubic-bezier(.2,.9,.3,1) both;
-  }
-  .breadcrumb { font-size: 12px; color: rgba(255,255,255,0.8); }
-  .breadcrumb .sep { margin: 0 4px; }
-  .breadcrumb .current { color: #fff; font-weight: 600; }
-  .page-title { font-size: 15px; font-weight: 700; color: #fff; margin-top: 2px; }
-
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .search-white {
-    display: flex; align-items: center; gap: 10px;
-    background: rgba(255,255,255,0.95);
-    border-radius: 12px;
-    padding: 8px 14px;
-    width: 220px;
-    color: var(--text-muted);
-  }
-  .search-white input {
-    border: none; outline: none;
-    background: transparent;
-    font-family: inherit; font-size: 12px;
-    width: 100%;
-    color: var(--text);
-  }
-  .search-white input::placeholder { color: var(--text-muted); }
-  .tb-link {
-    display: flex; align-items: center; gap: 6px;
-    color: #fff;
-    font-size: 12px; font-weight: 600;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 10px;
-    transition: background 0.18s;
-  }
-  .tb-link:hover { background: rgba(255,255,255,0.15); }
-  .tb-ic {
-    width: 34px; height: 34px;
-    display: grid; place-items: center;
-    color: #fff;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.18s;
-    position: relative;
-  }
-  .tb-ic:hover { background: rgba(255,255,255,0.15); }
-  .tb-ic .dot {
-    position: absolute;
-    top: 8px; right: 8px;
-    width: 7px; height: 7px;
-    background: #fff;
-    border-radius: 50%;
-    border: 1.5px solid var(--teal-mid);
-  }
-
-  /* ===== CONTENIDO ===== */
-  .content-wrap {
-    margin: -100px 30px 0;
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .card {
-    background: var(--card);
-    border-radius: 18px;
-    box-shadow: var(--shadow-lg);
-    padding: 22px;
-  }
-
-  /* Profile header card */
-  .profile-head {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 18px 22px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.85) 0%, var(--teal-light) 120%);
-    backdrop-filter: blur(8px);
-    animation: fadeUp 0.7s cubic-bezier(.2,.9,.3,1) 0.1s both;
-  }
-  .profile-avatar {
-    width: 78px; height: 78px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
-    display: grid; place-items: center;
-    color: #fff;
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-size: 30px; font-weight: 800;
-    letter-spacing: -1px;
-    box-shadow: 0 10px 25px -8px rgba(99, 102, 241, 0.5);
-    flex-shrink: 0;
-    position: relative;
-  }
-  .profile-avatar .verified {
-    position: absolute;
-    bottom: -4px; right: -4px;
-    width: 24px; height: 24px;
-    background: var(--teal);
-    border-radius: 50%;
-    display: grid; place-items: center;
-    color: #fff;
-    border: 3px solid #fff;
-  }
-  .profile-meta { flex: 1; min-width: 0; }
-  .profile-name {
-    font-size: 22px; font-weight: 700;
-    color: var(--navy);
-    letter-spacing: -0.5px;
-  }
-  .profile-email {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-
-  .tabs {
-    display: flex;
-    gap: 6px;
-    background: rgba(255,255,255,0.6);
-    padding: 5px;
-    border-radius: 14px;
-  }
-  .tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 10px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-light);
-    letter-spacing: 0.7px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    font-family: inherit;
-    transition: all 0.2s;
-  }
-  .tab:hover { color: var(--teal-dark); }
-  .tab.active {
-    background: #fff;
-    color: var(--navy);
-    box-shadow: var(--shadow);
-  }
-
-  /* ===== 3 COLUMNAS ===== */
-  .cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 22px;
-  }
-  .col-card { animation: fadeUp 0.7s cubic-bezier(.2,.9,.3,1) both; }
-  .col-card:nth-child(1) { animation-delay: 0.2s; }
-  .col-card:nth-child(2) { animation-delay: 0.3s; }
-  .col-card:nth-child(3) { animation-delay: 0.4s; }
-
-  .section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--navy);
-    letter-spacing: -0.2px;
-    margin-bottom: 18px;
-  }
-  .sub-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin: 18px 0 10px;
-  }
-  .sub-label:first-of-type { margin-top: 0; }
-
-  /* Toggles */
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 7px 0;
-    font-size: 12.5px;
-    color: var(--text-light);
-  }
-  .toggle {
-    --w: 38px; --h: 20px;
-    position: relative;
-    width: var(--w); height: var(--h);
-    flex-shrink: 0;
-    cursor: pointer;
-  }
-  .toggle input {
-    position: absolute;
-    opacity: 0;
-    width: 100%; height: 100%;
-    cursor: pointer;
-    margin: 0;
-  }
-  .toggle-ui {
-    position: absolute; inset: 0;
-    background: var(--border);
-    border-radius: 20px;
-    transition: background 0.22s;
-  }
-  .toggle-ui::after {
-    content: '';
-    position: absolute;
-    top: 2px; left: 2px;
-    width: 16px; height: 16px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 1.5px 3px rgba(0,0,0,0.2);
-    transition: transform 0.22s cubic-bezier(.2,.9,.3,1.2);
-  }
-  .toggle input:checked + .toggle-ui { background: var(--teal); }
-  .toggle input:checked + .toggle-ui::after { transform: translateX(18px); }
-
-  /* Información personal */
-  .info-desc {
-    font-size: 13px;
-    color: var(--text-light);
-    line-height: 1.65;
-    margin-bottom: 18px;
-  }
-  .info-grid { display: flex; flex-direction: column; gap: 12px; }
-  .info-row-line {
-    display: flex;
-    gap: 8px;
-    font-size: 13px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--border);
-  }
-  .info-row-line:last-child { border-bottom: none; padding-bottom: 0; }
-  .info-key {
-    font-weight: 700;
-    color: var(--navy);
-    flex-shrink: 0;
-  }
-  .info-val { color: var(--text-light); }
-
-  .social {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 4px;
-  }
-  .social a {
-    width: 32px; height: 32px;
-    border-radius: 10px;
-    background: var(--teal-light);
-    color: var(--teal-dark);
-    display: grid; place-items: center;
-    transition: transform 0.18s, background 0.18s;
-  }
-  .social a:hover {
-    background: var(--teal);
-    color: #fff;
-    transform: translateY(-2px);
-  }
-
-  /* Notificaciones recientes */
-  .notif-list { display: flex; flex-direction: column; gap: 14px; }
-  .notif-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 0;
-  }
-  .notif-avatar {
-    width: 42px; height: 42px;
-    border-radius: 12px;
-    display: grid; place-items: center;
-    color: #fff;
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-  .av-1 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
-  .av-2 { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
-  .av-3 { background: linear-gradient(135deg, #3b82f6, #14b8a6); }
-  .av-4 { background: linear-gradient(135deg, #14b8a6, #0f766e); }
-  .av-5 { background: linear-gradient(135deg, #64748b, #1e293b); }
-
-  .notif-meta { flex: 1; min-width: 0; }
-  .notif-who {
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--navy);
-  }
-  .notif-msg {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .notif-action {
-    background: none; border: none;
-    font-family: inherit;
-    color: var(--teal);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 8px;
-    transition: background 0.18s;
-  }
-  .notif-action:hover { background: var(--teal-light); }
-
-  /* ===== PROYECTOS (Mis préstamos recientes) ===== */
-  .projects-card { animation: fadeUp 0.7s cubic-bezier(.2,.9,.3,1) 0.5s both; }
-  .projects-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 20px;
-  }
-  .projects-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-  }
-
-  .project {
-    border-radius: 14px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.22s cubic-bezier(.2,.9,.3,1);
-  }
-  .project:hover { transform: translateY(-3px); }
-
-  .project-img {
-    height: 160px;
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 14px;
-    position: relative;
-    background: linear-gradient(135deg, var(--teal-light) 0%, #e0f2f1 100%);
-    display: grid;
-    place-items: center;
-    color: var(--teal);
-  }
-  .project-img svg { width: 54px; height: 54px; transition: transform 0.3s; }
-  .project:hover .project-img svg { transform: scale(1.1) rotate(-5deg); }
-  .project-img::after {
-    content: '';
-    position: absolute;
-    top: -40%; left: -40%;
-    width: 60%; height: 180%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
-    transform: rotate(20deg);
-    transition: left 0.6s;
-  }
-  .project:hover .project-img::after { left: 120%; }
-  .project.v1 .project-img { background: linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%); }
-  .project.v2 .project-img { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1d4ed8; }
-  .project.v3 .project-img { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #b45309; }
-
-  .project-tag {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-  }
-  .project-title {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--navy);
-    margin-top: 4px;
-    margin-bottom: 10px;
-    letter-spacing: -0.2px;
-  }
-  .project-desc {
-    font-size: 12.5px;
-    color: var(--text-light);
-    line-height: 1.55;
-    margin-bottom: 18px;
-  }
-  .project-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: auto;
-  }
-  .project-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--teal-dark);
-    font-weight: 700;
-    font-size: 10px;
-    padding: 9px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    letter-spacing: 0.8px;
-    font-family: inherit;
-    transition: all 0.18s;
-  }
-  .project-btn:hover { background: var(--teal-light); border-color: var(--teal-light); }
-
-  .avatar-stack {
-    display: flex;
-  }
-  .avatar-stack .av {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    margin-left: -8px;
-    display: grid; place-items: center;
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-    font-family: 'Bricolage Grotesque', sans-serif;
-  }
-  .avatar-stack .av:first-child { margin-left: 0; }
-
-  .project-new {
-    border: 1.5px dashed var(--border);
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    min-height: 230px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .project-new:hover {
-    border-color: var(--teal);
-    background: rgba(15,118,110,0.03);
-  }
-  .project-new .pn-inner {
-    text-align: center;
-    color: var(--text-muted);
-  }
-  .project-new .pn-plus {
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    background: var(--bg);
-    display: grid; place-items: center;
-    color: var(--text-muted);
-    margin: 0 auto 14px;
-    transition: all 0.2s;
-  }
-  .project-new:hover .pn-plus {
-    background: var(--teal-light);
-    color: var(--teal);
-    transform: rotate(90deg);
-  }
-  .project-new .pn-label {
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-light);
-  }
-
-  /* Footer */
-  .footer {
-    margin: 32px 30px 0;
-    padding-top: 22px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-  .footer .heart { color: var(--red); }
-  .footer-links { display: flex; gap: 22px; }
-  .footer-links a { color: var(--text-muted); transition: color 0.18s; }
-  .footer-links a:hover { color: var(--teal-dark); font-weight: 600; }
-
-  /* Floating settings */
-  .fab {
-    position: fixed;
-    bottom: 28px; right: 28px;
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid var(--border);
-    color: var(--text-light);
-    display: grid; place-items: center;
-    cursor: pointer;
-    box-shadow: 0 10px 25px -8px rgba(0,0,0,0.15);
-    transition: transform 0.25s;
-    z-index: 20;
-  }
-  .fab:hover { transform: rotate(60deg); color: var(--teal); }
-
-  /* ===== ANIMACIONES ===== */
-  @keyframes fadeUp {
-    0%   { opacity: 0; transform: translateY(18px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeDown {
-    0%   { opacity: 0; transform: translateY(-10px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes waveShift {
-    0%   { background-position: 0% 0%; }
-    100% { background-position: -200% 0%; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.001s !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.001s !important;
-    }
-  }
-
-  /* Responsive */
-  @media (max-width: 1200px) {
-    .cols { grid-template-columns: 1fr 1fr; }
-    .col-card:nth-child(3) { grid-column: 1 / -1; }
-    .projects-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 768px) {
-    .main { margin-left: 0; }
-    .content-wrap { margin: -80px 16px 0; }
-    .topbar { flex-wrap: wrap; gap: 14px; padding: 18px 16px; }
-    .search-white { width: 100%; order: 3; }
-    .profile-head { flex-direction: column; align-items: flex-start; gap: 14px; }
-    .cols { grid-template-columns: 1fr; }
-    .col-card:nth-child(3) { grid-column: auto; }
-    .projects-grid { grid-template-columns: 1fr; }
-    .footer { flex-direction: column; gap: 12px; margin: 24px 16px 0; }
-  }
-</style>
+<link rel="stylesheet" href="perfil_usuario.css">
 </head>
 <body>
+
+<div class="ripple-background" aria-hidden="true">
+  <div class="circle xxlarge shade1"></div>
+  <div class="circle xlarge shade2"></div>
+  <div class="circle large shade3"></div>
+  <div class="circle medium shade4"></div>
+  <div class="circle small shade5"></div>
+</div>
 
 <!-- Sidebar inyectado por compartido/componentes-ui/sidebar/sidebar.js -->
 
@@ -630,21 +33,17 @@
         <div class="page-title">Mi Perfil</div>
       </div>
       <div class="topbar-right">
-        <div class="search-white">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Buscar..." />
-        </div>
-        <a class="tb-link" href="#">
+        <a class="tb-link" href="../../usuarios/perfil/perfil_usuario.html">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>
-          <span>Jaime F.</span>
+          <span>Mi Perfil</span>
         </a>
         <div class="tb-ic" title="Configuración">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
         </div>
-        <div class="tb-ic" title="Notificaciones">
+        <a class="tb-ic" title="Notificaciones" href="../../notificaciones/bandeja-notificaciones/notificaciones_usuario.html">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
           <span class="dot"></span>
-        </div>
+        </a>
       </div>
     </div>
   </section>
@@ -653,15 +52,15 @@
 
     <!-- Profile header -->
     <section class="card profile-head">
-      <div class="profile-avatar">
-        JF
+      <div class="profile-avatar" id="profileAvatar">
+        --
         <span class="verified" title="Verificado">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
       </div>
       <div class="profile-meta">
-        <div class="profile-name">Jaime Fano Alijarde</div>
-        <div class="profile-email">jaimefano10@gmail.com · Estudiante</div>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-email" id="profileEmail">—</div>
       </div>
       <div class="tabs">
         <button class="tab active">
@@ -729,46 +128,27 @@
       <!-- Información -->
       <div class="card col-card">
         <div class="section-title">Información personal</div>
-        <p class="info-desc">
-          Estudiante de Ingeniería del Software en la Universidad Complutense de Madrid.
-          Interesado en desarrollo backend, infraestructura y diseño de sistemas distribuidos.
-        </p>
+        <p class="info-desc" id="infoBio">—</p>
         <div class="info-grid">
           <div class="info-row-line">
             <span class="info-key">Nombre:</span>
-            <span class="info-val">Jaime Fano Alijarde</span>
+            <span class="info-val" id="infoNombre">—</span>
           </div>
           <div class="info-row-line">
             <span class="info-key">Teléfono:</span>
-            <span class="info-val">(+34) 612 345 678</span>
+            <span class="info-val" id="infoTelefono">—</span>
           </div>
           <div class="info-row-line">
             <span class="info-key">Email:</span>
-            <span class="info-val">jaimefano10@gmail.com</span>
+            <span class="info-val" id="infoEmail">—</span>
           </div>
           <div class="info-row-line">
-            <span class="info-key">Facultad:</span>
-            <span class="info-val">Informática · UCM</span>
+            <span class="info-key">Rol:</span>
+            <span class="info-val" id="infoRol">—</span>
           </div>
           <div class="info-row-line">
-            <span class="info-key">Matrícula:</span>
-            <span class="info-val">2023-A-04562</span>
-          </div>
-          <div class="info-row-line">
-            <span class="info-key">Redes:</span>
-            <span class="info-val">
-              <span class="social">
-                <a href="#" title="GitHub">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.8.5 12.3c0 5.2 3.3 9.5 7.9 11 .6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.3 11.3 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.2 0 4.6-2.7 5.6-5.3 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6a11.5 11.5 0 007.9-11C23.5 5.8 18.3.5 12 .5z"/></svg>
-                </a>
-                <a href="#" title="LinkedIn">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 012.5 6 2.5 2.5 0 015 3.5 2.5 2.5 0 014.98 3.5zM3 9h4v12H3zM10 9h4v1.7a4.4 4.4 0 013.8-2c4 0 4.7 2.6 4.7 6v7.3h-4v-6.4c0-1.5 0-3.4-2.1-3.4s-2.4 1.6-2.4 3.3V21h-4z"/></svg>
-                </a>
-                <a href="#" title="Twitter">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 3H21l-6.5 7.4L22 21h-6.2l-4.9-6.4L5.3 21H2.5l7-8L1.8 3H8l4.4 5.8zm-1 16h1.6L7 4.7H5.3z"/></svg>
-                </a>
-              </span>
-            </span>
+            <span class="info-key">Miembro desde:</span>
+            <span class="info-val" id="infoFecha">—</span>
           </div>
         </div>
       </div>
@@ -776,47 +156,8 @@
       <!-- Notificaciones recientes -->
       <div class="card col-card">
         <div class="section-title">Notificaciones recientes</div>
-        <div class="notif-list">
-          <div class="notif-item">
-            <div class="notif-avatar av-1">SL</div>
-            <div class="notif-meta">
-              <div class="notif-who">Sala de préstamos</div>
-              <div class="notif-msg">Tu solicitud del MacBook Pro ha sido aprobada</div>
-            </div>
-            <button class="notif-action">VER</button>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar av-2">MP</div>
-            <div class="notif-meta">
-              <div class="notif-who">María Pérez · Staff</div>
-              <div class="notif-msg">El trípode Manfrotto está listo para recoger</div>
-            </div>
-            <button class="notif-action">VER</button>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar av-3">UG</div>
-            <div class="notif-meta">
-              <div class="notif-who">UniGear</div>
-              <div class="notif-msg">Recuerda devolver tu préstamo antes del 28/04</div>
-            </div>
-            <button class="notif-action">VER</button>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar av-4">LG</div>
-            <div class="notif-meta">
-              <div class="notif-who">Luis García · Staff</div>
-              <div class="notif-msg">Se ha registrado la devolución del proyector</div>
-            </div>
-            <button class="notif-action">VER</button>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar av-5">SI</div>
-            <div class="notif-meta">
-              <div class="notif-who">Sistema</div>
-              <div class="notif-msg">Nueva categoría disponible en el catálogo</div>
-            </div>
-            <button class="notif-action">VER</button>
-          </div>
+        <div class="notif-list" id="notifList">
+          <div class="notif-empty">Cargando…</div>
         </div>
       </div>
     </section>
@@ -830,82 +171,23 @@
         </div>
       </div>
 
-      <div class="projects-grid">
-
-        <div class="project v1">
-          <div class="project-img">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="13" rx="2"/>
-              <path d="M8 21h8M10 17v4M14 17v4"/>
-              <line x1="6" y1="8" x2="18" y2="8"/>
-            </svg>
-          </div>
-          <div class="project-tag">Préstamo #1</div>
-          <div class="project-title">MacBook Pro 14"</div>
-          <div class="project-desc">Usado para editar vídeo del trabajo final de Multimedia. Devuelto a tiempo, sin incidencias.</div>
-          <div class="project-footer">
-            <button class="project-btn">VER DETALLE</button>
-            <div class="avatar-stack">
-              <div class="av av-1">MP</div>
-              <div class="av av-2">LG</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="project v2">
-          <div class="project-img">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="4"/>
-            </svg>
-          </div>
-          <div class="project-tag">Préstamo #2</div>
-          <div class="project-title">Cámara Sony A7 III</div>
-          <div class="project-desc">Para el proyecto de Fotografía Digital. Calidad excelente, objetivo 50mm incluido.</div>
-          <div class="project-footer">
-            <button class="project-btn">VER DETALLE</button>
-            <div class="avatar-stack">
-              <div class="av av-3">JR</div>
-              <div class="av av-4">AS</div>
-              <div class="av av-2">MP</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="project v3">
-          <div class="project-img">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="9" y="2" width="6" height="12" rx="3"/>
-              <path d="M5 10a7 7 0 0014 0M12 17v4M8 21h8"/>
-            </svg>
-          </div>
-          <div class="project-tag">Préstamo #3</div>
-          <div class="project-title">Micrófono Rode NT-USB</div>
-          <div class="project-desc">Para grabar la defensa oral del TFG. Fácil de configurar y sonido claro.</div>
-          <div class="project-footer">
-            <button class="project-btn">VER DETALLE</button>
-            <div class="avatar-stack">
-              <div class="av av-1">MP</div>
-              <div class="av av-5">SI</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-new" onclick="window.location.href='../../catalogo/listado-materiales/listado_materiales.html'">
+      <div class="projects-grid" id="prestamosGrid">
+        <!-- Injected by JS -->
+        <a class="project-new" href="../../catalogo/listado-materiales/listado_materiales.html">
           <div class="pn-inner">
             <div class="pn-plus">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </div>
             <div class="pn-label">Nueva solicitud</div>
           </div>
-        </div>
-
+        </a>
       </div>
     </section>
 
   </div>
 
   <footer class="footer">
-    <div>© 2026 UniGear · Hecho con <span class="heart">❤</span> para la comunidad universitaria</div>
+    <div>© 2026 UniGear · Hecho con <span class="heart" role="img" aria-label="cariño">❤</span> para la comunidad universitaria</div>
     <div class="footer-links">
       <a href="#">Ayuda</a>
       <a href="#">Privacidad</a>
@@ -919,61 +201,7 @@
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
 </button>
 
-<script type="module">
-  import { auth } from '../../compartido/nucleo/auth.js';
-  import { api } from '../../compartido/nucleo/api.js';
-  import { mountSidebar } from '../../compartido/componentes-ui/sidebar/sidebar.js';
-  const currentUser = auth.requireAuth(['estudiante', 'profesor']);
-  mountSidebar({ activePage: 'perfil', basePath: '../..' });
-
-  window.__api = api;
-  window.__currentUser = currentUser;
-</script>
-
-<script>
-  (async function init() {
-    const currentUser = window.__currentUser;
-    const api = window.__api;
-
-    if (currentUser && api) {
-      try {
-        const profile = await api.getProfile(currentUser.id);
-        if (profile) {
-          document.querySelectorAll('.profile-name').forEach(el => el.textContent = profile.nombre_completo || currentUser.name);
-          document.querySelectorAll('.profile-email').forEach(el => el.textContent = profile.email_institucional || currentUser.email);
-          document.querySelectorAll('.user-name').forEach(el => el.textContent = (profile.nombre_completo || currentUser.name).split(' ')[0]);
-          document.querySelectorAll('.user-role').forEach(el => el.textContent = profile.rol || currentUser.role);
-          if (profile.dni) {
-            const dniEl = document.getElementById('dniValue');
-            if (dniEl) dniEl.textContent = profile.dni;
-          }
-          if (profile.telefono) {
-            const telEl = document.getElementById('telefonoValue');
-            if (telEl) telEl.textContent = profile.telefono;
-          }
-          if (profile.titulacion) {
-            const titEl = document.getElementById('titulacionValue');
-            if (titEl) titEl.textContent = profile.titulacion;
-          }
-          if (profile.curso) {
-            const curEl = document.getElementById('cursoValue');
-            if (curEl) curEl.textContent = profile.curso;
-          }
-        }
-      } catch (err) {
-        console.error('Error cargando perfil:', err);
-      }
-    }
-  })();
-
-  // Tabs (solo estado visual)
-  document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-    });
-  });
-</script>
+<script type="module" src="perfil_usuario.js"></script>
 
 </body>
 </html>

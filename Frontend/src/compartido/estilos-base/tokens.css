@@ -5,88 +5,121 @@
    las variables. Si falta un token, añádelo aquí, no en la página.
    ============================================================= */
 
+@import url('./componentes-base.css');
+
+/* Transición suave entre páginas (Chrome 126+, Edge 126+) */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+}
+
 :root {
   /* ===== Primarios — Teal ===== */
-  --teal:        #0f766e;
-  --teal-dark:   #115e59;
-  --teal-deep:   #0a4642;
-  --teal-100:    #ccfbf1;
-  --teal-50:     #f0fdfa;
+  --teal: #0f766e;
+  --teal-dark: #115e59;
+  --teal-deep: #0a4642;
+  --teal-100: #ccfbf1;
+  --teal-50: #f0fdfa;
 
   /* ===== Acento — Amarillo ===== */
-  --yellow:      #FACC15;
+  --yellow: #FACC15;
   --yellow-dark: #EAB308;
-  --yellow-50:   #FEFCE8;
+  --yellow-50: #FEFCE8;
 
   /* ===== Neutros ===== */
-  --white:       #ffffff;
-  --off-white:   #F8FAFC;
-  --gray-50:     #F9FAFB;
-  --gray-100:    #F3F4F6;
-  --gray-200:    #E5E7EB;
-  --gray-300:    #D1D5DB;
-  --gray-400:    #9CA3AF;
-  --gray-500:    #6B7280;
-  --gray-600:    #4B5563;
-  --gray-700:    #374151;
-  --gray-800:    #1F2937;
-  --gray-900:    #111827;
+  --white: #ffffff;
+  --off-white: #F8FAFC;
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
 
   /* ===== Estado / Feedback (de la tabla en CLAUDE.md) ===== */
-  --success-bg:     #ecfdf5;
+  --success-bg: #ecfdf5;
   --success-border: #10b981;
-  --success-text:   #047857;
+  --success-text: #047857;
 
-  --error-bg:     #fef2f2;
+  --error-bg: #fef2f2;
   --error-border: #f87171;
-  --error-text:   #b91c1c;
+  --error-text: #b91c1c;
 
-  --warning-bg:     var(--yellow-50);
+  --warning-bg: var(--yellow-50);
   --warning-border: var(--yellow-dark);
-  --warning-text:   var(--gray-800);
+  --warning-text: var(--gray-800);
 
-  --info-bg:     var(--teal-50);
+  --info-bg: var(--teal-50);
   --info-border: var(--teal);
-  --info-text:   var(--teal-dark);
+  --info-text: var(--teal-dark);
 
   /* ===== Aliases semánticos ===== */
-  --bg:          var(--off-white);
-  --card:        var(--white);
-  --border:      var(--gray-200);
+  /* Página ligeramente más oscura que cards y sidebar para crear
+     una jerarquía visual nítida: sidebar blanco / página gris
+     claro / cards blancas con borde. */
+  --bg: #D6E1EE;
+  --card: var(--white);
+  --border: var(--gray-200);
   --border-soft: var(--gray-100);
+  --border-strong: var(--gray-300);
 
-  --text:        var(--gray-800);
-  --text-light:  var(--gray-600);
-  --text-muted:  var(--gray-400);
-  --navy:        var(--gray-900);
+  --text: var(--gray-800);
+  --text-light: var(--gray-600);
+  --text-muted: var(--gray-400);
+  --navy: var(--gray-900);
 
   /* ===== Layout ===== */
-  --sidebar-w:   260px;
-  --r:           12px;
-  --r-lg:        16px;
-  --r-xl:        20px;
+  --sidebar-w: 260px;
+  --r: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
 
-  /* ===== Sombras (paleta permitida) ===== */
-  --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow:      0 3.5px 5.5px rgba(0, 0, 0, 0.05);
-  --shadow-lg:   0 2px 12px rgba(0, 0, 0, 0.06);
-  --shadow-xl:   0 20px 48px rgba(0, 0, 0, 0.10);
-  --shadow-teal: 0 8px 28px rgba(15, 118, 110, 0.28);
+  /* ===== Spacing scale ===== */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* ===== Sombras (paleta permitida, intensidad reducida) ===== */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow:    0 2px 6px rgba(15, 23, 42, 0.10);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
 
   /* ===== Tipografía ===== */
-  --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Bricolage Grotesque', sans-serif;
+
+  /* ===== Motion ===== */
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --dur-fast: 120ms;
+  --dur: 180ms;
 }
 
 /* =============================================================
    Foco visible global — WCAG 2.4.7
    ============================================================= */
-:focus { outline: none; }
+:focus {
+  outline: none;
+}
+
 :focus-visible {
   outline: 2px solid var(--teal);
   outline-offset: 2px;
   border-radius: 4px;
 }
+
 button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible,
@@ -98,8 +131,54 @@ textarea:focus-visible,
   outline: none;
   box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.22);
 }
+
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
   border-color: var(--teal);
 }
+
+/* =============================================================
+   Fondo animado de ripples (usado solo por la landing)
+   Uso: añadir <div class="ripple-background" aria-hidden="true">
+   con 5 hijos .circle .{xxlarge|xlarge|large|medium|small} .{shade1..5}
+   ============================================================= */
+.ripple-background {
+  position: fixed;
+  inset: 0;
+  left: var(--sidebar-w);
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ripple-background .circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: ripple 15s infinite ease-in-out;
+  box-shadow: 0 0 1px 0 var(--teal-dark);
+}
+.ripple-background .small  { width: 200px;  height: 200px;  right: -100px; bottom: -100px; }
+.ripple-background .medium { width: 400px;  height: 400px;  right: -200px; bottom: -200px; }
+.ripple-background .large  { width: 600px;  height: 600px;  right: -300px; bottom: -300px; }
+.ripple-background .xlarge { width: 800px;  height: 800px;  right: -400px; bottom: -400px; }
+.ripple-background .xxlarge{ width: 1000px; height: 1000px; right: -500px; bottom: -500px; }
+.ripple-background .shade1 { opacity: 0.05; }
+.ripple-background .shade2 { opacity: 0.07; }
+.ripple-background .shade3 { opacity: 0.09; }
+.ripple-background .shade4 { opacity: 0.11; }
+.ripple-background .shade5 { opacity: 0.13; }
+@keyframes ripple {
+  0%   { transform: scale(0.8); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(0.8); }
+}
+@media (max-width: 768px) {
+  .ripple-background { left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ripple-background .circle { animation: none; }
+}
+body:has(.ripple-background) { position: relative; min-height: 100vh; overflow-x: hidden; }
+
+main, .main, .content, .container { position: relative; z-index: 1; }

@@ -25,6 +25,7 @@ const pagosRoutes = require('./routes/pagosRoutes');
 const prestamosRoutes = require('./routes/prestamosRoutes');
 const sancionesRoutes = require('./routes/sancionesRoutes');
 const incidenciasRoutes = require('./routes/incidenciasRoutes');
+const configRoutes = require('./routes/configRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -58,6 +59,7 @@ app.use('/pagos', pagosRoutes);
 app.use('/prestamos', prestamosRoutes);
 app.use('/sanciones', sancionesRoutes);
 app.use('/incidencias', incidenciasRoutes);
+app.use('/config', configRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

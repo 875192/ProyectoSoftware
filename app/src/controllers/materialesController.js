@@ -186,6 +186,66 @@ const createMaterial = async (req, res) => {
   }
 };
 
+const getInventario = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        m.id,
+        m.codigo_modelo,
+        m.nombre,
+        m.descripcion,
+        m.icono,
+        m.plazo_max_dias,
+        m.activo,
+        c.id   AS categoria_id,
+        c.nombre AS categoria_nombre,
+        COUNT(u.id)::int AS total_unidades,
+        COUNT(u.id) FILTER (WHERE u.estado = 'disponible')::int AS disponibles,
+        COUNT(u.id) FILTER (WHERE u.estado = 'prestada')::int AS prestadas,
+        COUNT(u.id) FILTER (WHERE u.estado IN ('averiada','mantenimiento'))::int AS no_operativas,
+        COALESCE(
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'id',               u.id,
+              'codigo_inventario', u.codigo_inventario,
+              'numero_serie',      u.numero_serie,
+              'estado',            u.estado::text,
+              'ubicacion',         u.ubicacion
+            )
+            ORDER BY u.codigo_inventario
+          ) FILTER (WHERE u.id IS NOT NULL),
+          '[]'::json
+        ) AS unidades
+      FROM materiales m
+      JOIN categorias c ON m.categoria_id = c.id
+      LEFT JOIN unidades_material u ON u.material_id = m.id
+      GROUP BY m.id, c.id, c.nombre
+      ORDER BY m.nombre ASC
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener inventario:', error);
+    res.status(500).json({ message: 'Error al obtener inventario' });
+  }
+};
+
+const getUnidadesDisponibles = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(`
+      SELECT id, codigo_inventario, numero_serie, estado::text, ubicacion
+      FROM unidades_material
+      WHERE material_id = $1 AND estado = 'disponible'
+      ORDER BY codigo_inventario ASC
+    `, [id]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener unidades disponibles:', error);
+    res.status(500).json({ message: 'Error al obtener unidades' });
+  }
+};
+
 const deleteMaterial = async (req, res) => {
   try {
     const { id } = req.params;
@@ -208,6 +268,8 @@ module.exports = {
   getMaterialById,
   getTopMaterial,
   getTopAlquilados,
+  getInventario,
+  getUnidadesDisponibles,
   createMaterial,
   deleteMaterial,
 };

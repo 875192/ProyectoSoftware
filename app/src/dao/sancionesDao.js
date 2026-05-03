@@ -78,6 +78,16 @@ const sancionesDao = {
     `, [usuarioId]);
     return result.rows[0].total;
   },
+
+  create: async ({ usuarioId, tipo, motivo, importeCentimos, fechaInicio, fechaFin, prestamoId, creadaPor }) => {
+    const result = await pool.query(`
+      INSERT INTO sanciones
+        (usuario_id, tipo, motivo, importe_centimos, fecha_inicio, fecha_fin, prestamo_id, creada_por, activa, pagada)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE, FALSE)
+      RETURNING id, usuario_id, tipo, motivo, importe_centimos, fecha_inicio, fecha_fin, activa, pagada, prestamo_id, creada_por
+    `, [usuarioId, tipo, motivo, importeCentimos, fechaInicio, fechaFin || null, prestamoId || null, creadaPor]);
+    return result.rows[0];
+  },
 };
 
 module.exports = sancionesDao;

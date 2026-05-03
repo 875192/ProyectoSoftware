@@ -49,7 +49,16 @@ const notificacionesDao = {
       [id, usuarioId]
     );
     return result.rows[0] || null;
-  }
+  },
+
+  create: async ({ usuarioId, tipo, titulo, texto, entidadTipo = null, entidadId = null }) => {
+    const result = await pool.query(`
+      INSERT INTO notificaciones (usuario_id, tipo, titulo, texto, entidad_tipo, entidad_id, estado, fecha_envio)
+      VALUES ($1, $2, $3, $4, $5, $6, 'enviado', NOW())
+      RETURNING id
+    `, [usuarioId, tipo, titulo, texto, entidadTipo, entidadId]);
+    return result.rows[0];
+  },
 };
 
 module.exports = notificacionesDao;

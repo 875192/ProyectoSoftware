@@ -29,6 +29,52 @@ const usuariosDao = {
     return result.rows[0] || null;
   },
 
+  getAll: async () => {
+    const result = await pool.query(`
+      SELECT u.id, u.nombre_completo, u.email_institucional,
+             u.telefono, u.bio, u.avatar_url, u.activo,
+             u.email_verificado, u.ultimo_login_at, u.created_at,
+             r.nombre AS rol_nombre
+      FROM usuarios u
+      JOIN usuario_roles ur ON u.id = ur.usuario_id
+      JOIN roles r ON ur.rol_id = r.id
+      ORDER BY u.created_at DESC
+    `);
+    return result.rows;
+  },
+
+  updateRole: async (id, rol_nombre) => {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      
+      // Get role id
+      const rolResult = await client.query(`SELECT id FROM roles WHERE nombre = $1`, [rol_nombre]);
+      if (!rolResult.rows[0]) throw new Error(`Rol no encontrado: ${rol_nombre}`);
+      const rol_id = rolResult.rows[0].id;
+      
+      // Update role
+      await client.query(`
+        UPDATE usuario_roles SET rol_id = $1 WHERE usuario_id = $2
+      `, [rol_id, id]);
+      
+      await client.query('COMMIT');
+      return true;
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  },
+
+  updateStatus: async (id, activo) => {
+    const result = await pool.query(`
+      UPDATE usuarios SET activo = $1 WHERE id = $2 RETURNING id
+    `, [activo, id]);
+    return result.rows[0] || null;
+  },
+
   updateProfile: async (id, fields) => {
     const sets = [];
     const values = [];
@@ -74,6 +120,44 @@ const usuariosDao = {
     `, [id]);
   },
 
+  updateProfile: async (id, fields) => {
+    const sets = [];
+    const values = [];
+    let i = 1;
+    for (const key of ['nombre_completo', 'telefono', 'bio', 'avatar_url']) {
+      if (fields[key] !== undefined) {
+        sets.push(`${key} = $${i++}`);
+        values.push(fields[key]);
+      }
+    }
+    if (sets.length === 0) return null;
+    values.push(id);
+    const result = await pool.query(`
+      UPDATE usuarios SET ${sets.join(', ')}
+      WHERE id = $${i}
+      RETURNING id, nombre_completo, email_institucional, telefono, bio
+    `, values);
+    return result.rows[0] || null;
+  },
+
+  updatePassword: async (id, passwordHash, passwordSalt) => {
+    const result = await pool.query(`
+      UPDATE usuarios
+      SET password_hash = $1, password_salt = $2
+      WHERE id = $3
+      RETURNING id
+    `, [passwordHash, passwordSalt, id]);
+    return result.rows[0] || null;
+  },
+
+  getPasswordData: async (id) => {
+    const result = await pool.query(`
+      SELECT password_hash, password_salt
+      FROM usuarios WHERE id = $1
+    `, [id]);
+    return result.rows[0] || null;
+  },
+
   create: async ({ nombre_completo, email_institucional, password_hash, password_salt, rol_nombre }) => {
     const client = await pool.connect();
     try {
@@ -110,21 +194,14 @@ const usuariosDao = {
     `, [token, expiry, userId]);
   },
 
-  findByResetToken: async (token) => {
+findByResetToken: async (token) => {
     const result = await pool.query(`
       SELECT id, email_institucional
       FROM usuarios
       WHERE reset_token = $1 AND reset_token_expiry > NOW()
     `, [token]);
     return result.rows[0] || null;
-  },
-
-  clearResetToken: async (userId) => {
-    await pool.query(`
-      UPDATE usuarios SET reset_token = NULL, reset_token_expiry = NULL
-      WHERE id = $1
-    `, [userId]);
-  },
+  }
 };
 
 module.exports = usuariosDao;

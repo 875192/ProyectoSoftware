@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UniGear — Mi Perfil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
+<link rel="stylesheet" href="perfil_usuario.css">
+</head>
+<body>
+
+<div class="ripple-background" aria-hidden="true">
+  <div class="circle xxlarge shade1"></div>
+  <div class="circle xlarge shade2"></div>
+  <div class="circle large shade3"></div>
+  <div class="circle medium shade4"></div>
+  <div class="circle small shade5"></div>
+</div>
+
+<!-- Sidebar inyectado por sidebar-staff.js -->
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- Hero banner con topbar encima -->
+  <section class="hero-banner">
+    <div class="topbar">
+      <div>
+        <div class="breadcrumb">Páginas <span class="sep">/</span> <span class="current">Mi Perfil</span></div>
+        <div class="page-title">Mi Perfil</div>
+      </div>
+      <div class="topbar-right">
+        <a class="tb-link" href="../../usuarios/perfil/perfil_staff.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>
+          <span>Mi Perfil</span>
+        </a>
+        <a class="tb-ic" title="Notificaciones" href="../../notificaciones/bandeja-notificaciones/notificaciones_usuario.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+          <span class="dot"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="content-wrap">
+
+    <!-- Profile header -->
+    <section class="card profile-head">
+      <div class="profile-avatar" id="profileAvatar">
+        --
+        <span class="verified" title="Personal de gestión">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+      </div>
+      <div class="profile-meta">
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-email" id="profileEmail">—</div>
+      </div>
+      <div class="tabs">
+        <button class="tab active">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.7l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.7l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+          Resumen
+        </button>
+        <button class="tab">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Solicitudes
+        </button>
+        <button class="tab">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Inventario
+        </button>
+      </div>
+    </section>
+
+    <!-- 3 columnas -->
+    <section class="cols">
+
+      <!-- Preferencias -->
+      <div class="card col-card">
+        <div class="section-title">Preferencias de notificación</div>
+
+        <div class="sub-label">Solicitudes</div>
+        <label class="toggle-row">
+          <span class="toggle">
+            <input type="checkbox" checked />
+            <span class="toggle-ui"></span>
+          </span>
+          <span>Avisarme cuando llegue una nueva solicitud pendiente</span>
+        </label>
+        <label class="toggle-row">
+          <span class="toggle">
+            <input type="checkbox" checked />
+            <span class="toggle-ui"></span>
+          </span>
+          <span>Avisarme de solicitudes en lista de espera</span>
+        </label>
+
+        <div class="sub-label">Préstamos</div>
+        <label class="toggle-row">
+          <span class="toggle">
+            <input type="checkbox" checked />
+            <span class="toggle-ui"></span>
+          </span>
+          <span>Avisarme de devoluciones con retraso</span>
+        </label>
+        <label class="toggle-row">
+          <span class="toggle">
+            <input type="checkbox" />
+            <span class="toggle-ui"></span>
+          </span>
+          <span>Resumen diario de entregas y devoluciones</span>
+        </label>
+
+        <div class="sub-label">Inventario</div>
+        <label class="toggle-row">
+          <span class="toggle">
+            <input type="checkbox" checked />
+            <span class="toggle-ui"></span>
+          </span>
+          <span>Alertas de material en mantenimiento o averiado</span>
+        </label>
+      </div>
+
+      <!-- Información -->
+      <div class="card col-card">
+        <div class="section-title">Información personal</div>
+        <p class="info-desc" id="infoBio">—</p>
+        <div class="info-grid">
+          <div class="info-row-line">
+            <span class="info-key">Nombre:</span>
+            <span class="info-val" id="infoNombre">—</span>
+          </div>
+          <div class="info-row-line">
+            <span class="info-key">Teléfono:</span>
+            <span class="info-val" id="infoTelefono">—</span>
+          </div>
+          <div class="info-row-line">
+            <span class="info-key">Email:</span>
+            <span class="info-val" id="infoEmail">—</span>
+          </div>
+          <div class="info-row-line">
+            <span class="info-key">Rol:</span>
+            <span class="info-val" id="infoRol">—</span>
+          </div>
+          <div class="info-row-line">
+            <span class="info-key">Miembro desde:</span>
+            <span class="info-val" id="infoFecha">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notificaciones recientes -->
+      <div class="card col-card">
+        <div class="section-title">Notificaciones recientes</div>
+        <div class="notif-list" id="notifList">
+          <div class="notif-empty">Cargando…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solicitudes gestionadas recientemente -->
+    <section class="card projects-card">
+      <div class="projects-head">
+        <div>
+          <div class="section-title" style="margin-bottom: 0;">Solicitudes gestionadas recientemente</div>
+          <div class="projects-sub">Últimas solicitudes de préstamo que has procesado</div>
+        </div>
+        <a class="tb-link" href="../../solicitudes-prestamo/gestion-solicitudes/gestion_solicitudes.html" style="color: var(--teal); font-size: 12px; font-weight: 600; display:flex; align-items:center; gap:4px;">
+          Ver todas
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <div class="projects-grid" id="solicitudesGrid">
+        <!-- Inyectado por JS -->
+        <a class="project-new" href="../../solicitudes-prestamo/gestion-solicitudes/gestion_solicitudes.html">
+          <div class="pn-inner">
+            <div class="pn-plus">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            </div>
+            <div class="pn-label">Gestionar solicitudes</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    <div>© 2026 UniGear · Hecho con <span class="heart" role="img" aria-label="cariño">❤</span> para la comunidad universitaria</div>
+    <div class="footer-links">
+      <a href="#">Ayuda</a>
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
+    </div>
+  </footer>
+
+</main>
+
+<script type="module" src="perfil_staff.js"></script>
+
+</body>
+</html>

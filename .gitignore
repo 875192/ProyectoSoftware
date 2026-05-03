@@ -1,8 +1,9 @@
 .env
 
-#Archivos en Construccion (admin)
-/Frontend/src/paneles/panel-admin/panel_admin.html
-/Frontend/src/prestamos/gestion-prestamos/gestion_prestamos.html
-/Frontend/src/inventario/alta-material/alta_material.html
-/Frontend/src/inventario/listado-inventario/listado_inventario.html
-/Frontend/src/sanciones/gestion-sanciones/gestion_devoluciones.html
+#Archivos en construccion
+
+#Launch Video
+/my-video
+
+#Carpeta de video
+Video/

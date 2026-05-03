@@ -106,6 +106,12 @@
       "sourceType": "github",
       "computedHash": "2c20b12bb4ece445d45fc63bda020aecf78b3cdf6d593beb59c273f658293130"
     },
+    "remotion-best-practices": {
+      "source": "remotion-dev/skills",
+      "sourceType": "github",
+      "skillPath": "skills/remotion/SKILL.md",
+      "computedHash": "42797c366775afa9fecc7c862f1cc1aace3dc9533082f56b21c7c1f9f6e00fdc"
+    },
     "shape": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",

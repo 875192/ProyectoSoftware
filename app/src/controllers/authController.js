@@ -120,7 +120,7 @@ const forgotPassword = async (req, res) => {
     await usuariosDao.saveResetToken(user.id, token, expiry);
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5500';
-    const resetUrl = `${frontendUrl}/api/src/pages/public/reset_password.html?token=${token}`;
+    const resetUrl = `${frontendUrl}/Frontend/src/autenticacion/restablecer-password/restablecer-password.html?token=${token}`;
     
     console.log(`[forgot-password] Enviando enlace a: ${user.email_institucional}`);
     console.log(`[forgot-password] URL: ${resetUrl}`);

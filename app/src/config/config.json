@@ -1,0 +1,20 @@
+{
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "secure": false,
+    "user": "unigear.sistema@gmail.com",
+    "from": "unigear.sistema@gmail.com"
+  },
+  "stripe": {
+    "secret_key": "sk_test_...",
+    "publishable_key": "pk_test_..."
+  },
+  "database": {
+    "url": "postgresql://unigear_app:unigear_password@localhost:5433/unigear"
+  },
+  "server": {
+    "url": "http://127.0.0.1:5500",
+    "port": 3000
+  }
+}

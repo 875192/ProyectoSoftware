@@ -1,0 +1,20 @@
+{
+  "name": "unigear-admin-tui",
+  "version": "1.0.0",
+  "description": "Terminal de administración UniGear",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.3",
+    "dotenv": "^17.3.1",
+    "inquirer": "^8.2.6",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

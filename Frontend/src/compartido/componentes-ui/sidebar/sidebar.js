@@ -134,7 +134,7 @@ export function mountSidebar({ activePage = '', basePath = '../..' } = {}) {
       <nav class="menu" aria-label="Páginas">
         <div class="menu-label">Páginas</div>
         ${MENU_ITEMS.map((item) => renderItem(item, basePath, activePage)).join('')}
-        <div class="menu-label">Mi cuenta</div>
+        <div class="menu-label">Mi perfil</div>
         ${ACCOUNT_ITEMS.map((item) => renderItem(item, basePath, activePage)).join('')}
       </nav>
 

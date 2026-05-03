@@ -1,21 +1,9 @@
 /* =============================================================
-   Login / Registro — alineado con paleta y fuentes del proyecto.
-   Tokens definidos en compartido/estilos-base/tokens.css.
+   Login / Registro — alineado con tokens y componentes-base.
+   Tokens y resets globales viven en compartido/estilos-base/.
    ============================================================= */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: var(--font-body);
-}
-
 body {
-    background:
-        radial-gradient(circle at 15% 20%, rgba(15, 118, 110, 0.06), transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(250, 204, 21, 0.05), transparent 40%),
-        var(--off-white);
-    color: var(--text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,8 +14,9 @@ body {
 
 .container {
     background: var(--card);
-    border-radius: 24px;
-    box-shadow: 0 24px 60px -20px rgba(15, 118, 110, 0.18), 0 8px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--gray-200);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
     position: relative;
     overflow: hidden;
     width: 880px;
@@ -37,9 +26,9 @@ body {
 
 .container h1 {
     font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
     color: var(--navy);
     margin-bottom: 8px;
 }
@@ -48,19 +37,18 @@ body {
     font-size: 14px;
     line-height: 1.5;
     color: var(--text-light);
-    margin: 18px 0;
+    margin: 14px 0;
 }
 
 .container span {
     font-size: 13px;
     color: var(--text-muted);
-    margin-top: 14px;
+    margin-top: 12px;
 }
 
 .container a {
     color: var(--teal);
     font-size: 13px;
-    text-decoration: none;
     font-weight: 600;
 }
 .container a:hover { color: var(--teal-dark); }
@@ -70,31 +58,27 @@ body {
     color: var(--white);
     font-family: var(--font-body);
     font-size: 14px;
-    font-weight: 700;
-    padding: 12px 36px;
-    border: 1px solid transparent;
+    font-weight: 600;
+    padding: 11px 32px;
+    border: 1.5px solid var(--teal);
     border-radius: 10px;
     margin-top: 14px;
     cursor: pointer;
-    box-shadow: 0 8px 20px -8px rgba(15, 118, 110, 0.45);
-    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 .container button:hover {
     background: var(--teal-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 12px 24px -8px rgba(15, 118, 110, 0.5);
+    border-color: var(--teal-dark);
 }
 
 .container button.hidden {
     background: transparent;
     color: var(--white);
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.7);
 }
 .container button.hidden:hover {
     background: rgba(255, 255, 255, 0.12);
-    transform: none;
-    box-shadow: none;
+    border-color: var(--white);
 }
 
 .container form {
@@ -109,23 +93,21 @@ body {
 
 .container input,
 .container select {
-    background: var(--gray-50);
-    border: 1px solid var(--border);
+    background: var(--white);
+    border: 1.5px solid var(--gray-300);
     color: var(--text);
     margin: 6px 0;
-    padding: 12px 14px;
+    height: 42px;
+    padding: 10px 12px;
     font-size: 14px;
     border-radius: 10px;
     width: 100%;
-    outline: none;
-    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 .container input::placeholder { color: var(--text-muted); }
 .container input:focus,
 .container select:focus {
-    background: var(--white);
     border-color: var(--teal);
-    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
 }
 
 .container select {
@@ -133,7 +115,7 @@ body {
     color: var(--text-light);
 }
 
-/* Role selector cards */
+/* ===== Role selector ===== */
 .role-selector {
     display: flex;
     gap: 10px;
@@ -151,22 +133,22 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 14px 10px;
-    background: var(--gray-50);
-    border: 2px solid var(--border);
-    border-radius: 12px;
+    gap: 6px;
+    padding: 12px 10px;
+    background: var(--white);
+    border: 1.5px solid var(--gray-300);
+    border-radius: 10px;
     cursor: pointer;
     font-size: 12px;
     font-weight: 600;
     color: var(--text-light);
-    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
-.role-card i { font-size: 20px; }
+.role-card i { font-size: 18px; }
 .role-card:hover {
     background: var(--teal-50);
     color: var(--teal-dark);
-    border-color: var(--teal-100);
+    border-color: var(--teal);
 }
 .role-option input[type="radio"]:checked + .role-card {
     background: var(--teal-50);
@@ -174,13 +156,13 @@ body {
     color: var(--teal-dark);
 }
 
-/* Remember row */
+/* ===== Remember row ===== */
 .remember-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    margin: 10px 0 4px;
+    margin: 8px 0 4px;
     font-size: 13px;
     flex-wrap: wrap;
     gap: 8px;
@@ -193,6 +175,7 @@ body {
 }
 .remember-check input[type="checkbox"] {
     width: auto;
+    height: auto;
     margin: 0;
     padding: 0;
     accent-color: var(--teal);
@@ -213,14 +196,14 @@ body {
     text-decoration: underline;
 }
 
-/* Error message */
+/* ===== Error message ===== */
 .error-msg {
     color: var(--error-text);
     background: var(--error-bg);
     border: 1px solid var(--error-border);
-    font-size: 12px;
+    font-size: 12.5px;
     margin: 8px 0 0 !important;
-    padding: 6px 10px;
+    padding: 8px 10px;
     border-radius: 8px;
     text-align: center;
     width: 100%;
@@ -229,7 +212,7 @@ body {
 }
 .error-msg:not(:empty) { display: block; }
 
-/* ---- Form panels ---- */
+/* ===== Form panels ===== */
 .form-container {
     position: absolute;
     top: 0;
@@ -262,12 +245,10 @@ body {
     50%, 100%  { opacity: 1; z-index: 5; }
 }
 
-/* ---- Social ---- */
+/* ===== Social ===== */
 .social-icons {
     width: 100%;
-    margin: 18px 0 4px;
-}
-.social-icons {
+    margin: 16px 0 4px;
     display: flex;
     justify-content: center;
 }
@@ -275,20 +256,15 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0;
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     padding: 0;
     background: var(--white);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--gray-300);
     border-radius: 10px;
     color: var(--gray-700);
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
     cursor: pointer;
-    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .social-icons .icon i { font-size: 16px; color: var(--gray-600); }
 .social-icons .icon .google-logo {
@@ -297,16 +273,14 @@ body {
     flex-shrink: 0;
     display: block;
 }
-.social-icons .icon span { display: inline-block; line-height: 1; }
 .social-icons .icon:hover {
     border-color: var(--teal);
     color: var(--teal-dark);
     background: var(--teal-50);
-    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.08);
 }
 .social-icons .icon:hover i { color: var(--teal); }
 
-/* ---- Toggle container (panel deslizante teal) ---- */
+/* ===== Toggle container (panel teal) ===== */
 .toggle-container {
     position: absolute;
     top: 0;
@@ -324,7 +298,7 @@ body {
 }
 
 .toggle {
-    background: linear-gradient(135deg, var(--teal-deep) 0%, var(--teal-dark) 55%, var(--teal) 100%);
+    background: var(--teal);
     color: var(--white);
     position: relative;
     left: -100%;
@@ -352,13 +326,13 @@ body {
 .toggle-panel h1 {
     color: var(--white);
     font-family: var(--font-display);
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.4px;
-    margin-bottom: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
 }
 .toggle-panel p {
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.88);
     font-size: 14px;
     line-height: 1.55;
     margin-bottom: 8px;
@@ -370,12 +344,7 @@ body {
 .toggle-right { right: 0; transform: translateX(0); }
 .container.active .toggle-right { transform: translateX(200%); }
 
-/* ---- Loading state ---- */
-button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
+/* ===== Loading ===== */
 @keyframes spin {
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }

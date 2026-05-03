@@ -19,7 +19,7 @@ function redirectByRole(user) {
     const routes = {
         estudiante:       '../../paneles/panel-usuario/panel_usuarios.html',
         profesor:         '../../paneles/panel-usuario/panel_usuarios.html',
-        personal_gestion: '../../paneles/panel-staff/panel-staff.html',
+        personal_gestion: '../../paneles/panel-staff/panel_staff.html',
         mantenimiento:    '../../mantenimiento/mantenimiento.html'
     };
     window.location.href = routes[user.role] || 'login.html';
@@ -148,10 +148,6 @@ if (registerForm) {
         const rol      = rolInput ? rolInput.value : '';
 
         // Validaciones
-        if (password.length < 8) {
-            showError('reg-error', 'La contraseña debe tener al menos 8 caracteres');
-            return;
-        }
         if (password !== confirm) {
             showError('reg-error', 'Las contraseñas no coinciden');
             return;

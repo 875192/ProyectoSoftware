@@ -19,6 +19,14 @@ const SELECT_FIELDS = `
   p.created_at
 `;
 
+const RETURNING_FIELDS = `
+  id, usuario_id, solicitud_id, sancion_id,
+  concepto, concepto_sub, metodo, metodo_detalle,
+  importe_centimos, moneda, estado,
+  stripe_payment_intent_id, recibo_url,
+  fecha_pago, fecha_reembolso, created_at
+`;
+
 const pagosDao = {
   findByUsuarioId: async (usuarioId) => {
     const result = await pool.query(`
@@ -58,9 +66,9 @@ const pagosDao = {
         fecha_pago
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-        CASE WHEN $9 = 'pagado' THEN NOW() ELSE NULL END
+        CASE WHEN $9::text = 'pagado' THEN NOW() ELSE NULL END
       )
-      RETURNING ${SELECT_FIELDS}
+      RETURNING ${RETURNING_FIELDS}
     `, [
       usuario_id, solicitud_id, sancion_id,
       concepto, concepto_sub,

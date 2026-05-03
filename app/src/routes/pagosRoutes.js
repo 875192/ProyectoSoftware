@@ -2,6 +2,7 @@ const express = require('express');
 const {
   getPagos,
   pagarSancion,
+  createSancionCheckoutSession,
   createCheckoutSession,
   verifyCheckoutSession,
   createPaymentIntent,
@@ -15,6 +16,7 @@ router.get('/', getPagos);
 
 // Pago de sanción
 router.post('/sancion', pagarSancion);
+router.post('/sancion-checkout', createSancionCheckoutSession);
 
 // Stripe
 router.post('/create-checkout-session', createCheckoutSession);

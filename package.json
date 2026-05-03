@@ -1,0 +1,13 @@
+{
+  "name": "unigear-catalog-processor",
+  "version": "1.0.0",
+  "description": "Agent to process UniGear catalog pages",
+  "main": "launch-catalog-agent.js",
+  "scripts": {
+    "start": "node launch-catalog-agent.js",
+    "process": "node src/agents/catalogProcessor.js"
+  },
+  "keywords": ["unigear", "catalog", "agent", "processor"],
+  "author": "UniGear Team",
+  "license": "MIT"
+}

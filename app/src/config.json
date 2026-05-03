@@ -1,0 +1,38 @@
+{
+  "appName": "UniGear Updated",
+  "version": "1.0.1",
+  "environment": "development",
+  "database": {
+    "host": "localhost",
+    "port": 5433,
+    "name": "unigear_updated"
+  },
+  "api": {
+    "baseUrl": "http://localhost:3000",
+    "rateLimit": {
+      "windowMs": 900000,
+      "max": 100
+    }
+  },
+  "frontend": {
+    "url": "http://127.0.0.1:5500"
+  },
+  "email": {
+    "enabled": true,
+    "service": "gmail"
+  },
+  "stripe": {
+    "enabled": true,
+    "publicKey": "pk_test_key",
+    "webhookSecret": "whsec_test_key"
+  },
+  "features": {
+    "enableNotifications": true,
+    "enablePayments": true,
+    "enableMaintenance": true
+  },
+  "limits": {
+    "maxLoanDays": 30,
+    "maxRenewals": 2
+  }
+}

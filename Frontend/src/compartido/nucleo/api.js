@@ -47,6 +47,8 @@ function mapSolicitud(s) {
   return {
     id: String(s.id),
     userId: String(s.usuario_id),
+    usuarioNombre: s.usuario_nombre || null,
+    usuarioEmail: s.usuario_email || null,
     materialId: String(s.material_id),
     materialName: s.material_nombre,
     materialIcon: s.material_icono,
@@ -68,12 +70,17 @@ function mapPrestamo(p) {
     id: String(p.id),
     solicitudId: String(p.solicitud_id),
     userId: String(p.usuario_id),
+    usuarioNombre: p.usuario_nombre || null,
+    usuarioEmail: p.usuario_email || null,
     materialId: String(p.material_id),
     materialName: p.material_nombre,
     materialIcon: p.material_icono,
     materialCodigo: p.material_codigo,
     categoria: p.categoria_nombre,
+    unidadMaterialId: p.unidad_material_id ? String(p.unidad_material_id) : null,
     codigoInventario: p.codigo_inventario,
+    numeroSerie: p.numero_serie || null,
+    ubicacion: p.ubicacion || null,
     fechaEntrega: p.fecha_entrega,
     fechaDevolucionPrevista: p.fecha_devolucion_prevista,
     fechaDevolucionReal: p.fecha_devolucion_real,
@@ -257,6 +264,11 @@ export const api = {
     return request(`/prestamos/estadisticas/mensual?usuario_id=${usuarioId}`);
   },
 
+  // Usuarios (staff)
+  getUsuarios: async () => {
+    return request('/usuarios');
+  },
+
   // Sanciones
   getSanciones: async (usuarioId) => {
     const data = await request(`/sanciones?usuario_id=${usuarioId}`);
@@ -266,6 +278,22 @@ export const api = {
   getSancion: async (id) => {
     const data = await request(`/sanciones/${id}`);
     return mapSancion(data);
+  },
+
+  createSancion: async ({ usuarioId, tipo, motivo, importeCentimos, fechaInicio, fechaFin, prestamoId, creadaPor }) => {
+    return request('/sanciones', {
+      method: 'POST',
+      body: JSON.stringify({
+        usuario_id: parseInt(usuarioId),
+        tipo,
+        motivo,
+        importe_centimos: parseInt(importeCentimos),
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin || null,
+        prestamo_id: prestamoId ? parseInt(prestamoId) : null,
+        creada_por: parseInt(creadaPor),
+      }),
+    });
   },
 
   // Pagos
@@ -354,6 +382,63 @@ export const api = {
     });
   },
 
+  // Staff — Solicitudes
+  getSolicitudesStaff: async (estado) => {
+    const qs = estado ? `?estado=${encodeURIComponent(estado)}` : '';
+    const data = await request(`/solicitudes/staff${qs}`);
+    return data.map(mapSolicitud);
+  },
+
+  aprobarSolicitud: async (id, staffUserId) => {
+    const data = await request(`/solicitudes/${id}/aprobar`, {
+      method: 'PUT',
+      body: JSON.stringify({ staff_user_id: parseInt(staffUserId) }),
+    });
+    return mapSolicitud(data);
+  },
+
+  rechazarSolicitud: async (id, staffUserId, motivoRechazo) => {
+    const data = await request(`/solicitudes/${id}/rechazar`, {
+      method: 'PUT',
+      body: JSON.stringify({ staff_user_id: parseInt(staffUserId), motivo_rechazo: motivoRechazo }),
+    });
+    return mapSolicitud(data);
+  },
+
+  // Staff — Préstamos
+  getPrestamosStaff: async (estado) => {
+    const qs = estado ? `?estado=${encodeURIComponent(estado)}` : '';
+    const data = await request(`/prestamos/staff${qs}`);
+    return data.map(mapPrestamo);
+  },
+
+  registrarEntrega: async ({ solicitudId, usuarioId, unidadMaterialId, fechaDevolucionPrevista, staffUserId }) => {
+    const data = await request('/prestamos', {
+      method: 'POST',
+      body: JSON.stringify({
+        solicitud_id: parseInt(solicitudId),
+        usuario_id: parseInt(usuarioId),
+        unidad_material_id: parseInt(unidadMaterialId),
+        fecha_devolucion_prevista: fechaDevolucionPrevista,
+        staff_user_id: staffUserId ? parseInt(staffUserId) : null,
+      }),
+    });
+    return mapPrestamo(data);
+  },
+
+  registrarDevolucion: async (id, staffUserId) => {
+    const data = await request(`/prestamos/${id}/devolver`, {
+      method: 'PUT',
+      body: JSON.stringify({ staff_user_id: staffUserId ? parseInt(staffUserId) : null }),
+    });
+    return mapPrestamo(data);
+  },
+
+  // Staff — Inventario
+  getInventario: async () => {
+    return request('/materiales/inventario');
+  },
+
   // Pagos (Stripe)
   getStripeConfig: async () => {
     return request('/pagos/config');
@@ -366,15 +451,17 @@ export const api = {
     });
   },
 
-  createCheckoutSession: async ({ usuarioId, materialNombre, fechaInicio, fechaFin, motivo }) => {
+  createCheckoutSession: async ({ usuarioId, materialId, materialNombre, fechaInicio, fechaFin, motivo, prioridad }) => {
     return request('/pagos/create-checkout-session', {
       method: 'POST',
       body: JSON.stringify({
         usuario_id: parseInt(usuarioId),
+        material_id: materialId ? parseInt(materialId) : undefined,
         material_nombre: materialNombre,
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFin,
         motivo: motivo || '',
+        prioridad: prioridad || 'normal',
       }),
     });
   },

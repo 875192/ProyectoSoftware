@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UniGear — Gestión de Solicitudes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../compartido/estilos-base/tokens.css">
+<link rel="stylesheet" href="gestion_solicitudes.css">
+</head>
+<body>
+
+<div class="ripple-background" aria-hidden="true">
+  <div class="circle xxlarge shade1"></div>
+  <div class="circle xlarge shade2"></div>
+  <div class="circle large shade3"></div>
+  <div class="circle medium shade4"></div>
+  <div class="circle small shade5"></div>
+</div>
+
+<main class="main">
+  <div id="topbar-sentinel"></div>
+  <div class="topbar" id="topbar">
+    <div>
+      <div class="breadcrumb">Páginas <span class="sep">/</span> Solicitudes</div>
+      <div class="page-title">Gestión de Solicitudes</div>
+    </div>
+    <div class="topbar-right">
+      <label class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="search" type="text" placeholder="Buscar..." aria-label="Buscar solicitudes" />
+      </label>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary" id="summary"></div>
+
+  <!-- Filtros -->
+  <div class="filters" id="filtros">
+    <button class="filter-btn active" data-estado="">Todas</button>
+    <button class="filter-btn" data-estado="pendiente">Pendientes</button>
+    <button class="filter-btn" data-estado="aprobada">Aprobadas</button>
+    <button class="filter-btn" data-estado="en_espera">En espera</button>
+    <button class="filter-btn" data-estado="rechazada">Rechazadas</button>
+    <button class="filter-btn" data-estado="cancelada">Canceladas</button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-card">
+    <div id="tablaContainer">
+      <div class="empty-state">Cargando...</div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">—</h2>
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="gestion_solicitudes.js"></script>
+</body>
+</html>

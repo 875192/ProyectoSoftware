@@ -1,0 +1,121 @@
+/* Resets, layout, topbar, .card, .badge, inputs, tablas viven
+     en compartido/estilos-base/componentes-base.css. */
+
+  .toast {
+    animation: slide-in 320ms var(--ease) both;
+  }
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Resumen */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .summary-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: box-shadow var(--dur) var(--ease);
+  }
+  .summary-card:hover { box-shadow: var(--shadow); }
+  .summary-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.4px;
+    margin-bottom: 6px;
+  }
+  .summary-value {
+    font-size: 22px; font-weight: 700;
+    color: var(--navy); letter-spacing: -0.3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .summary-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: var(--teal-50); color: var(--teal);
+    display: grid; place-items: center;
+  }
+
+  /* Filtros */
+  .toolbar {
+    display: flex; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 14px;
+  }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { cursor: pointer; }
+  .chip:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .chip.active { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+  .year-select {
+    background: var(--white);
+    border: 1.5px solid var(--gray-300);
+    border-radius: 10px;
+    padding: 7px 12px 7px 14px;
+    font-size: 12.5px; font-weight: 600;
+    color: var(--text-light);
+    transition: border-color var(--dur) var(--ease);
+  }
+  .year-select:hover { border-color: var(--teal); }
+
+  /* Tabla */
+  .table-card { padding: 0; overflow: hidden; }
+  .table-wrap { overflow-x: auto; }
+
+  .p-date { color: var(--gray-700); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .p-concept-main { color: var(--navy); font-weight: 600; }
+  .p-concept-sub { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+  .p-amount {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 14px;
+    color: var(--gray-900);
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .p-method {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--gray-600);
+    font-size: 12.5px;
+  }
+  .p-method svg { color: var(--teal); }
+  .badge.paid     { background: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
+  .badge.refunded { background: var(--gray-100); color: var(--gray-600); border-color: var(--gray-200); }
+  .badge.failed   { background: var(--error-bg); color: var(--error-text); border-color: var(--error-border); }
+
+  .receipt-link {
+    color: var(--teal-dark);
+    font-weight: 600; font-size: 12.5px;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: color var(--dur) var(--ease);
+  }
+  .receipt-link:hover { color: var(--teal); }
+
+  /* Empty */
+  .empty { text-align: center; padding: 60px 22px; }
+  .empty-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--teal-50);
+    color: var(--teal);
+    display: grid; place-items: center;
+    margin: 0 auto 18px;
+  }
+  .empty-title { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .empty-desc { font-size: 13.5px; color: var(--text-muted); max-width: 380px; margin: 0 auto; line-height: 1.6; }
+
+  @media (max-width: 1100px) {
+    .summary { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .summary { grid-template-columns: 1fr; }
+    table.payments thead { display: none; }
+    table.payments tbody td { display: block; padding: 6px 16px; border-bottom: none; }
+    table.payments tbody tr { display: block; padding: 14px 0; border-bottom: 1px solid var(--border-soft); }
+    .p-amount { text-align: left; }
+  }

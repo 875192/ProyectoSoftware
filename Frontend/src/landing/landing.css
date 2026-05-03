@@ -295,10 +295,8 @@ summary:focus-visible {
 }
 .hero-title em {
   font-style: normal;
-  background: linear-gradient(120deg, var(--teal) 0%, var(--teal-dark) 60%, var(--yellow-dark) 120%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--teal-deep);
+  font-weight: 800;
 }
 
 .hero-sub {
